@@ -158,7 +158,7 @@ img,svg{max-width:100%;height:auto}
 @media(min-width:900px){.tiers{grid-template-columns:repeat(3,1fr)}}
 .tier{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--rlg);padding:1.6rem 1.4rem;display:flex;flex-direction:column}
 .tier-pop{border-color:var(--green);box-shadow:0 0 0 3px var(--gtint)}
-.tier__flag{position:absolute;top:-13px;left:1.4rem;background:var(--green);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:var(--pill);padding:.3rem .75rem}
+.tier__flag{position:absolute;top:-13px;left:1.4rem;background:#DD00FF;color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:var(--pill);padding:.3rem .75rem}
 .tier h3{margin-bottom:.2rem}
 .tier__meta{font-size:.88rem;font-weight:700;color:var(--brass2);margin-bottom:.6rem}
 .tier__price{font-size:1rem;font-weight:700;color:var(--ink);margin:.8rem 0 1rem;padding-top:.9rem;border-top:1px dashed var(--line2)}
