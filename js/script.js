@@ -17,7 +17,7 @@ const SITE = {
 };
 
 const I = {
-  paw:`<svg width="22" height="22" viewBox="0 0 24 24" fill="#000000" aria-hidden="true"><ellipse cx="7" cy="7.5" rx="2.4" ry="3"/><ellipse cx="12" cy="6.2" rx="2.4" ry="3.1"/><ellipse cx="17" cy="7.5" rx="2.4" ry="3"/><path d="M12 11.2c3 0 5.4 2 5.4 4.6 0 2-1.7 3.2-3.6 3.2-1 0-1.4-.3-1.8-.3s-.8.3-1.8.3c-1.9 0-3.6-1.2-3.6-3.2 0-2.6 2.4-4.6 5.4-4.6Z"/></svg>`,
+  paw:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="7" cy="7.5" rx="2.4" ry="3"/><ellipse cx="12" cy="6.2" rx="2.4" ry="3.1"/><ellipse cx="17" cy="7.5" rx="2.4" ry="3"/><path d="M12 11.2c3 0 5.4 2 5.4 4.6 0 2-1.7 3.2-3.6 3.2-1 0-1.4-.3-1.8-.3s-.8.3-1.8.3c-1.9 0-3.6-1.2-3.6-3.2 0-2.6 2.4-4.6 5.4-4.6Z"/></svg>`,
   shield:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v6c0 5.2-3.4 8.4-7.5 10-4.1-1.6-7.5-4.8-7.5-10V6L12 3Z"/><path d="M9.2 12.2l2 2 3.6-4"/></svg>`,
   home:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>`,
   user:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><circle cx="12" cy="6" r="3.2"/></svg>`,
@@ -47,7 +47,12 @@ function crumbs(items){
 
 function hero(o){
   const mini = (o.mini || []).map(m => `<li>${I.check} ${m}</li>`).join('');
-  return `<section class="hero">${o.crumbs ? crumbs(o.crumbs) : ''}
+  return `<section class="hero hero--video">
+    <video class="hero__video" autoplay muted loop playsinline>
+       <source src="https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Facebook%20Test%20Video.mp4" type="video/mp4">
+    </video>
+    <div class="hero__overlay"></div>
+    ${o.crumbs ? crumbs(o.crumbs) : ''}
   <div class="wrap hero__in">
     <div>
       ${o.tag ? `<span class="tagpill">${o.tag}</span>` : ''}
@@ -471,7 +476,7 @@ PAGES['/'] = {
   desc:'Professional dog training in Aransas Pass, Corpus Christi and the Coastal Bend: Board and Train, private lessons, puppy foundations, behavior modification, detection, sport and police K9 training.',
   render(){
     const trows = [
-      {href:'#/pet-training', ic:I.home, t:'Pet Dog Training', d:'Board &amp; Train, private lessons, and puppy foundations. Real-world obedience your family can live with.'},
+      {href:'#/pet-training', ic:I.home, t:'Pet Dog Training', d:'Board &amp; Train, private lessons, puppy foundations and day training. Real-world obedience your family can live with.'},
       {href:'#/working-dogs', ic:I.shield, t:'Specialty &amp; Working Dogs', d:'Sport, detection and police K9 training, with certified decoys delivering real-world scenarios.'}
     ].map(x => `<div class="trow">
         <span class="trow__ic" aria-hidden="true">${x.ic}</span>
@@ -483,7 +488,7 @@ PAGES['/'] = {
       </div>`).join('');
 
     return hero({
-      tag:'We make "sit" happen2.',
+      tag:'We make "sit" happen.',
       title:'Dog training that holds up in the real world.',
       lede:'Taurus K9 trains family pets and professional working dogs across the Texas Coastal Bend. Structured plans, daily updates, certified trainers, and a free meet and greet so you can decide with no pressure.',
       actions:`${CTAB}<a class="btn btn-o" href="#/pet-training">See all programs</a>`,
@@ -501,9 +506,9 @@ PAGES['/'] = {
         <div><b>21 Years</b><span>U.S. Army veteran on staff</span></div>
       </div>`})
     + sec({
-        eyebrow:'Two divisions, one standard',
+        eyebrow:'Two Trainers, one standard',
         h2:'Pet dogs and working dogs. Same trainers, same rigor.',
-        lede:'Whether your dog needs to stop jumping on guests or needs to certify as a detection team, the process starts the same way: assess the individual dog, build a plan, set that dog up to succeed.',
+        lede:'Whether your dog needs to stop jumping on guests or needs to certify as a K9 team, the process starts the same way: assess the individual dog, build a plan, set that dog up to succeed.',
         body: grid([
           card({
             icon:I.home, tag:'Pet owners', h3:'Pet Dog Training',
@@ -600,12 +605,12 @@ PAGES['/pet-training'] = {
 
 PAGES['/board-train'] = {
   title:'Board & Train Dog Training in Corpus Christi & South Texas | Taurus K9',
-  desc:'Immersive board and train programs in Aransas Pass and Corpus Christi, TX. Basic Obedience (6-8 weeks), Advanced Obedience (6-12 weeks) and Behavior Modification (8-12 weeks) with daily updates and real-world proofing.',
+  desc:'Immersive board and train programs in Aransas Pass and Corpus Christi, TX. Basic Obedience (4-6 weeks), Advanced Obedience (6-8 weeks) and Behavior Modification (8-12 weeks) with daily updates and real-world proofing.',
   render(){
     const tiers = [
-      {h3:'Basic Obedience', meta:'6&ndash;8 weeks &middot; foundational life skills', flag:'',
+      {h3:'Basic Obedience', meta:'4&ndash;6 weeks &middot; foundational life skills', flag:'',
        items:['4&ndash;6 week foundational training','Daily updates while your dog stays with us','Advanced commands','Off-leash foundation training','House manners','Training tools available (optional)']},
-      {h3:'Advanced Obedience', meta:'6&ndash;12 weeks &middot; public reliability', flag:'Most chosen',
+      {h3:'Advanced Obedience', meta:'6&ndash;8 weeks &middot; public reliability', flag:'Most chosen',
        items:['Everything in Basic Obedience','6&ndash;8 week advanced training','Public reliability proofing','Off-leash training','Public manners in real environments','Training tools available (optional)']},
       {h3:'Behavior Modification', meta:'8&ndash;12 weeks &middot; custom plan', flag:'',
        items:['Everything in Advanced Obedience','8&ndash;12 week intensive program','Custom plan for aggression, anxiety or reactivity','Advanced commands','Off-leash training','Complete manners and household reliability']}
@@ -614,7 +619,7 @@ PAGES['/board-train'] = {
         <h3>${t.h3}</h3>
         <p class="tier__meta">${t.meta}</p>
         ${chk(t.items)}
-        <p class="tier__price">Quoted per 1 dog after your free meet and greet<span>Written scope and cost before anything starts.</span></p>
+        <p class="tier__price">Quoted per dog after your free meet and greet<span>Written scope and cost before anything starts.</span></p>
         <div class="card__f">
           <a class="btn btn-p btn-blk" href="#/contact?service=board-train&amp;tier=${encodeURIComponent(t.h3)}" data-track="cta_tier">Reserve My Dog Spot</a>
         </div>
