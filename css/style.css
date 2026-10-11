@@ -63,7 +63,7 @@ img,svg{max-width:100%;height:auto}
 .hdr{position:sticky;top:0;z-index:120;background:rgba(250,248,244,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .hdr__in{display:flex;align-items:center;gap:1rem;min-height:76px}
 .brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:var(--ink);flex:0 0 auto}
-.brand__m{width:44px;height:44px;flex:0 0 44px;border-radius:12px;background:#FF0000;display:grid;place-items:center}
+.brand__m{width:44px;height:44px;flex:0 0 44px;border-radius:12px;background:var(-muted);display:grid;place-items:center}
 .brand__t{display:flex;flex-direction:column;line-height:1.1}
 .brand__t b{font-size:1.15rem;font-weight:900;letter-spacing:-.03em}
 .brand__t span{font-size:.75rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
