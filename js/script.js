@@ -17,7 +17,7 @@ const SITE = {
 };
 
 const I = {
-  paw:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="7" cy="7.5" rx="2.4" ry="3"/><ellipse cx="12" cy="6.2" rx="2.4" ry="3.1"/><ellipse cx="17" cy="7.5" rx="2.4" ry="3"/><path d="M12 11.2c3 0 5.4 2 5.4 4.6 0 2-1.7 3.2-3.6 3.2-1 0-1.4-.3-1.8-.3s-.8.3-1.8.3c-1.9 0-3.6-1.2-3.6-3.2 0-2.6 2.4-4.6 5.4-4.6Z"/></svg>`,
+  paw:`<svg width="22" height="22" viewBox="0 0 24 24" fill="#FF0303" aria-hidden="true"><ellipse cx="7" cy="7.5" rx="2.4" ry="3"/><ellipse cx="12" cy="6.2" rx="2.4" ry="3.1"/><ellipse cx="17" cy="7.5" rx="2.4" ry="3"/><path d="M12 11.2c3 0 5.4 2 5.4 4.6 0 2-1.7 3.2-3.6 3.2-1 0-1.4-.3-1.8-.3s-.8.3-1.8.3c-1.9 0-3.6-1.2-3.6-3.2 0-2.6 2.4-4.6 5.4-4.6Z"/></svg>`,
   shield:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v6c0 5.2-3.4 8.4-7.5 10-4.1-1.6-7.5-4.8-7.5-10V6L12 3Z"/><path d="M9.2 12.2l2 2 3.6-4"/></svg>`,
   home:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>`,
   user:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><circle cx="12" cy="6" r="3.2"/></svg>`,
