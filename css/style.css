@@ -134,7 +134,7 @@ img,svg{max-width:100%;height:auto}
 .s-dark .card{background:var(--ink2);border-color:#2c3a44}
 .s-dark .card p{color:#a9b7c0}
 .s-dark .card__ic{background:rgba(200,145,47,.16);color:#f0c874}
-.tag{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green);background:var(--gtint);border-radius:var(--pill);padding:.28rem .7rem;margin-bottom:.6rem;align-self:flex-start}
+.tag{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green);background:#FFFFFF;border-radius:var(--pill);padding:.28rem .7rem;margin-bottom:.6rem;align-self:flex-start}
 .tag-b{color:var(--brass2);background:var(--btint)}
 .s-dark .tag{color:#f0c874;background:rgba(240,200,116,.14)}
 .check{list-style:none;padding:0;margin:1rem 0 0}
