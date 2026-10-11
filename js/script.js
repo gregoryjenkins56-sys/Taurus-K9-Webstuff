@@ -483,7 +483,7 @@ PAGES['/'] = {
       </div>`).join('');
 
     return hero({
-      tag:'We make "sit" happen.',
+      tag:'We make "sit" happen2.',
       title:'Dog training that holds up in the real world.',
       lede:'Taurus K9 trains family pets and professional working dogs across the Texas Coastal Bend. Structured plans, daily updates, certified trainers, and a free meet and greet so you can decide with no pressure.',
       actions:`${CTAB}<a class="btn btn-o" href="#/pet-training">See all programs</a>`,
