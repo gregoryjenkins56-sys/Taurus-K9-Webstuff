@@ -614,7 +614,7 @@ PAGES['/board-train'] = {
         <h3>${t.h3}</h3>
         <p class="tier__meta">${t.meta}</p>
         ${chk(t.items)}
-        <p class="tier__price">Quoted per dog after your free meet and greet<span>Written scope and cost before anything starts.</span></p>
+        <p class="tier__price">Quoted per 1 dog after your free meet and greet<span>Written scope and cost before anything starts.</span></p>
         <div class="card__f">
           <a class="btn btn-p btn-blk" href="#/contact?service=board-train&amp;tier=${encodeURIComponent(t.h3)}" data-track="cta_tier">Reserve My Dog Spot</a>
         </div>
