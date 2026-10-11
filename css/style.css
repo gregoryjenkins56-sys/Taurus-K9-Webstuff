@@ -46,7 +46,7 @@ img,svg{max-width:100%;height:auto}
 .btn-p:hover{background:#4683E0;color:#242021}
 .btn-g{background:#E04646);color:#fff;border-color:var(--green)}
 .btn-g:hover{background:#E04646;color:#fff}
-.btn-o{background:transparent;color:var(--ink);border-color:var(--line2)}
+.btn-o{background:#078C7F;color:#FFFFFF;border-color:#078C7F}
 .btn-o:hover{border-color:#E04646;color:var(--ink);background:rgba(16,24,32,.03)}
 .s-dark .btn-o{color:#fff;border-color:rgba(255,255,255,.4)}
 .s-dark .btn-o:hover{background:rgba(255,255,255,.1);border-color:#fff;color:#fff}
@@ -70,7 +70,7 @@ img,svg{max-width:100%;height:auto}
 @media(max-width:420px){.brand__t span{display:none}}
 .nav{margin-left:auto;display:flex;align-items:center;gap:.15rem}
 .nav__i{position:relative}
-.nav__l,.nav__b{display:inline-flex;align-items:center;gap:.35rem;padding:.6rem .75rem;border-radius:10px;font:inherit;font-weight:700;font-size:.94rem;color:#2b3a45;text-decoration:none;background:none;border:0;cursor:pointer;min-height:44px}
+.nav__l,.nav__b{display:inline-flex;align-items:center;gap:.35rem;padding:.6rem .75rem;border-radius:10px;font:inherit;font-weight:700;font-size:.94rem;color:#242;text-decoration:none;background:none;border:0;cursor:pointer;min-height:44px}
 .nav__l:hover,.nav__b:hover{background:var(--gtint);color:var(--green)}
 .nav__l[aria-current="page"]{color:var(--green);background:var(--gtint)}
 .nav__cta{margin-left:.6rem}
