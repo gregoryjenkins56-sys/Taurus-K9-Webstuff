@@ -42,8 +42,8 @@ img,svg{max-width:100%;height:auto}
 .measure{max-width:70ch}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font:inherit;font-weight:700;text-decoration:none;cursor:pointer;padding:.85rem 1.4rem;border-radius:var(--pill);border:2px solid transparent;transition:transform .15s,background-color .15s,border-color .15s,color .15s;min-height:48px;text-align:center}
 .btn:hover{transform:translateY(-2px)}
-.btn-p{background:##4683E0;color:#E04646;border-color:#256DDA}
-.btn-p:hover{background:#d9a13a;color:#241a06}
+.btn-p{background:#4683E0;color:#242021;border-color:#256DDA}
+.btn-p:hover{background:#4683E0;color:#242021}
 .btn-g{background:var(--green);color:#fff;border-color:var(--green)}
 .btn-g:hover{background:var(--green2);color:#fff}
 .btn-o{background:transparent;color:var(--ink);border-color:var(--line2)}
