@@ -600,7 +600,7 @@ PAGES['/pet-training'] = {
 
 PAGES['/board-train'] = {
   title:'Board & Train Dog Training in Corpus Christi & South Texas | Taurus K9',
-  desc:'Immersive board and train programs in Aransas Pass and Corpus Christi, TX. Basic Obedience (4-6 weeks), Advanced Obedience (6-8 weeks) and Behavior Modification (8-12 weeks) with daily updates and real-world proofing.',
+  desc:'Immersive board and train programs in Aransas Pass and Corpus Christi, TX. Basic Obedience (6-8 weeks), Advanced Obedience (6-12 weeks) and Behavior Modification (8-12 weeks) with daily updates and real-world proofing.',
   render(){
     const tiers = [
       {h3:'Basic Obedience', meta:'6&ndash;8 weeks &middot; foundational life skills', flag:'',
