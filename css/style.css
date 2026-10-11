@@ -95,7 +95,7 @@ img,svg{max-width:100%;height:auto}
 .crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:.4rem;margin:0;padding:0}
 .crumbs li{margin:0;display:flex;align-items:center;gap:.4rem}
 .crumbs li+li::before{content:"\203A";color:#FFFFFF}
-.crumbs a{color:var(--muted);text-decoration:none;font-weight:600}
+.crumbs a{color:#FFFFFF;text-decoration:none;font-weight:600}
 .crumbs a:hover{color:#0E219A;text-decoration:underline}
 .crumbs [aria-current]{color:var(--muted);font-weight:700}
 .hero{position:relative;background:var(--ink);color:#c3ced6;overflow:hidden}
