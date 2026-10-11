@@ -263,7 +263,7 @@ legend{padding:0 .4rem}
 .cookie__in{max-width:var(--maxw);margin-inline:auto;display:grid;gap:1rem}
 @media(min-width:900px){.cookie__in{grid-template-columns:1fr auto;align-items:center}}
 .cookie p{font-size:.88rem;margin:0}
-.cookie a{color:#F08B74}
+.cookie a{color:#FFFFF}
 .cookie__a{display:flex;flex-wrap:wrap;gap:.5rem}
 .prefs{border-top:1px solid rgba(255,255,255,.15);margin-top:1rem;padding-top:1rem;display:none;gap:.7rem}
 .prefs[data-show="true"]{display:grid}
