@@ -107,7 +107,7 @@ img,svg{max-width:100%;height:auto}
 .tagpill{display:inline-block;font-size:.78rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#f0c874;border:1px solid rgba(240,200,116,.4);border-radius:var(--pill);padding:.35rem .85rem;margin-bottom:1.1rem}
 .hero__min{display:flex;flex-wrap:wrap;gap:.5rem 1.1rem;font-size:.87rem;color:#9fb0ba;list-style:none;padding:0;margin:1.25rem 0 0}
 .hero__min li{display:flex;align-items:center;gap:.45rem;margin:0}
-.hero__min svg{flex:0 0 auto;color:var(--brass)}
+.hero__min svg{flex:0 0 auto;color:#F20000}
 .hcard{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:var(--rlg);padding:clamp(1.25rem,3vw,1.8rem)}
 .hcard h2{font-size:1.12rem;margin-bottom:1rem;color:#fff}
 .hcard>p{color:#a9b7c0;font-size:.92rem;margin:1rem 0 0}
