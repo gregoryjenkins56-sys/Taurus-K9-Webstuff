@@ -623,7 +623,7 @@ PAGES['/board-train'] = {
     return phero({
       tag:'Board &amp; Train',
       title:'While you are at work, your dog is in training to be great.',
-      lede:'An immersive residential program where your dog lives with our certified trainers and works multiple structured sessions every day, in real-home and real-world settings, with updates you actually receive.',
+      lede:'An immersive residential dog program where your dog lives with our certified trainers and works multiple structured sessions every day, in real-home and real-world settings, with updates you actually receive.',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Board & Train'}],
       actions: CTAB + CTAC
     })
