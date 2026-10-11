@@ -251,7 +251,7 @@ legend{padding:0 .4rem}
 .fbrand p{max-width:34ch}
 .social{display:flex;gap:.6rem;list-style:none;padding:0;margin:1rem 0 0}
 .social a{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.08);color:#dfe8ec}
-.social a:hover{background:var(--brass);color:#241a06}
+.social a:hover{background:#F08B74;color:#241a06}
 .news{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
 .news input{flex:1 1 190px;min-height:48px;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22);color:#fff}
 .news input::placeholder{color:#8b9aa4}
