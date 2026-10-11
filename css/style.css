@@ -19,7 +19,7 @@ h3{font-size:clamp(1.08rem,.5rem + .85vw,1.34rem)}
 h4{font-size:1.02rem}
 p{margin:0 0 1em}
 a{color:#E5FF00;text-underline-offset:3px;text-decoration-thickness:1.5px}
-a:hover{color:var(--green2)}
+a:hover{color:var(--muted)}
 ul,ol{margin:0 0 1em;padding-left:1.25em}
 li{margin-bottom:.35em}
 img,svg{max-width:100%;height:auto}
