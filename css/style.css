@@ -66,7 +66,7 @@ img,svg{max-width:100%;height:auto}
 .brand__m{width:44px;height:44px;flex:0 0 44px;border-radius:12px;background:var(-muted);display:grid;place-items:center}
 .brand__t{display:flex;flex-direction:column;line-height:1.1}
 .brand__t b{font-size:1.15rem;font-weight:900;letter-spacing:-.03em}
-.brand__t span{font-size:.75rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.brand__t span{font-size:.75rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#FF0000}
 @media(max-width:420px){.brand__t span{display:none}}
 .nav{margin-left:auto;display:flex;align-items:center;gap:.15rem}
 .nav__i{position:relative}
