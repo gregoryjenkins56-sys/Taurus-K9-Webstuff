@@ -44,7 +44,7 @@ img,svg{max-width:100%;height:auto}
 .btn:hover{transform:translateY(-2px)}
 .btn-p{background:#4683E0;color:#242021;border-color:#256DDA}
 .btn-p:hover{background:#4683E0;color:#242021}
-.btn-g{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-g{background:#E04646);color:#fff;border-color:var(--green)}
 .btn-g:hover{background:var(--green2);color:#fff}
 .btn-o{background:transparent;color:var(--ink);border-color:var(--line2)}
 .btn-o:hover{border-color:var(--ink);color:var(--ink);background:rgba(16,24,32,.03)}
