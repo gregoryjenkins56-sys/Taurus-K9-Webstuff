@@ -47,7 +47,7 @@ img,svg{max-width:100%;height:auto}
 .btn-g{background:#E04646);color:#fff;border-color:var(--green)}
 .btn-g:hover{background:#E04646;color:#fff}
 .btn-o{background:#078C7F;color:#FFFFFF;border-color:#078C7F}
-.btn-o:hover{border-color:#E04646;color:var(--ink);background:rgba(16,24,32,.03)}
+.btn-o:hover{border-color:#3BD8FF;color:#FFFFFF;background:#32D9D9}
 .s-dark .btn-o{color:#fff;border-color:rgba(255,255,255,.4)}
 .s-dark .btn-o:hover{background:rgba(255,255,255,.1);border-color:#fff;color:#fff}
 .btn-sm{padding:.55rem 1rem;font-size:.9rem;min-height:42px}
