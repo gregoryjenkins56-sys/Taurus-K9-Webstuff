@@ -603,9 +603,9 @@ PAGES['/board-train'] = {
   desc:'Immersive board and train programs in Aransas Pass and Corpus Christi, TX. Basic Obedience (4-6 weeks), Advanced Obedience (6-8 weeks) and Behavior Modification (8-12 weeks) with daily updates and real-world proofing.',
   render(){
     const tiers = [
-      {h3:'Basic Obedience', meta:'4&ndash;6 weeks &middot; foundational life skills', flag:'',
+      {h3:'Basic Obedience', meta:'6&ndash;8 weeks &middot; foundational life skills', flag:'',
        items:['4&ndash;6 week foundational training','Daily updates while your dog stays with us','Advanced commands','Off-leash foundation training','House manners','Training tools available (optional)']},
-      {h3:'Advanced Obedience', meta:'6&ndash;8 weeks &middot; public reliability', flag:'Most chosen',
+      {h3:'Advanced Obedience', meta:'6&ndash;12 weeks &middot; public reliability', flag:'Most chosen',
        items:['Everything in Basic Obedience','6&ndash;8 week advanced training','Public reliability proofing','Off-leash training','Public manners in real environments','Training tools available (optional)']},
       {h3:'Behavior Modification', meta:'8&ndash;12 weeks &middot; custom plan', flag:'',
        items:['Everything in Advanced Obedience','8&ndash;12 week intensive program','Custom plan for aggression, anxiety or reactivity','Advanced commands','Off-leash training','Complete manners and household reliability']}
