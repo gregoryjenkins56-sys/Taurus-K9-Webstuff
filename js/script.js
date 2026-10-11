@@ -1,0 +1,1402 @@
+/* =========================================================
+   TAURUS K9 - SITE SCRIPT
+   All HTML is generated with template literals. No string
+   concatenation, so quotes and parentheses cannot break.
+   ========================================================= */
+
+const SITE = {
+  phoneDisplay:'361-230-1932',
+  phone:'+13612301932',
+  email:'taurusk9tx@gmail.com',
+  city:'Aransas Pass', state:'TX', zip:'78336',
+  origin:'https://www.taurusk9.com',
+  bookingUrl:'https://www.taurusk9.com/meetings/taurus',
+  cities:['Aransas Pass','Corpus Christi','Portland','Ingleside','Rockport','Fulton','Port Aransas','Gregory','Sinton','Odem','Taft','Mathis','Robstown','Bishop','Kingsville','Alice','Beeville','Refugio','Woodsboro','Skidmore','Orange Grove','Freer','Premont'],
+  counties:['San Patricio','Nueces','Aransas','Refugio','Kleberg','Jim Wells','Bee','Live Oak'],
+  hours:[['Monday - Friday','6:00 AM - 6:00 PM'],['Saturday','By appointment'],['Sunday','By appointment']]
+};
+
+const I = {
+  paw:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="7" cy="7.5" rx="2.4" ry="3"/><ellipse cx="12" cy="6.2" rx="2.4" ry="3.1"/><ellipse cx="17" cy="7.5" rx="2.4" ry="3"/><path d="M12 11.2c3 0 5.4 2 5.4 4.6 0 2-1.7 3.2-3.6 3.2-1 0-1.4-.3-1.8-.3s-.8.3-1.8.3c-1.9 0-3.6-1.2-3.6-3.2 0-2.6 2.4-4.6 5.4-4.6Z"/></svg>`,
+  shield:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v6c0 5.2-3.4 8.4-7.5 10-4.1-1.6-7.5-4.8-7.5-10V6L12 3Z"/><path d="M9.2 12.2l2 2 3.6-4"/></svg>`,
+  home:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>`,
+  user:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><circle cx="12" cy="6" r="3.2"/></svg>`,
+  nose:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4c3.6 0 6 2.3 6 5.2 0 2.3-1.6 3.6-2.8 4.6-.9.8-1.2 1.5-1.2 2.4 0 1.3-.9 2.3-2 2.3s-2-1-2-2.3c0-.9-.3-1.6-1.2-2.4C7.6 12.8 6 11.5 6 9.2 6 6.3 8.4 4 12 4Z"/><path d="M9.5 9.5c.4.9 1.4 1.5 2.5 1.5s2.1-.6 2.5-1.5"/></svg>`,
+  bolt:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>`,
+  chart:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>`,
+  chat:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 1 1-3.2-6.4"/><path d="M4 20l3.8-1.2"/></svg>`,
+  clock:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.4 2"/></svg>`,
+  pin:`<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C4.7 0 2 2.7 2 6c0 4.2 6 10 6 10s6-5.8 6-10c0-3.3-2.7-6-6-6Zm0 8.3A2.3 2.3 0 1 1 8 3.7a2.3 2.3 0 0 1 0 4.6Z"/></svg>`,
+  phone:`<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3.6 1.4 5.5 1c.4-.1.8.1 1 .5l.8 2a.9.9 0 0 1-.2 1L6 5.9a8.7 8.7 0 0 0 4.1 4.1l1.4-1.1a.9.9 0 0 1 1-.2l2 .8c.4.2.6.6.5 1l-.4 1.9c-.1.4-.4.7-.8.7A12.4 12.4 0 0 1 2.9 2.2c0-.4.3-.7.7-.8Z"/></svg>`,
+  mail:`<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1.5 3.5h13v9h-13v-9Zm1.3 1 .2.1L8 8.1l4.8-3.5.2-.1H2.8Z"/></svg>`,
+  check:`<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm3.6 6.2-4.2 4.6a.9.9 0 0 1-1.3 0L4.4 9a.9.9 0 0 1 1.3-1.3l1 1 3.6-4a.9.9 0 1 1 1.3 1.3Z"/></svg>`
+};
+
+/* ---------- shared building blocks ---------- */
+
+const CTAB = `<a class="btn btn-p" href="#/contact" data-track="cta_book">Book Free Meet &amp; Greet</a>`;
+const CTAC = `<a class="btn btn-o" href="tel:${SITE.phone}" data-track="click_to_call" data-loc="hero">Call ${SITE.phoneDisplay}</a>`;
+
+function crumbs(items){
+  if(!items || !items.length) return '';
+  const li = items.map((c,i) => (c.href && i < items.length - 1)
+    ? `<li><a href="${c.href}">${c.label}</a></li>`
+    : `<li><span aria-current="page">${c.label}</span></li>`).join('');
+  return `<nav class="crumbs wrap" aria-label="Breadcrumb"><ol>${li}</ol></nav>`;
+}
+
+function hero(o){
+  const mini = (o.mini || []).map(m => `<li>${I.check} ${m}</li>`).join('');
+  return `<section class="hero">${o.crumbs ? crumbs(o.crumbs) : ''}
+  <div class="wrap hero__in">
+    <div>
+      ${o.tag ? `<span class="tagpill">${o.tag}</span>` : ''}
+      <h1>${o.title}</h1>
+      <p class="lede">${o.lede}</p>
+      ${o.actions ? `<div class="btnrow" style="margin:1.5rem 0 1rem">${o.actions}</div>` : ''}
+      ${mini ? `<ul class="hero__min">${mini}</ul>` : ''}
+    </div>
+    ${o.aside || ''}
+  </div></section>`;
+}
+
+function phero(o){
+  return `<section class="phero">${crumbs(o.crumbs)}<div class="wrap phero__in">
+    ${o.tag ? `<span class="tagpill">${o.tag}</span>` : ''}
+    <h1>${o.title}</h1>
+    <p class="lede">${o.lede}</p>
+    ${o.actions ? `<div class="btnrow" style="margin-top:1.4rem">${o.actions}</div>` : ''}
+  </div></section>`;
+}
+
+function sec(o){
+  return `<section class="section ${o.bg === 'dark' ? 's-dark' : (o.bg === 'cream' ? 's-cream' : 's-surface')}">
+    <div class="wrap">
+      ${o.eyebrow ? `<span class="eyebrow">${o.eyebrow}</span>` : ''}
+      ${o.h2 ? `<h2>${o.h2}</h2>` : ''}
+      ${o.lede ? `<p class="lede">${o.lede}</p>` : ''}
+      ${o.body || ''}
+    </div></section>`;
+}
+
+function card(o){
+  return `<article class="card${o.acc ? ' card-acc' : ''}"${o.id ? ` id="${o.id}"` : ''}>
+    ${o.icon ? `<span class="card__ic" aria-hidden="true">${o.icon}</span>` : ''}
+    ${o.tag ? `<span class="tag${o.acc ? ' tag-b' : ''}">${o.tag}</span>` : ''}
+    <h3>${o.h3}</h3>
+    ${o.body || ''}
+    ${o.foot ? `<div class="card__f">${o.foot}</div>` : ''}
+  </article>`;
+}
+
+const chk = items => `<ul class="check">${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+const grid = (items, cls) => `<div class="grid ${cls}">${items.join('')}</div>`;
+
+const steps = items => `<ol class="steps">${items.map(s => `<li><h3>${s.h3}</h3><p>${s.p}</p></li>`).join('')}</ol>`;
+
+function band(o){
+  o = o || {};
+  const h2 = o.h2 || 'Ready to meet the trainers? No cost, no commitment.';
+  const p = o.p || 'Book a free in-person meet &amp; greet, or call and tell us where your dog is right now. We will tell you honestly what is realistic.';
+  const cta = o.cta || 'Book Free Meet &amp; Greet';
+  return `<div class="band"><div><h2>${h2}</h2><p>${p}</p></div>
+    <div class="btnrow">
+      <a class="btn btn-p" href="#/contact" data-track="cta_band_book">${cta}</a>
+      <a class="btn btn-o" href="tel:${SITE.phone}" data-track="click_to_call" data-loc="cta_band">Call ${SITE.phoneDisplay}</a>
+    </div></div>`;
+}
+
+const faqBlock = items => `<div class="faq">${items.map(q => `<details class="q"><summary>${q.q}</summary><div class="qbody">${q.a}</div></details>`).join('')}</div>`;
+
+const revBlock = r => `<figure class="review">
+  <div class="stars" role="img" aria-label="${r.stars} out of 5 stars">${'\u2605'.repeat(r.stars)}</div>
+  <blockquote>${r.text}</blockquote>
+  <figcaption><b>${r.name}</b>${r.detail}</figcaption>
+</figure>`;
+
+/* PLACEHOLDER REVIEWS - replace with verified Google and Facebook reviews before launch */
+const REVIEWS = [
+  {stars:5,name:'Client name',detail:'Corpus Christi, TX &middot; Board &amp; Train, Basic Obedience',text:'Placeholder for a verified Google or Facebook review. Paste the real review text here, with the reviewer name and permission.'},
+  {stars:5,name:'Client name',detail:'Aransas Pass, TX &middot; Private Lessons',text:'Placeholder for a verified review. Keep it specific to the program named in the caption so future clients can match their situation.'},
+  {stars:5,name:'Client name',detail:'Rockport, TX &middot; Behavior Modification',text:'Placeholder for a verified review. Behavior modification reviews are the highest-intent social proof for this service line.'},
+  {stars:5,name:'Agency or handler',detail:'Detection &amp; Police K9',text:'Placeholder for a verified review from a working dog or agency client. These build credibility with departments evaluating contracts.'}
+];
+
+const FAQS = [
+  {q:'What is a free meet &amp; greet, and what happens?',a:'<p>It is an in-person consultation, free of charge and with no commitment. You meet the trainers, we meet your dog, and we go through temperament, history, household environment and what you want to change. You leave with a straight answer on which program fits and how long it should take, not a sales pitch.</p>'},
+  {q:'What training methods do you use?',a:'<p>Our approach starts with understanding the unique temperament of each dog, then builds a plan rooted in behavioral science. We use motivational techniques so the dog learns with minimal stress, pairing positive reinforcement with clear, consistent communication. The goal is never just teaching a command; it is teaching the dog how to perform in a wide range of real situations. Our guiding principle is to create an environment where the dog is set up for success.</p>'},
+  {q:'Do you use e-collars?',a:'<p>We offer training-tool education as an <em>optional</em> part of many programs. If a tool is used, it is introduced properly with imprinting, conditioning and clear education for the handler first, so the tool communicates rather than corrects. We run e-collar education sessions for owners and teams who want to understand how these tools work and how to use them safely. You are never required to use one.</p>'},
+  {q:'How long is Board &amp; Train, and what are the options?',a:'<p>Three tracks. <strong>Basic Obedience</strong> (4&ndash;6 weeks) covers foundation life skills and off-leash groundwork. <strong>Advanced Obedience</strong> (6&ndash;8 weeks) adds public reliability, off-leash work and public manners. <strong>Behavior Modification</strong> (8&ndash;12 weeks) is a custom plan for aggression, anxiety or reactivity. All include daily structured sessions, daily updates and varied real-world settings.</p>'},
+  {q:'Will I get updates while my dog is boarding?',a:'<p>Yes. You get real-time updates and progress reports throughout your dog stay, plus a handoff session when training is complete so the behavior transfers home instead of staying with the trainer.</p>'},
+  {q:'Do you train working dogs as well as pets?',a:'<p>Both. Alongside pet obedience and behavior work we train sport, detection and police K9 teams, and our certified decoys provide real-world scenario work. Our trainers hold Police K9 Master Trainer credentials through Tarheel Canine Inc., are NEPOPO Silver School graduates, and hold Demanet Academy Police Decoy Level 1 certification.</p>'},
+  {q:'Do you work with law enforcement agencies and departments?',a:'<p>Yes, including unit-level training days, decoy support, handler education and sustainment. We travel for agency contracts, so departments outside the Coastal Bend can request a proposal for their team.</p>'},
+  {q:'What areas do you serve?',a:'<p>Our core service area is Aransas Pass, Corpus Christi, Portland, Ingleside, Rockport, Port Aransas, Sinton, Robstown and the surrounding Coastal Bend counties. For working dog and agency programs we travel, and we quote those engagements across the United States.</p>'},
+  {q:'How old should a puppy be to start?',a:'<p>Puppies can begin Puppy Foundations as early as 8 weeks. Early sessions focus on socialization, handling, household routines and the foundation that prevents problems later.</p>'},
+  {q:'How much does training cost?',a:'<p>Pricing depends on the track, the program length and your dog needs, so we quote each dog individually after the meet and greet. The consultation itself is free, and you receive a written quote with the program scope before you commit to anything.</p>'},
+  {q:'What if my dog has a bite history or severe aggression?',a:'<p>We assess these cases, but we handle them honestly. Some dogs need a custom behavior modification plan and a longer timeline; some need a veterinary behaviorist working alongside us. We will tell you which applies rather than take the booking and hope.</p>'},
+  {q:'Are you insured?',a:'<p>Yes, Taurus K9 carries business insurance. A current certificate of insurance is available on request for agency and facility contracts.</p>'}
+];
+
+const faqPick = idx => idx.map(i => FAQS[i]);
+
+/* ---------- lead form (CRM) ---------- */
+
+function leadForm(){
+  return `<form class="form" id="leadForm" novalidate>
+  <div class="errm" id="errm" role="alert" data-show="false" tabindex="-1">
+    <h3>Please fix these items</h3>
+    <ul id="errList"></ul>
+  </div>
+  <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <fieldset>
+    <legend class="fl-legend">What do you need help with? <span class="req" aria-hidden="true">*</span></legend>
+    <p class="hint">Choose the closest match. We will confirm the details at your meet and greet.</p>
+    <div class="field" style="margin-top:.85rem">
+      <label for="service">Training service</label>
+      <select id="service" name="service" required aria-describedby="serviceErr">
+        <option value="">Select a service</option>
+        <optgroup label="Pet Dog Training">
+          <option value="board-train">Board &amp; Train (residential)</option>
+          <option value="private-lessons">Private lessons</option>
+          <option value="puppy-foundations">Puppy foundations</option>
+          <option value="day-training">Day training</option>
+          <option value="behavior-modification">Behavior modification (aggression, anxiety, reactivity)</option>
+        </optgroup>
+        <optgroup label="Working &amp; Agency">
+          <option value="detection">Detection dog training</option>
+          <option value="police-k9">Police K9 / patrol</option>
+          <option value="sport">Sport training</option>
+          <option value="protection">Personal protection</option>
+          <option value="agency">Agency / department program</option>
+          <option value="decoy">Decoy services</option>
+          <option value="evaluation">Dog evaluation &amp; selection</option>
+        </optgroup>
+        <option value="unsure">Not sure yet, advise me</option>
+      </select>
+      <span class="err" id="serviceErr" data-show="false">Please choose a service.</span>
+    </div>
+  </fieldset>
+
+  <div class="frow frow2">
+    <div class="field">
+      <label for="owner">Your name <span class="req" aria-hidden="true">*</span></label>
+      <input id="owner" name="owner" type="text" autocomplete="name" required aria-describedby="ownerErr" />
+      <span class="err" id="ownerErr" data-show="false">Please enter your name.</span>
+    </div>
+    <div class="field">
+      <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+      <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="emailErr" />
+      <span class="err" id="emailErr" data-show="false">Please enter a valid email address.</span>
+    </div>
+  </div>
+
+  <div class="frow frow2">
+    <div class="field">
+      <label for="phone">Phone <span class="req" aria-hidden="true">*</span></label>
+      <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="phoneErr phoneHint" />
+      <span class="hint" id="phoneHint">Used for your consultation. 10-digit US number.</span>
+      <span class="err" id="phoneErr" data-show="false">Please enter a 10-digit phone number.</span>
+    </div>
+    <div class="field">
+      <label for="dogName">Dog name</label>
+      <input id="dogName" name="dogName" type="text" autocomplete="off" />
+    </div>
+  </div>
+
+  <div class="frow frow3">
+    <div class="field">
+      <label for="city">City <span class="req" aria-hidden="true">*</span></label>
+      <input id="city" name="city" type="text" autocomplete="address-level2" required aria-describedby="cityErr" />
+      <span class="err" id="cityErr" data-show="false">Please enter your city.</span>
+    </div>
+    <div class="field">
+      <label for="state">State</label>
+      <select id="state" name="state" autocomplete="address-level1"><option>TX</option><option>Other</option></select>
+    </div>
+    <div class="field">
+      <label for="dogInfo">Breed &amp; age</label>
+      <input id="dogInfo" name="dogInfo" type="text" placeholder="e.g. GSD, 14 months" />
+    </div>
+  </div>
+
+  <fieldset>
+    <legend class="fl-legend">How soon do you want to start?</legend>
+    <div class="radios radios-row" style="margin-top:.85rem">
+      <label class="radio"><input type="radio" name="timeline" value="asap" /><span>As soon as possible<small>Within 2 weeks</small></span></label>
+      <label class="radio"><input type="radio" name="timeline" value="30-days" /><span>Within 30 days<small>Planning ahead</small></span></label>
+      <label class="radio"><input type="radio" name="timeline" value="researching" /><span>Just researching<small>Gathering information</small></span></label>
+    </div>
+  </fieldset>
+
+  <div class="field">
+    <label for="message">What would you like to change or achieve?</label>
+    <textarea id="message" name="message" placeholder="Tell us what your dog does now, what you want instead, and anything we should know (bite history, health conditions, prior training, other dogs in the home)."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="heard">How did you hear about us?</label>
+    <select id="heard" name="heard">
+      <option value="">Select</option>
+      <option value="google-search">Google search</option>
+      <option value="google-ads">Google ad</option>
+      <option value="facebook">Facebook</option>
+      <option value="instagram">Instagram</option>
+      <option value="tiktok">TikTok</option>
+      <option value="referral">Referred by a client</option>
+      <option value="vet">Veterinarian or vet staff</option>
+      <option value="agency">Another agency or department</option>
+      <option value="event">Event or class</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+
+  <fieldset>
+    <legend class="fl-legend">How would you like us to respond? <span class="req" aria-hidden="true">*</span></legend>
+    <p class="hint">Choose at least one. Your choice is logged with a timestamp for your protection.</p>
+    <div style="display:grid;gap:.7rem;margin-top:.85rem">
+      <label class="consent"><input type="checkbox" id="consentEmail" name="consentEmail" /><span>Yes, email me about my inquiry and Taurus K9 services.</span></label>
+      <label class="consent"><input type="checkbox" id="consentSms" name="consentSms" /><span>Yes, text me about my inquiry. Message frequency varies; message and data rates may apply. Reply STOP to unsubscribe. Consent is not a condition of purchase.</span></label>
+    </div>
+    <span class="err" id="consentErr" data-show="false" style="margin-top:.6rem">Please choose at least one way to contact you.</span>
+  </fieldset>
+
+  <div>
+    <button class="btn btn-p btn-blk" type="submit" data-track="form_submit" style="min-height:54px">Request My Free Meet &amp; Greet</button>
+    <p class="fnote" style="margin-top:.75rem">We respond within one business day. Your information is never sold. See our <a href="#/privacy">Privacy Policy</a>.</p>
+  </div>
+
+  <details style="margin-top:.5rem">
+    <summary style="cursor:pointer;font-weight:700;color:var(--muted);font-size:.88rem">QA: preview the CRM record this form creates</summary>
+    <div class="crm" style="margin-top:.75rem">
+      <h4>Lead record &amp; routing (HubSpot-standard)</h4>
+      <div class="score">
+        <span class="score__v" id="scoreVal">0</span>
+        <div class="score__bar"><div class="score__fill" id="scoreFill"></div></div>
+        <span id="scoreTier" style="font-weight:700;color:#f0c874">&mdash;</span>
+      </div>
+      <pre id="crmPreview">{}</pre>
+    </div>
+  </details>
+</form>`;
+}
+
+function utm(){
+  const out = {};
+  const raw = location.hash || '';
+  const qi = raw.indexOf('?');
+  if(qi > -1){
+    raw.slice(qi + 1).split('&').forEach(p => {
+      const kv = p.split('=');
+      if(kv[0]) out[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1] || '');
+    });
+  }
+  const sp = new URLSearchParams(location.search);
+  ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid','msclkid'].forEach(k => {
+    if(sp.get(k)) out[k] = sp.get(k);
+  });
+  return out;
+}
+
+function hashParam(k){
+  const raw = (location.hash || '').replace(/^#/, '');
+  const qi = raw.indexOf('?');
+  if(qi < 0) return '';
+  const sp = new URLSearchParams(raw.slice(qi + 1));
+  return sp.get(k) || '';
+}
+
+function scoreLead(d){
+  let s = 0;
+  const why = [];
+  if(d.phone){ s += 15; why.push('phone provided (+15)'); }
+  if(d.email){ s += 10; why.push('email provided (+10)'); }
+  if(d.timeline === 'asap'){ s += 20; why.push('wants to start immediately (+20)'); }
+  else if(d.timeline === '30-days'){ s += 12; why.push('start within 30 days (+12)'); }
+  if(d.service === 'board-train'){ s += 15; why.push('high-value service: Board and Train (+15)'); }
+  if(['agency','police-k9','detection','protection','sport'].indexOf(d.service) > -1){ s += 20; why.push('commercial or agency intent (+20)'); }
+  if(d.message && d.message.length > 40){ s += 10; why.push('detailed description (+10)'); }
+  const local = SITE.cities.map(c => c.toLowerCase());
+  if(d.city && local.indexOf(d.city.trim().toLowerCase()) > -1){ s += 15; why.push('in core service area (+15)'); }
+  if(d.dogInfo){ s += 5; why.push('dog details given (+5)'); }
+  if(d.heard){ s += 5; why.push('attribution captured (+5)'); }
+  const u = utm();
+  if(u.utm_medium === 'cpc' || u.gclid || u.fbclid){ s += 10; why.push('paid traffic source (+10)'); }
+  s = Math.min(100, s);
+  const tier = s >= 70 ? 'Hot: contact within 1 hour' : (s >= 40 ? 'Warm: contact within 4 business hours' : 'Nurture: 1 business day');
+  return {score:s, tier:tier, reasons:why};
+}
+
+function buildPayload(d){
+  const sc = scoreLead(d);
+  const now = new Date().toISOString();
+  const isWork = ['agency','detection','police-k9','decoy','evaluation','sport','protection'].indexOf(d.service) > -1;
+  return {
+    submittedAt: now,
+    page: location.hash || '#/',
+    attribution: utm(),
+    contact: {
+      firstname: d.owner,
+      email: d.email,
+      phone_e164: d.phone ? '+1' + d.phone.replace(/\D/g,'') : '',
+      city: d.city,
+      state: d.state,
+      lifecyclestage: 'lead'
+    },
+    dog: { name: d.dogName, breed_age: d.dogInfo },
+    inquiry: { service: d.service, tier: d.tier, timeline: d.timeline, notes: d.message, heard: d.heard },
+    consent: {
+      email: {
+        granted: !!d.consentEmail,
+        text: 'Email me about my inquiry and Taurus K9 services',
+        capturedAt: now,
+        source: 'taurusk9.com contact form'
+      },
+      sms: {
+        granted: !!d.consentSms,
+        text: 'Yes, text me about my inquiry. Message frequency varies; msg and data rates may apply. Reply STOP to unsubscribe.',
+        capturedAt: now,
+        source: 'taurusk9.com contact form'
+      }
+    },
+    scoring: { score: sc.score, tier: sc.tier, reasons: sc.reasons },
+    routing: {
+      owner: isWork ? 'Working Dog Division (Greg)' : 'Pet Division (Rebecca)',
+      pipeline: isWork ? 'Agency and Working K9' : 'Pet Training',
+      dealstage: 'New Inquiry',
+      sla: sc.score >= 70 ? '60 minutes' : '1 business day'
+    },
+    dedupeKey: 'email'
+  };
+}
+
+function wireForm(){
+  const form = document.getElementById('leadForm');
+  if(!form) return;
+
+  const pre = hashParam('service');
+  if(pre){ const sel = document.getElementById('service'); if(sel) sel.value = pre; }
+  const tier = hashParam('tier');
+  if(tier){ form.dataset.tier = tier; }
+
+  const errm = document.getElementById('errm');
+  const errList = document.getElementById('errList');
+
+  function setErr(id, flag){
+    const el = document.getElementById(id);
+    const e = document.getElementById(id + 'Err');
+    if(e) e.setAttribute('data-show', flag ? 'true' : 'false');
+    if(el) el.setAttribute('aria-invalid', flag ? 'true' : 'false');
+  }
+
+  function collect(){
+    const g = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    const c = id => { const el = document.getElementById(id); return el ? el.checked : false; };
+    const r = form.querySelector('input[name="timeline"]:checked');
+    return {
+      service: g('service'), owner: g('owner'), email: g('email'), phone: g('phone'),
+      city: g('city'), state: g('state'), dogName: g('dogName'), dogInfo: g('dogInfo'),
+      message: g('message'), heard: g('heard'), timeline: r ? r.value : '',
+      tier: form.dataset.tier || '', consentEmail: c('consentEmail'), consentSms: c('consentSms'),
+      company: g('company')
+    };
+  }
+
+  function updatePreview(){
+    const d = collect();
+    const sc = scoreLead(d);
+    const sv = document.getElementById('scoreVal');
+    const sf = document.getElementById('scoreFill');
+    const st = document.getElementById('scoreTier');
+    const box = document.getElementById('crmPreview');
+    if(sv) sv.textContent = sc.score;
+    if(sf) sf.style.width = sc.score + '%';
+    if(st) st.textContent = sc.tier;
+    if(box) box.textContent = JSON.stringify(buildPayload(d), null, 2);
+  }
+
+  form.addEventListener('input', updatePreview);
+  form.addEventListener('change', updatePreview);
+  updatePreview();
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const d = collect();
+    const errs = [];
+    ['service','owner','email','phone','city'].forEach(id => setErr(id, false));
+    document.getElementById('consentErr').setAttribute('data-show','false');
+
+    if(d.company){ location.hash = '#/thank-you'; return; }
+
+    if(!d.service){ setErr('service', true); errs.push(['service','Please choose a service.']); }
+    if(!d.owner){ setErr('owner', true); errs.push(['owner','Please enter your name.']); }
+    if(!d.email || !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(d.email)){
+      setErr('email', true); errs.push(['email','Please enter a valid email address.']);
+    }
+    if(!d.phone || d.phone.replace(/\D/g,'').length < 10){
+      setErr('phone', true); errs.push(['phone','Please enter a 10-digit phone number.']);
+    }
+    if(!d.city){ setErr('city', true); errs.push(['city','Please enter your city.']); }
+    if(!d.consentEmail && !d.consentSms){
+      document.getElementById('consentErr').setAttribute('data-show','true');
+      errs.push(['consentEmail','Please choose at least one way to contact you.']);
+    }
+
+    if(errs.length){
+      errList.innerHTML = errs.map(x => `<li><a href="#${x[0]}">${x[1]}</a></li>`).join('');
+      errm.setAttribute('data-show','true');
+      errm.focus();
+      track('form_error', {error_count: errs.length});
+      return;
+    }
+
+    const payload = buildPayload(d);
+    window.__lastLead = payload; /* replace with a real CRM POST */
+    track('generate_lead', {
+      service: d.service,
+      tier: d.tier,
+      score: payload.scoring.score,
+      tier_label: payload.scoring.tier
+    });
+    location.hash = '#/thank-you';
+  });
+}
+
+/* ---------- pages ---------- */
+
+const PAGES = {};
+
+PAGES['/'] = {
+  title:'Taurus K9 | Dog Training in Aransas Pass & Corpus Christi, TX',
+  desc:'Professional dog training in Aransas Pass, Corpus Christi and the Coastal Bend: Board and Train, private lessons, puppy foundations, behavior modification, detection, sport and police K9 training.',
+  render(){
+    const trows = [
+      {href:'#/pet-training', ic:I.home, t:'Pet Dog Training', d:'Board &amp; Train, private lessons, puppy foundations and day training. Real-world obedience your family can live with.'},
+      {href:'#/working-dogs', ic:I.shield, t:'Specialty &amp; Working Dogs', d:'Sport, detection and police K9 training, with certified decoys delivering real-world scenarios.'}
+    ].map(x => `<div class="trow">
+        <span class="trow__ic" aria-hidden="true">${x.ic}</span>
+        <div>
+          <strong>${x.t}</strong>
+          <span>${x.d}</span><br>
+          <a href="${x.href}">Explore ${x.t}</a>
+        </div>
+      </div>`).join('');
+
+    return hero({
+      tag:'We make "sit" happen.',
+      title:'Dog training that holds up in the real world.',
+      lede:'Taurus K9 trains family pets and professional working dogs across the Texas Coastal Bend. Structured plans, daily updates, certified trainers, and a free meet and greet so you can decide with no pressure.',
+      actions:`${CTAB}<a class="btn btn-o" href="#/pet-training">See all programs</a>`,
+      mini:['Free in-person meet and greet','Certified Police K9 Master Trainers','Daily progress updates','Agency and department programs'],
+      aside:`<aside class="hcard" aria-labelledby="hcH">
+        <h2 id="hcH">Which path is your dog on?</h2>
+        ${trows}
+        <p>Not sure? The free meet and greet settles it in person.</p>
+      </aside>`
+    })
+    + sec({bg:'cream', body:`<div class="strip">
+        <div><b>Police K9 Master Trainer</b><span>Tarheel Canine Inc. certified</span></div>
+        <div><b>NEPOPO Silver School</b><span>Graduate trainers</span></div>
+        <div><b>Decoy Level 1</b><span>Demanet Academy certified</span></div>
+        <div><b>21 Years</b><span>U.S. Army veteran on staff</span></div>
+      </div>`})
+    + sec({
+        eyebrow:'Two divisions, one standard',
+        h2:'Pet dogs and working dogs. Same trainers, same rigor.',
+        lede:'Whether your dog needs to stop jumping on guests or needs to certify as a detection team, the process starts the same way: assess the individual dog, build a plan, set that dog up to succeed.',
+        body: grid([
+          card({
+            icon:I.home, tag:'Pet owners', h3:'Pet Dog Training',
+            body:`<p>For families who want a dog that is genuinely easy to live with, not one that behaves only in a training building.</p>
+              ${chk(['Board &amp; Train (4&ndash;12 weeks)','Private one-on-one lessons','Puppy Foundations from 8 weeks','Behavior modification for reactivity, anxiety and aggression'])}`,
+            foot:`<a class="btn btn-g btn-sm" href="#/pet-training">Explore Pet Training</a>`
+          }),
+          card({
+            icon:I.shield, acc:true, tag:'Handlers and agencies', h3:'Specialty &amp; Working Dog Training',
+            body:`<p>For handlers, departments and owner-operators who need documented, repeatable performance under real pressure.</p>
+              ${chk(['Sport protection and tracking','Contraband and narcotics detection','Police K9 and patrol support','Certified police decoy scenario work'])}`,
+            foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Working Dogs</a>`
+          })
+        ],'g2')
+      })
+    + sec({
+        bg:'dark', eyebrow:'How it works', h2:'Four steps from first call to a trained dog',
+        lede:'No guesswork and no surprise invoices. You always know which stage you are in and what comes next.',
+        body: steps([
+          {h3:'Free meet and greet', p:'In person, no cost, no commitment. We assess temperament, environment and goals, then tell you what is realistic.'},
+          {h3:'A written plan and quote', p:'You get the recommended program, the length, any training tools, and the cost in writing before anything starts.'},
+          {h3:'Training with daily updates', p:'Board and Train runs multiple structured sessions daily across varied settings. Lessons run in your home and neighborhoods.'},
+          {h3:'Handoff and follow-through', p:'We hand you the handling skills, not just a trained dog, plus a maintenance plan and trainer support.'}
+        ])
+      })
+    + sec({
+        eyebrow:'Why clients choose us', h2:'What certified actually means here',
+        lede:'Anyone can call themselves a dog trainer. These are the credentials you can verify before you hand over your dog.',
+        body: grid([
+          card({icon:I.chart, h3:'Temperament-first assessment', body:'<p>Our approach centers on understanding the individual temperament of each dog and building a strategy rooted in scientific principles, not a template applied to every dog.</p>'}),
+          card({icon:I.paw, h3:'Low-stress, motivational methods', body:'<p>We use motivational techniques so your dog learns with minimal stress. A dog that is not shut down learns faster and keeps the behavior longer.</p>'}),
+          card({icon:I.bolt, h3:'Real-world proofing', body:'<p>Skills are trained in varied settings: home, parks, parking lots and public spaces, so reliability survives contact with the real world.</p>'}),
+          card({icon:I.chat, h3:'You are trained too', body:'<p>A dog that is only obedient for the trainer is not trained. Handoff includes handler education so the results stay yours.</p>'})
+        ],'g4')
+      })
+    + sec({
+        bg:'cream', eyebrow:'Client outcomes', h2:'Real clients, real transformations',
+        body:`<p class="disc" style="margin-bottom:1.5rem"><strong>Template content:</strong> the review cards below are placeholders. Replace them with verified Google and Facebook reviews before launch, and keep the on-page text identical to the review text so Review markup stays compliant with Google policies.</p>
+          ${grid(REVIEWS.slice(0,3).map(revBlock),'g3')}
+          <p style="margin-top:1.5rem"><a class="btn btn-o btn-sm" href="#/reviews">Read more reviews</a></p>`
+      })
+    + sec({body: band({})});
+  }
+};
+
+PAGES['/pet-training'] = {
+  title:'Pet Dog Training: Board & Train, Private Lessons, Puppy Training | Taurus K9',
+  desc:'Pet dog training in Aransas Pass, Corpus Christi and the Coastal Bend. Board and Train, private lessons, puppy foundations, day training and behavior modification with certified trainers.',
+  render(){
+    return phero({
+      tag:'Pet Dog Training',
+      title:'Training your dog for your actual life.',
+      lede:'Obedience that works in your kitchen, on your street and at the vet, not just in a training facility. Choose the format that fits your schedule, your dog and your budget.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training'}],
+      actions: CTAB + CTAC
+    })
+    + sec({h2:'Programs', body: grid([
+        card({icon:I.home, tag:'Most popular', h3:'Board &amp; Train',
+          body:`<p>Your dog lives with our certified trainers and receives multiple structured sessions daily in varied, real-world settings. Fast, deep behavior change for busy owners.</p><p><strong>4&ndash;12 weeks</strong> depending on track.</p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/board-train">Board &amp; Train options</a>`}),
+        card({icon:I.user, h3:'Private Lessons',
+          body:`<p>One-on-one sessions built around your dog goals and challenges, in your home and neighborhoods. You learn side by side with the trainer.</p><p><strong>Single sessions or packages.</strong></p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/private-lessons">Private lesson details</a>`}),
+        card({icon:I.paw, h3:'Puppy Foundations',
+          body:`<p>Start before problems start. Socialization, handling, household routines and a confident foundation from 8 weeks old.</p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/puppy-foundations">Puppy program</a>`}),
+        card({icon:I.clock, h3:'Day Training',
+          body:`<p>Trainer-led sessions during the day while you work, with transfer sessions so the handling transfers to you.</p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/day-training">Day training details</a>`}),
+        card({icon:I.shield, acc:true, tag:'Advanced', h3:'Behavior Modification',
+          body:`<p>A custom plan for aggression, anxiety or reactivity. Longer timeline, careful management, honest expectations set at the assessment.</p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/board-train">Behavior programs</a>`}),
+        card({icon:I.check, h3:'Personal Protection',
+          body:`<p>For owners who want a trained family dog with reliable protective capability. Assessed individually; not every dog or family is the right fit.</p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Protection training</a>`})
+      ],'g2')})
+    + sec({
+        bg:'cream', eyebrow:'Choose with confidence', h2:'How to pick the right format',
+        body:`<table class="data">
+          <caption>Comparing formats at a glance</caption>
+          <thead><tr><th scope="col">Format</th><th scope="col">Best for</th><th scope="col">Typical length</th><th scope="col">Your involvement</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Board &amp; Train</th><td>Busy schedules, fast behavior change</td><td>4&ndash;12 weeks</td><td>Handoff and transfer sessions</td></tr>
+            <tr><th scope="row">Private Lessons</th><td>Building your own handling skills</td><td>Weekly, ongoing</td><td>Every session</td></tr>
+            <tr><th scope="row">Puppy Foundations</th><td>Puppies 8 weeks to 6 months</td><td>4&ndash;8 weeks</td><td>Every session</td></tr>
+            <tr><th scope="row">Day Training</th><td>Owners away during the workday</td><td>4&ndash;8 weeks</td><td>Transfer sessions</td></tr>
+            <tr><th scope="row">Behavior Modification</th><td>Aggression, anxiety, reactivity</td><td>8&ndash;12+ weeks</td><td>Essential: consistency required</td></tr>
+          </tbody>
+        </table>`
+      })
+    + sec({body: band({h2:'Not sure which program fits? That is what the free meet and greet is for.', cta:'Book My Free Meet and Greet'})});
+  }
+};
+
+PAGES['/board-train'] = {
+  title:'Board & Train Dog Training in Corpus Christi & South Texas | Taurus K9',
+  desc:'Immersive board and train programs in Aransas Pass and Corpus Christi, TX. Basic Obedience (4-6 weeks), Advanced Obedience (6-8 weeks) and Behavior Modification (8-12 weeks) with daily updates and real-world proofing.',
+  render(){
+    const tiers = [
+      {h3:'Basic Obedience', meta:'4&ndash;6 weeks &middot; foundational life skills', flag:'',
+       items:['4&ndash;6 week foundational training','Daily updates while your dog stays with us','Advanced commands','Off-leash foundation training','House manners','Training tools available (optional)']},
+      {h3:'Advanced Obedience', meta:'6&ndash;8 weeks &middot; public reliability', flag:'Most chosen',
+       items:['Everything in Basic Obedience','6&ndash;8 week advanced training','Public reliability proofing','Off-leash training','Public manners in real environments','Training tools available (optional)']},
+      {h3:'Behavior Modification', meta:'8&ndash;12 weeks &middot; custom plan', flag:'',
+       items:['Everything in Advanced Obedience','8&ndash;12 week intensive program','Custom plan for aggression, anxiety or reactivity','Advanced commands','Off-leash training','Complete manners and household reliability']}
+    ].map((t,i) => `<article class="tier${i === 1 ? ' tier-pop' : ''}">
+        ${t.flag ? `<span class="tier__flag">${t.flag}</span>` : ''}
+        <h3>${t.h3}</h3>
+        <p class="tier__meta">${t.meta}</p>
+        ${chk(t.items)}
+        <p class="tier__price">Quoted per dog after your free meet and greet<span>Written scope and cost before anything starts.</span></p>
+        <div class="card__f">
+          <a class="btn btn-p btn-blk" href="#/contact?service=board-train&amp;tier=${encodeURIComponent(t.h3)}" data-track="cta_tier">Reserve My Dog Spot</a>
+        </div>
+      </article>`).join('');
+
+    return phero({
+      tag:'Board &amp; Train',
+      title:'While you are at work, your dog is in training.',
+      lede:'An immersive residential program where your dog lives with our certified trainers and works multiple structured sessions every day, in real-home and real-world settings, with updates you actually receive.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Board & Train'}],
+      actions: CTAB + CTAC
+    })
+    + sec({
+        bg:'cream', h2:'Three ways to board and train',
+        lede:'Every program includes daily updates, multiple daily sessions across varied settings, and a handoff so the behavior transfers home. Pick the depth that matches your dog.',
+        body:`<div class="tiers">${tiers}</div>
+          <p class="fnote" style="margin-top:1.25rem">Program lengths are the range we quote; final length depends on your dog starting point and your goals. Training tools refers to optional education and conditioning, never required.</p>`
+      })
+    + sec({
+        eyebrow:'Deep dive', h2:'How Board and Train actually works',
+        body: grid([
+          card({icon:I.bolt, h3:'Accelerated learning', body:'<p>Multiple structured sessions every day, with rest and decompression built in. Consistent repetition across settings compresses months of intermittent training into weeks.</p>'}),
+          card({icon:I.home, h3:'Home environment', body:'<p>Training happens in real-home conditions, so your dog generalizes the behavior instead of only performing in a facility.</p>'}),
+          card({icon:I.shield, h3:'Certified trainers', body:'<p>Police K9 Master Trainer credentials and years of behavior work mean consistency and a plan, not improvisation.</p>'}),
+          card({icon:I.chat, h3:'Progress reporting', body:'<p>Real-time updates and progress reports throughout the stay, the single thing owners tell us they want most.</p>'})
+        ],'g2')
+      })
+    + sec({
+        bg:'dark', eyebrow:'What to expect', h2:'Your dog stay, start to finish',
+        body: steps([
+          {h3:'Meet and greet with assessment', p:'Free and in person. We evaluate temperament, existing skills and the specific behaviors you want changed.'},
+          {h3:'Plan, scope and quote', p:'You receive the program, the length, whether any training tools are recommended, and the cost, in writing.'},
+          {h3:'Training blocks with updates', p:'Daily sessions, varied environments, enrichment and rest. You get progress reports along the way.'},
+          {h3:'Handoff and transfer sessions', p:'We teach you the handling and the commands, then follow up so the behavior holds at your house.'}
+        ])
+      })
+    + sec({h2:'Board and Train questions', body: faqBlock(faqPick([2,3,4,9,10]))})
+    + sec({bg:'cream', body: band({h2:'Spots are limited. We only board a small number of dogs at a time.', cta:'Reserve My Dog Spot'})});
+  }
+};
+
+PAGES['/private-lessons'] = {
+  title:'Private Dog Training Lessons in Corpus Christi & the Coastal Bend | Taurus K9',
+  desc:'One-on-one private dog training lessons in your home and neighborhoods across Aransas Pass, Corpus Christi and the Coastal Bend. Customized to your goals, with handling skills for the owner.',
+  render(){
+    return phero({
+      tag:'Private Lessons',
+      title:'One-on-one training, built around your dog and your goals.',
+      lede:'Some dogs need the training, some owners need the handling skills, and most need both. Private lessons put a certified trainer alongside you in your own environment, coaching the timing and communication that actually changes behavior.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Private Lessons'}],
+      actions: CTAB + CTAC
+    })
+    + sec({
+        h2:'What private lessons cover',
+        lede:'Lessons are customized, not scripted. These are the most common goals clients bring us.',
+        body: grid([
+          card({icon:I.paw, h3:'Foundational obedience', body: chk(['Sit, down, stay, place','Loose-leash walking','Coming when called','Door and threshold manners'])}),
+          card({icon:I.bolt, h3:'Real-world reliability', body: chk(['Public manners and neutrality','Polite greetings with people and dogs','Off-leash reliability where appropriate','Working around distractions'])}),
+          card({icon:I.shield, h3:'Behavior problems', body: chk(['Jumping, nipping, counter-surfing','Leash reactivity and barking','Anxiety and settling difficulty','Aggression, assessed first and managed honestly'])}),
+          card({icon:I.chat, h3:'Owner handling skills', body: chk(['Marker timing and reward placement','Reading body language and stress signals','Consistent household rules','Crate and management strategy'])})
+        ],'g2')
+      })
+    + sec({
+        bg:'cream', eyebrow:'Format', h2:'Where and how lessons run',
+        body: grid([
+          card({h3:'In your home', body:'<p>Sessions where the behavior actually happens. Especially valuable for door manners, crate work and household structure.</p>'}),
+          card({h3:'In your neighborhood', body:'<p>We train on your streets, parks and parking lots so the dog generalizes instead of performing only at home.</p>'}),
+          card({h3:'Single sessions or packages', body:'<p>Start with one session to see if we are the right fit, or commit to a package for a defined goal and timeline.</p>'})
+        ],'g3')
+      })
+    + sec({h2:'Private lesson questions', body: faqBlock(faqPick([1,2,8,9]))})
+    + sec({bg:'cream', body: band({h2:'Book a private lesson or start with the free meet and greet.', cta:'Book Free Meet and Greet'})});
+  }
+};
+
+PAGES['/puppy-foundations'] = {
+  title:'Puppy Training in Aransas Pass & Corpus Christi, TX | Taurus K9',
+  desc:'Puppy training from 8 weeks in the Texas Coastal Bend. Socialization, handling, crate and potty routines, and a confident foundation that prevents behavior problems later.',
+  render(){
+    return phero({
+      tag:'Puppy Foundations',
+      title:'The behavior you build at 10 weeks lasts a lifetime.',
+      lede:'The easiest dog to train is a puppy who has not learned the wrong habits yet. We build socialization, handling tolerance and household routines while your puppy is still in the highest-learning window.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Puppy Foundations'}],
+      actions: CTAB + CTAC
+    })
+    + sec({h2:'What we build in puppies', body: grid([
+        card({icon:I.paw, h3:'Socialization done properly', body: chk(['Confident exposure to people, surfaces and sounds','Reading your puppy stress signals','Exposure without overwhelming','Building neutrality rather than over-excitement'])}),
+        card({icon:I.home, h3:'Household routines', body: chk(['Crate introduction and comfort','Potty schedule and management','Bite inhibition and appropriate chewing','Settling and calm behavior indoors'])}),
+        card({icon:I.check, h3:'Foundation commands', body: chk(['Name recognition and focus','Sit, down, come, place','Leash introduction without pulling','Building the habit of learning'])}),
+        card({icon:I.chat, h3:'Owner education', body: chk(['What to do at each developmental stage','Preventing resource guarding','Managing children and puppy interactions','A clear plan for the next 6 months'])})
+      ],'g2')})
+    + sec({bg:'cream', h2:'Puppy questions', body: faqBlock(faqPick([8,0,1]))})
+    + sec({body: band({h2:'Start your puppy on the right foundation.', cta:'Book Free Meet and Greet'})});
+  }
+};
+
+PAGES['/day-training'] = {
+  title:'Day Training for Dogs in Corpus Christi & the Coastal Bend | Taurus K9',
+  desc:'Trainer-led day training sessions for dogs in Aransas Pass, Corpus Christi and the Coastal Bend. Structured daytime training with transfer sessions so handling skills become yours.',
+  render(){
+    return phero({
+      tag:'Day Training',
+      title:'Your dog trains during the day. You get the skills at handoff.',
+      lede:'Day training fits training into the hours you are already working. A certified trainer runs structured sessions with your dog, then teaches you the handling so the results transfer home.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Day Training'}],
+      actions: CTAB + CTAC
+    })
+    + sec({h2:'Who day training suits', body: grid([
+        card({icon:I.clock, h3:'Working owners', body:'<p>If your schedule is the only thing standing between your dog and consistent training, day training removes that obstacle.</p>'}),
+        card({icon:I.bolt, h3:'Dogs needing repetition', body:'<p>Some dogs need far more repetition than a weekly lesson provides. Daily or multi-weekly sessions accelerate progress substantially.</p>'}),
+        card({icon:I.chat, h3:'Owners who want to stay involved', body:'<p>Unlike Board and Train, your dog comes home each day. Transfer sessions keep you part of the process.</p>'})
+      ],'g3')})
+    + sec({bg:'cream', h2:'Day training questions', body: faqBlock(faqPick([0,9,1]))})
+    + sec({body: band({cta:'Ask About Day Training'})});
+  }
+};
+
+PAGES['/working-dogs'] = {
+  title:'Police K9, Detection, Sport & Protection Dog Training in Texas | Taurus K9',
+  desc:'Specialty and working dog training in Texas: sport protection, tracking, contraband and narcotics detection, police K9, patrol support and certified police decoy scenario training. Agency programs nationwide.',
+  render(){
+    return phero({
+      tag:'Specialty &amp; Working Dog Training',
+      title:'Working dogs trained for real scenarios, not demonstrations.',
+      lede:'Taurus K9 trains sport, detection and police K9 teams, with experienced certified police decoys providing real-world scenario work that prepares the dog for peak performance under pressure.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs'}],
+      actions: CTAB + `<a class="btn btn-o" href="#/detection-agency">Agency programs</a>`
+    })
+    + sec({id:'sport', h2:'Disciplines we train', body: grid([
+        card({icon:I.shield, tag:'Sport', h3:'Sport training',
+          body:`<p>Structured development for sport handlers: obedience under drive, protection phases, tracking and precision, built progressively with clear benchmarks.</p>
+            ${chk(['Obedience under high drive','Protection phase development','Tracking and scent discrimination','Trial preparation and problem-solving'])}`}),
+        card({icon:I.nose, acc:true, tag:'Detection', h3:'Detection dogs',
+          body:`<p>Odor imprinting and search pattern development for narcotics, contraband and other target odors, including vehicle, building and area searches.</p>
+            ${chk(['Odor imprinting and indication','Vehicle, building and area search','Indirect reward and variable reinforcement','Handler education and certification prep'])}`,
+          foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Detection programs</a>`}),
+        card({icon:I.chat, tag:'Police K9', h3:'Police K9 training',
+          body:`<p>Patrol and dual-purpose development, handler education and sustainment training for departments already working a dog.</p>
+            ${chk(['Patrol and dual-purpose development','Handler and unit training days','Sustainment and re-certification support','Scenario-based team evaluation'])}`}),
+        card({icon:I.bolt, acc:true, id:'protection', tag:'Civilian', h3:'Personal protection',
+          body:`<p>For owners who want a trained family dog with reliable protective capability. Every dog and family is assessed individually; this is not the right fit for everyone, and we will say so.</p>
+            ${chk(['Obedience first, always','Controlled protective response','Family-safe handling protocols','Clear legal and liability guidance'])}`}),
+        card({icon:I.paw, tag:'Support', h3:'Certified police decoy services',
+          body:`<p>Scenario work delivered by Demanet Academy Police Decoy Level 1 certified decoys: realistic pressure that builds a working dog instead of confusing it.</p>
+            ${chk(['Real-world scenario pressure','Correct decoy mechanics','Safe, controlled progression','Unit-level training support'])}`}),
+        card({icon:I.check, tag:'Selection', h3:'Dog evaluation and selection',
+          body:`<p>Temperament, drive, nerve and suitability assessment before you invest in a working dog or a long program.</p>
+            ${chk(['Temperament and nerve evaluation','Drive and hunt assessment','Suitability for discipline','Honest pass or fail reporting'])}`})
+      ],'g2')})
+    + sec({
+        bg:'dark', eyebrow:'Our credentials', h2:'Certifications behind the working dog division',
+        lede:'These are the qualifications we can document. Verify them before you hire any working dog trainer.',
+        body: grid([
+          card({h3:'Tarheel Canine Inc.', body:'<p><strong>Police K9 Master Trainer</strong> certification held by both Greg and Rebecca.</p>'}),
+          card({h3:'NEPOPO Silver School', body:'<p>Silver School graduates, covering detection and working dog development methodology.</p>'}),
+          card({h3:'Demanet Academy', body:'<p><strong>Police Decoy Level 1</strong> certification for realistic, safe scenario work.</p>'}),
+          card({h3:'21 years U.S. Army', body:'<p>Greg brings two decades of military discipline and operational experience to the training field.</p>'})
+        ],'g2')
+      })
+    + sec({
+        eyebrow:'Training philosophy', h2:'Understanding the dog before writing the plan',
+        body:`<div class="measure">
+          <p>Our approach centers on comprehending the unique temperament of each dog and devising a training strategy rooted in scientific principles to achieve the ultimate training objective effectively.</p>
+          <p>We employ motivational techniques to ensure the dog learns with minimal stress, going well beyond mere command teaching to instill a broader understanding of how to perform in various situations. Our guiding principle is to create an environment where the dog is primed for success.</p>
+          <p>For detection work specifically, that means building reinforcement schedules the right way: indirect reward on a variable schedule, so the dog works because the behavior itself has become the win, not because a treat is visible in the handler hand. Behavior reinforced on a variable schedule is the most resistant to extinction, which is exactly what you want in the field.</p>
+        </div>
+        <h3 style="margin-top:2.5rem" id="decoy">Decoy services</h3>
+        <div class="measure"><p>Scenario work is only as good as the decoy delivering it. Our decoy support is certified, safety-managed, and matched to your dog current level, building the dog up rather than overwhelming it.</p></div>`
+      })
+    + sec({bg:'cream', h2:'Working dog questions', body: faqBlock(faqPick([5,6,4,11]))})
+    + sec({body: band({h2:'Working dog or agency program? Request a proposal.', cta:'Request a Proposal'})});
+  }
+};
+
+PAGES['/detection-agency'] = {
+  title:'Detection Dog Training & K9 Programs for Agencies | Taurus K9, Texas',
+  desc:'Contraband and narcotics detection dog training, handler education and department K9 programs. Training days, decoy support and sustainment for police and private teams. Nationwide travel for agency contracts.',
+  render(){
+    return phero({
+      tag:'Detection &amp; Agency Programs',
+      title:'Programs for departments, units and private handlers.',
+      lede:'Whether you are starting a dog, fixing a handling problem, or maintaining a certified team, we deliver training that is documented, repeatable and defensible in the field.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs',href:'#/working-dogs'},{label:'Detection and Agency'}],
+      actions:`<a class="btn btn-p" href="#/contact?service=agency">Request Agency Proposal</a>${CTAC}`
+    })
+    + sec({h2:'Agency and handler services', body: grid([
+        card({icon:I.nose, h3:'Detection development', body:'<p>Odor imprinting, search pattern mechanics, indication finalization, and proofing across vehicles, buildings, open area and luggage.</p>'}),
+        card({icon:I.chat, h3:'Handler training days', body:'<p>Unit-level training built around your dogs, your handlers and the problems you are actually facing, not a generic curriculum.</p>'}),
+        card({icon:I.paw, h3:'Certified decoy support', body:'<p>Scenario pressure delivered to standard, with correct mechanics and safe progression for patrol and protection work.</p>'}),
+        card({icon:I.chart, h3:'Sustainment programs', body:'<p>Recurring maintenance to keep certified teams sharp between annual certifications, with documented progress.</p>'}),
+        card({icon:I.check, h3:'Selection and procurement', body:'<p>Independent evaluation of candidate dogs so departments invest in the right dog instead of inheriting a problem.</p>'}),
+        card({icon:I.shield, h3:'Private handler support', body:'<p>Owner-operators in security, recovery and specialized fields: training and maintenance for working teams outside law enforcement.</p>'})
+      ],'g2')})
+    + sec({
+        bg:'cream', eyebrow:'Scope', h2:'How a contract typically runs',
+        body: steps([
+          {h3:'Needs assessment', p:'A call or visit to define the discipline, the number of teams, current certification status and the outcomes your unit needs.'},
+          {h3:'Written proposal', p:'Scope, duration, travel, deliverables and cost. Clear enough to submit internally for approval.'},
+          {h3:'Delivery on site', p:'We come to you. Training days, decoy support and handler education delivered against the agreed plan.'},
+          {h3:'Documentation and sustainment', p:'Progress records, a maintenance schedule and re-certification support so the capability survives after we leave.'}
+        ]) + `<p class="fnote" style="margin-top:1.5rem">We travel for agency contracts and quote in all 50 states. Certificate of insurance available on request.</p>`
+      })
+    + sec({
+        eyebrow:'Real-world example', h2:'Contraband detection in a sober living community',
+        body:`<div class="measure">
+          <p>A recent placement: a contraband (narcotics) detection dog with rock-solid obedience, working periodic sweeps to protect the sanctuary of a residential recovery home. Every sweep adds a layer of accountability, safety and peace of mind for residents.</p>
+          <p>What that work looks like: precision narcotics detection on real odors, flawless obedience around real-world distractions, and reward delivered through an indirect reward system on a variable reinforcement schedule. The dog never knows exactly when the reward is coming, because the work itself has become the win.</p>
+          <p>If your facility, venue or organization needs detection capability, we build the dog and train the handler.</p>
+        </div>`
+      })
+    + sec({bg:'cream', h2:'Agency questions', body: faqBlock(faqPick([6,5,11,7]))})
+    + sec({body: band({h2:'Talk to the working dog division.', p:'Tell us your discipline, your team size and your timeline. We will tell you what is realistic and send a written proposal.', cta:'Request a Proposal'})});
+  }
+};
+
+PAGES['/about'] = {
+  title:'About Taurus K9 | Certified Dog Trainers in Aransas Pass, Texas',
+  desc:'Meet the Taurus K9 team: Greg and Rebecca, Police K9 Master Trainers (Tarheel Canine Inc.), NEPOPO Silver School graduates and Demanet Academy certified police decoys. Our story and training philosophy.',
+  render(){
+    return phero({
+      tag:'About Us',
+      title:'Get to know us, then let us meet.',
+      lede:'Taurus K9 was founded with a mission to provide exceptional dog training services that transform both dogs and their owners. See the difference our passion and expertise can make for your dog.',
+      crumbs:[{label:'Home',href:'#/'},{label:'About Us'}],
+      actions: CTAB + CTAC
+    })
+    + sec({
+        bg:'cream', eyebrow:'Our story', h2:'Built to serve both ends of the leash',
+        body:`<div class="measure">
+          <p>Taurus K9 was founded with a mission to provide exceptional dog training services that transform both dogs and their owners. Our team of certified trainers brings years of experience in obedience, behavior modification, and specialized working dog techniques.</p>
+          <p>We believe in positive reinforcement methods combined with clear communication to create lasting results. Whether you have a new puppy or an adult dog with behavioral challenges, we have the expertise to help.</p>
+          <p style="font-weight:700;color:var(--ink)">Our philosophy is simple: every dog deserves training that enhances their life and strengthens their bond with their family.</p>
+          <p>That philosophy is why we train pet dogs and working dogs under one roof. A family dog learning to settle on a mat and a police K9 holding an indication in a parking lot are doing the same thing: making choices under pressure. The standard does not change; only the environment does.</p>
+        </div>`
+      })
+    + sec({
+        eyebrow:'Meet the team', h2:'Certified professionals dedicated to your dog success',
+        body: grid([
+          `<article class="card"><div class="person">
+            <span class="av" aria-hidden="true">G</span>
+            <div>
+              <h3>Greg</h3>
+              <p class="person__r">Trainer &middot; Working Dog Division</p>
+              <p>A 21-year Army veteran, Greg brings military discipline and unwavering dedication to his dog training, which leads to proven results.</p>
+              <ul class="cred">
+                <li>Tarheel Canine Inc. &mdash; Police K9 Master Trainer</li>
+                <li>NEPOPO Silver School</li>
+                <li>Demanet Academy &mdash; Police Decoy LVL 1</li>
+              </ul>
+            </div>
+          </div></article>`,
+          `<article class="card"><div class="person">
+            <span class="av av-b" aria-hidden="true">R</span>
+            <div>
+              <h3>Rebecca</h3>
+              <p class="person__r">Trainer &middot; Pet and Behavior</p>
+              <p>Rebecca training approach is second to none, combining unparalleled expertise with a personalized touch that delivers exceptional results for every dog.</p>
+              <ul class="cred">
+                <li>Tarheel Canine Inc. &mdash; Police K9 Master Trainer</li>
+                <li>NEPOPO Silver School</li>
+              </ul>
+            </div>
+          </div></article>`
+        ],'g2')
+      })
+    + sec({
+        bg:'dark', eyebrow:'Certifications',
+        h2:'We maintain the highest standards in training education and methodology',
+        body: grid([
+          card({h3:'Tarheel Canine Inc.', body:'<p>Police K9 Master Trainer certification, a recognized credential in the working dog community.</p>'}),
+          card({h3:'NEPOPO Silver School', body:'<p>Completion of the Silver School curriculum in working dog development.</p>'}),
+          card({h3:'Demanet Academy', body:'<p>Police Decoy Level 1 certification for safe, realistic scenario work.</p>'}),
+          card({h3:'Ongoing education', body:'<p>We continue developing methodology rather than repeating what we learned years ago.</p>'})
+        ],'g2')
+      })
+    + sec({
+        eyebrow:'How we train', h2:'Set the dog up for success',
+        body: grid([
+          card({icon:I.chart, h3:'Assess the individual', body:'<p>Every plan starts with the dog temperament, drives and history, not a script.</p>'}),
+          card({icon:I.paw, h3:'Motivational methods', body:'<p>Low-stress learning and clear reinforcement produce faster, more durable results than pressure.</p>'}),
+          card({icon:I.chat, h3:'Clear communication', body:'<p>Consistency and timing from the handler matter as much as anything we do with the dog.</p>'}),
+          card({icon:I.bolt, h3:'Beyond commands', body:'<p>We teach the dog how to perform in varied situations, so behavior survives the real world.</p>'})
+        ],'g2')
+      })
+    + sec({bg:'cream', body: band({cta:'Schedule Free Meet and Greet'})});
+  }
+};
+
+PAGES['/reviews'] = {
+  title:'Reviews & Transformations | Taurus K9 Dog Training, Coastal Bend TX',
+  desc:'Client reviews for Taurus K9 dog training in Aransas Pass, Corpus Christi and the Texas Coastal Bend, including Board and Train, private lessons, behavior modification and agency K9 programs.',
+  render(){
+    return phero({
+      tag:'Reviews &amp; Transformations',
+      title:'Real clients, real transformations.',
+      lede:'The proof of a training program is what happens thirty days after handoff. These are the outcomes clients report.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Reviews'}],
+      actions: CTAB
+    })
+    + sec({
+        body:`<p class="disc" style="margin-bottom:1.75rem"><strong>Template content, replace before launch.</strong> Do not publish invented testimonials. Pull your real Google and Facebook reviews, keep the wording verbatim, and only add Review structured data for reviews you can verify.</p>
+          ${grid(REVIEWS.map(revBlock),'g2')}
+          <div class="btnrow" style="margin-top:1.75rem">
+            <a class="btn btn-o" href="https://www.facebook.com/TaurusK9LLC" target="_blank" rel="noopener" data-track="social_click" data-loc="facebook">Reviews on Facebook</a>
+            <a class="btn btn-o" href="#/contact?service=board-train">Start my dog program</a>
+          </div>`
+      })
+    + sec({
+        bg:'cream', h2:'Results by program',
+        body:`<table class="data">
+          <caption>What clients typically report after each program</caption>
+          <thead><tr><th scope="col">Program</th><th scope="col">Typical reported outcome</th><th scope="col">Timeframe</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Board &amp; Train, Basic</th><td>House manners, reliable commands, off-leash foundation</td><td>4&ndash;6 weeks</td></tr>
+            <tr><th scope="row">Board &amp; Train, Advanced</th><td>Off-leash reliability and public manners</td><td>6&ndash;8 weeks</td></tr>
+            <tr><th scope="row">Behavior Modification</th><td>Managed reactivity, reduced anxiety, household safety</td><td>8&ndash;12+ weeks</td></tr>
+            <tr><th scope="row">Private Lessons</th><td>Owner handling confidence plus measurable obedience gains</td><td>Weekly</td></tr>
+            <tr><th scope="row">Agency and Detection</th><td>Certification readiness and sustained field performance</td><td>Per contract</td></tr>
+          </tbody>
+        </table>`
+      })
+    + sec({body: band({})});
+  }
+};
+
+PAGES['/service-area'] = {
+  title:'Service Area | Dog Training in the Texas Coastal Bend & Nationwide K9 Programs',
+  desc:'Taurus K9 serves Aransas Pass, Corpus Christi, Portland, Ingleside, Rockport, Port Aransas, Sinton, Robstown and the Coastal Bend counties, with working dog and agency programs available nationwide.',
+  render(){
+    const cityList = SITE.cities.map(c => `<li>${c}</li>`).join('');
+    const countyList = SITE.counties.map(c => `<li>${c} County</li>`).join('');
+    return phero({
+      tag:'Service Area',
+      title:'Local on the Texas Coast. Nationwide for working dogs.',
+      lede:'Our core pet training area is the Coastal Bend, centered on Aransas Pass and Corpus Christi. For working dog and agency programs, we travel, and we quote across the United States.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Service Area'}],
+      actions: CTAB + CTAC
+    })
+    + sec({
+        eyebrow:'Local', h2:'Cities and towns we serve in the Coastal Bend',
+        lede:'If you are within reasonable driving distance of Aransas Pass, contact us and we will confirm availability for your area. Board and Train clients can travel to us.',
+        body:`<ul class="areas">${cityList}</ul><h3 style="margin-top:2.25rem">Counties</h3><ul class="areas">${countyList}</ul>`
+      })
+    + sec({
+        bg:'cream', eyebrow:'Nationwide', h2:'Agency, department and working dog programs',
+        body: grid([
+          card({icon:I.shield, h3:'On-site agency delivery', body:'<p>We travel to your department or facility for unit training days, decoy support, handler education and sustainment programs. Proposals are scoped per contract, including travel.</p>'}),
+          card({icon:I.nose, h3:'Detection programs anywhere', body:'<p>Detection development, imprinting and certification preparation for departments and private handlers across the United States.</p>'}),
+          card({icon:I.chat, h3:'Remote consultations', body:'<p>Not local? We can consult remotely on selection, program design and training problems before committing to travel.</p>'})
+        ],'g3')
+      })
+    + sec({h2:'Coverage questions', body: faqBlock(faqPick([7,6,0]))})
+    + sec({bg:'cream', body: band({h2:'Not sure if we cover your area? Ask us.', cta:'Check My Area'})});
+  }
+};
+
+PAGES['/faq'] = {
+  title:'Dog Training FAQ | Taurus K9, Aransas Pass & Corpus Christi TX',
+  desc:'Answers about Taurus K9 dog training: methods, e-collar education, Board and Train lengths, updates, working dog programs, service area, pricing, and what happens at the free meet and greet.',
+  render(){
+    return phero({
+      tag:'FAQ',
+      title:'Answers before you hand over your dog.',
+      lede:'The questions we get asked most, answered the same way we would answer them on the phone.',
+      crumbs:[{label:'Home',href:'#/'},{label:'FAQ'}],
+      actions: CTAB + CTAC
+    })
+    + sec({body: faqBlock(FAQS)})
+    + sec({bg:'cream', body: band({h2:'Still have a question? Call us.', cta:'Book Free Meet and Greet'})});
+  }
+};
+
+PAGES['/contact'] = {
+  title:'Contact Taurus K9 | Book a Free Meet & Greet | Aransas Pass, TX',
+  desc:'Book your free in-person dog training consultation with Taurus K9 in Aransas Pass, TX. Call 361-230-1932 or send an inquiry for Board and Train, private lessons, detection or police K9 programs.',
+  render(){
+    const hours = SITE.hours.map(h => `<li><span>${h[0]}</span><b>${h[1]}</b></li>`).join('');
+    return phero({
+      tag:'Contact &amp; Booking',
+      title:'Book your free meet and greet.',
+      lede:'Tell us about your dog and what you want to change. We will respond with the right next step, usually within one business day and often the same day during business hours.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Contact'}],
+      actions:`<a class="btn btn-p" href="tel:${SITE.phone}" data-track="click_to_call" data-loc="contact_hero">Call ${SITE.phoneDisplay}</a>
+        <a class="btn btn-o" href="${SITE.bookingUrl}" target="_blank" rel="noopener" data-track="schedule_click">Open the booking calendar</a>`
+    })
+    + sec({
+        body:`<div class="cgrid">
+          <div>
+            <h2 style="margin-bottom:.35rem">Send us a training inquiry</h2>
+            <p class="fnote" style="margin-bottom:1.5rem">Fields marked <span class="req" aria-hidden="true">*</span> are required. Prefer to talk? Call <a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="form_intro">${SITE.phoneDisplay}</a>.</p>
+            ${leadForm()}
+          </div>
+          <aside aria-labelledby="napH">
+            <div class="card">
+              <h2 id="napH" style="font-size:1.14rem">Contact details</h2>
+              <ul class="nap">
+                <li>${I.phone}<span><b>Phone</b><br><a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="nap">${SITE.phoneDisplay}</a><br><span style="font-size:.86rem;color:var(--muted)">Mon&ndash;Fri, 6:00 AM &ndash; 6:00 PM CT</span></span></li>
+                <li>${I.mail}<span><b>Email</b><br><a href="mailto:${SITE.email}" data-track="click_to_email">${SITE.email}</a></span></li>
+                <li>${I.pin}<span><b>Location</b><br>${SITE.city}, ${SITE.state} ${SITE.zip}<br><span style="font-size:.86rem;color:var(--muted)">Serving the Coastal Bend. Exact address confirmed at booking.</span></span></li>
+                <li>${I.clock}<span><b>Hours</b><ul class="hours">${hours}</ul></span></li>
+              </ul>
+              <div class="btnrow" style="margin-top:1.25rem">
+                <a class="btn btn-g btn-sm" href="tel:${SITE.phone}" data-track="click_to_call" data-loc="nap_btn">Call now</a>
+                <a class="btn btn-o btn-sm" href="sms:${SITE.phone}" data-track="click_to_text" data-loc="nap_btn">Text us</a>
+              </div>
+            </div>
+            <div class="card" style="margin-top:1.25rem">
+              <h2 style="font-size:1.14rem">What happens next</h2>
+              <ol style="margin:0;padding-left:1.2rem;font-size:.94rem">
+                <li>We confirm your inquiry, usually within one business day.</li>
+                <li>We schedule your free in-person meet and greet.</li>
+                <li>You get a written program recommendation and quote.</li>
+                <li>You decide. No deposit required to talk.</li>
+              </ol>
+            </div>
+            <div class="card" style="margin-top:1.25rem">
+              <h2 style="font-size:1.14rem">Working dogs and agencies</h2>
+              <p style="font-size:.94rem">Select <em>Agency or department program</em> or <em>Detection dog training</em> in the form and your inquiry is routed to the working dog division for a proposal.</p>
+            </div>
+          </aside>
+        </div>`
+      })
+    + sec({bg:'cream', h2:'Before you book, these may help', body: faqBlock(FAQS.slice(0,4))});
+  }
+};
+
+PAGES['/thank-you'] = {
+  title:'Thank You | Your Inquiry Was Received | Taurus K9',
+  desc:'Your training inquiry has been received by Taurus K9. Here is what happens next.',
+  render(){
+    return phero({
+      tag:'Inquiry received',
+      title:'Thank you. Your inquiry is in.',
+      lede:'We have your information and it is already routed to the right trainer. Here is exactly what happens next.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Thank you'}]
+    })
+    + sec({
+        body: grid([
+          card({icon:I.check, h3:'1. Confirmation', body:'<p>You will receive an email confirmation immediately. If you opted into text messages, you may also get a short text from our team.</p>'}),
+          card({icon:I.chat, h3:'2. A real reply', body:'<p>A trainer reviews your inquiry and responds within one business day, often same-day during business hours. Expect a question or two about your dog.</p>'}),
+          card({icon:I.paw, h3:'3. Your free meet and greet', body:'<p>We schedule the in-person consultation at your convenience, your dog comes too, and you leave with a written recommendation and quote.</p>'})
+        ],'g3')
+        + `<p style="margin-top:2rem">Need to talk sooner? <a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="thankyou">Call ${SITE.phoneDisplay}</a> (Mon&ndash;Fri, 6:00 AM &ndash; 6:00 PM CT).</p>
+          <p class="fnote">A record of this submission was created in our CRM with a timestamped consent record. <a href="#/privacy">Privacy Policy</a> &middot; <a href="#/contact">Submit another inquiry</a></p>`
+      })
+    + sec({bg:'cream', body: band({h2:'While you wait, explore our programs.', cta:'See All Programs', p:'Board and Train, private lessons, puppy foundations, detection and police K9 training.'})});
+  }
+};
+
+PAGES['/privacy'] = {
+  title:'Privacy Policy | Taurus K9',
+  desc:'How Taurus K9 collects, uses and protects personal information submitted through taurusk9.com, including SMS consent, analytics and your privacy rights.',
+  render(){
+    return phero({title:'Privacy Policy', lede:'How we handle the information you give us.', crumbs:[{label:'Home',href:'#/'},{label:'Privacy Policy'}]})
+    + sec({
+        body:`<div class="prose">
+          <div class="note"><p><strong>Template notice.</strong> This policy is a complete, usable starting draft written to US standards. Have it reviewed by qualified counsel and confirm it matches your actual tools (CRM, analytics, call tracking) before publishing. Replace bracketed placeholders.</p></div>
+          <p><em>Last updated: [DATE]</em></p>
+          <h2>Who we are</h2><p>Taurus K9 operates www.taurusk9.com and provides dog training services from Aransas Pass, Texas. Contact us at <a href="mailto:${SITE.email}">${SITE.email}</a> or <a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a>.</p>
+          <h2>Information we collect</h2>
+          <ul>
+            <li><strong>Information you give us:</strong> name, email, phone number, city, your dog name, breed, age, the service you are interested in, your message and your communication preferences.</li>
+            <li><strong>Automatically collected:</strong> IP address, device and browser type, pages viewed, referring URL and campaign parameters such as UTM codes and click identifiers used to understand how visitors find us.</li>
+            <li><strong>Communications:</strong> records of calls, emails and text messages so we can follow up accurately.</li>
+          </ul>
+          <h2>How we use information</h2>
+          <ul>
+            <li>Respond to your inquiry and schedule your consultation</li>
+            <li>Deliver the training services you book</li>
+            <li>Send service updates, appointment reminders and, only with your consent, marketing messages</li>
+            <li>Improve our website, programs and advertising</li>
+            <li>Meet legal, insurance and accounting obligations</li>
+          </ul>
+          <h2>Text messages and calls</h2>
+          <p>If you provide a phone number and check the consent box, you agree that Taurus K9 may contact you by call or text at that number, including through automated technology, about your inquiry and our services. Consent is not a condition of purchase. Message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe or <strong>HELP</strong> for help at any time.</p>
+          <h2>Cookies and tracking</h2>
+          <p>We use cookies and similar technologies. Essential cookies keep the site functioning. Analytics and marketing cookies are optional and are only set with your consent through our cookie banner. You can change your choice at any time using Cookie Settings in the footer. We may use Google Analytics 4, Google Ads, Meta advertising tools and call-tracking services.</p>
+          <h2>Sharing</h2>
+          <p>We do not sell your personal information. We share it only with service providers who help us operate, such as our CRM and email provider, hosting, analytics and scheduling tools; with professional advisors; or where required by law or to protect safety. Where a dog is placed with a department or facility, we may share relevant records with that organization.</p>
+          <h2>Data retention</h2>
+          <p>We keep inquiry and client records as long as needed to provide services and meet legal and insurance requirements, then delete or anonymize them.</p>
+          <h2>Your rights</h2>
+          <p>Depending on your state of residence, you may have the right to request access to, correction of, or deletion of your personal information, and to opt out of certain uses. To make a request, email <a href="mailto:${SITE.email}">${SITE.email}</a>. We will verify your request and respond within the timeframe required by applicable law.</p>
+          <h2>Children</h2><p>Our services and website are intended for adults. We do not knowingly collect information from children under 13.</p>
+          <h2>Security</h2><p>We use reasonable administrative, technical and physical safeguards, including encrypted transmission over HTTPS. No method of transmission or storage is completely secure.</p>
+          <h2>Changes</h2><p>We may update this policy. Material changes will be posted on this page with a new effective date.</p>
+          <h2>Contact</h2><p>Taurus K9 &middot; Aransas Pass, TX 78336 &middot; <a href="mailto:${SITE.email}">${SITE.email}</a> &middot; <a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a></p>
+        </div>`
+      });
+  }
+};
+
+PAGES['/accessibility'] = {
+  title:'Accessibility Statement | Taurus K9',
+  desc:'Taurus K9 is committed to digital accessibility for all visitors, targeting WCAG 2.2 Level AA conformance on taurusk9.com.',
+  render(){
+    return phero({title:'Accessibility Statement', lede:'Our commitment to an accessible website for every visitor.', crumbs:[{label:'Home',href:'#/'},{label:'Accessibility'}]})
+    + sec({
+        body:`<div class="prose">
+          <div class="note"><p><strong>Template notice.</strong> Replace bracketed items and confirm your actual audit results before publishing. Accessibility statements must be accurate.</p></div>
+          <p><em>Last updated: [DATE]</em></p>
+          <h2>Our commitment</h2><p>Taurus K9 is committed to ensuring digital accessibility for people with disabilities. We continually work to improve the experience for everyone and apply the relevant accessibility standards.</p>
+          <h2>Standards we target</h2><p>We aim to conform to the Web Content Accessibility Guidelines (WCAG) 2.2 at Level AA, as well as accessibility requirements applicable under the Americans with Disabilities Act (ADA).</p>
+          <h2>Measures we take</h2>
+          <ul>
+            <li>Semantic HTML with landmark regions, a skip link and a logical heading hierarchy</li>
+            <li>Full keyboard operability, including navigation menus, forms and accordions</li>
+            <li>Visible focus indicators on all interactive elements</li>
+            <li>Text color contrast tested against WCAG AA thresholds</li>
+            <li>Form fields with programmatic labels, error identification and instructions</li>
+            <li>Respect for the operating system reduced-motion setting</li>
+            <li>Alternative text for meaningful images and hidden decorative graphics</li>
+            <li>Status messages announced to screen readers</li>
+          </ul>
+          <h2>Known limitations</h2><p>We are actively improving: [LIST ANY KNOWN ISSUES, such as third-party embedded scheduling widgets or older PDF documents]. We are working with our vendors to resolve them.</p>
+          <h2>Third-party content</h2><p>Some features, such as scheduling or review widgets, are provided by third parties and may not fully conform. We provide equivalent contact methods below.</p>
+          <h2>Feedback and assistance</h2>
+          <p>If you encounter an accessibility barrier, or need information in an alternative format, contact us and we will provide the information through an alternative means:</p>
+          <ul>
+            <li>Email: <a href="mailto:${SITE.email}">${SITE.email}</a></li>
+            <li>Phone: <a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a> (Mon&ndash;Fri, 6:00 AM &ndash; 6:00 PM CT)</li>
+          </ul>
+          <p>We aim to respond within [X] business days.</p>
+          <h2>Assessment approach</h2><p>Accessibility is evaluated through [self-assessment or third-party audit] using [tools and methods]. Last evaluation: [DATE].</p>
+        </div>`
+      });
+  }
+};
+
+PAGES['/terms'] = {
+  title:'Terms of Service | Taurus K9',
+  desc:'Terms governing the use of taurusk9.com and the purchase of dog training services from Taurus K9, including booking, payment, cancellation and liability provisions.',
+  render(){
+    return phero({title:'Terms of Service', lede:'The terms that govern our website and training services.', crumbs:[{label:'Home',href:'#/'},{label:'Terms of Service'}]})
+    + sec({
+        body:`<div class="prose">
+          <div class="note"><p><strong>Template notice.</strong> General informational terms only, not legal advice. Have counsel draft or review your final agreements, and confirm insurance, vaccination and liability language with your carrier.</p></div>
+          <p><em>Last updated: [DATE]</em></p>
+          <h2>Agreement</h2><p>By using www.taurusk9.com or purchasing services from Taurus K9, you agree to these terms. If you do not agree, do not use the site or services.</p>
+          <h2>Services</h2><p>We provide dog training services including Board and Train, private lessons, puppy programs, day training, behavior modification, and working dog or agency programs. Program scope and pricing are confirmed in writing before training begins. Program lengths quoted are typical ranges; actual duration depends on the individual dog.</p>
+          <h2>Booking and payment</h2><p>[DEPOSIT TERMS] [PAYMENT SCHEDULE] [ACCEPTED PAYMENT METHODS] Reservations may require a deposit. Balances are due as stated in your agreement.</p>
+          <h2>Cancellation and rescheduling</h2><p>[CANCELLATION WINDOW] [RESCHEDULING POLICY] [REFUND POLICY, if any]. Please give us as much notice as possible so we can offer the slot to another client.</p>
+          <h2>Health, vaccinations and behavior disclosure</h2><p>You agree to disclose your dog known health conditions, medications, bite history and prior training. You confirm your dog is current on vaccinations and free of communicable illness, or that a veterinarian has cleared training. Failure to disclose a bite history or aggression may result in termination of services.</p>
+          <h2>Risk and liability</h2><p>Working with animals involves inherent risk. [LIABILITY LANGUAGE TO BE COMPLETED WITH COUNSEL AND INSURER.] Taurus K9 carries business insurance; a certificate of insurance is available on request.</p>
+          <h2>Training tools</h2><p>Where training tools are used, they are optional and introduced through proper imprinting, conditioning and handler education. You may decline their use.</p>
+          <h2>Intellectual property</h2><p>Site content, written training plans and materials are the property of Taurus K9 and may not be reproduced or redistributed without permission.</p>
+          <h2>Photography and media</h2><p>Unless you opt out in writing, you grant Taurus K9 permission to use photographs or video of your dog taken during training for our website and social media. We will not publish your full name or address without consent.</p>
+          <h2>Limitation of warranties</h2><p>Training outcomes depend on many factors including the dog, the environment and client follow-through. We do not guarantee a specific result. We commit to applying professional standards and delivering the program described in your agreement.</p>
+          <h2>Governing law</h2><p>These terms are governed by the laws of the State of Texas. Venue for disputes lies in [COUNTY] County, Texas.</p>
+          <h2>Contact</h2><p>Taurus K9 &middot; Aransas Pass, TX 78336 &middot; <a href="mailto:${SITE.email}">${SITE.email}</a> &middot; <a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a></p>
+        </div>`
+      });
+  }
+};
+
+PAGES['/404'] = {
+  title:'Page Not Found | Taurus K9',
+  desc:'That page could not be found. Browse Taurus K9 dog training programs or contact us in Aransas Pass, Texas.',
+  render(){
+    return phero({
+      tag:'404 error',
+      title:'That page did not hold the command.',
+      lede:'We could not find what you were looking for. Here are the paths people usually want.'
+    })
+    + sec({body: grid([
+        card({icon:I.home, h3:'Pet Dog Training', body:'<p>Board and Train, private lessons, puppy foundations and day training.</p>', foot:'<a class="btn btn-g btn-sm" href="#/pet-training">Go to Pet Training</a>'}),
+        card({icon:I.shield, h3:'Working Dogs', body:'<p>Detection, police K9, sport, protection and decoy services.</p>', foot:'<a class="btn btn-g btn-sm" href="#/working-dogs">Go to Working Dogs</a>'}),
+        card({icon:I.chat, h3:'Contact Us', body:`<p>Book a free meet and greet or call ${SITE.phoneDisplay}.</p>`, foot:'<a class="btn btn-g btn-sm" href="#/contact">Go to Contact</a>'})
+      ],'g3')});
+  }
+};
+
+/* ---------- tracking (consent aware) ---------- */
+
+const CONSENT = {analytics:true, marketing:false};
+
+function track(name, params){
+  if(!CONSENT.analytics && !CONSENT.marketing) return;
+  window.__dataLayer = window.__dataLayer || [];
+  const ev = Object.assign({event:name, page_path:location.hash || '#/'}, params || {});
+  window.__dataLayer.push(ev);
+  /* In production: gtag('event', name, params); fbq('trackCustom', name, params); */
+}
+
+document.addEventListener('click', function(e){
+  const a = e.target.closest ? e.target.closest('[data-track]') : null;
+  if(!a) return;
+  const n = a.getAttribute('data-track');
+  const loc = a.getAttribute('data-loc') || '';
+  if(n !== 'form_submit'){
+    track(n, {location:loc});
+  }
+});
+
+/* ---------- newsletter ---------- */
+
+function wireNews(){
+  const f = document.getElementById('newsForm');
+  if(!f) return;
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    const input = document.getElementById('nlEmail');
+    const st = document.getElementById('nlStatus');
+    const v = (input.value || '').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v)){
+      st.textContent = 'Please enter a valid email address.';
+      st.style.color = '#f0c874';
+      input.setAttribute('aria-invalid','true');
+      input.focus();
+      return;
+    }
+    input.removeAttribute('aria-invalid');
+    st.textContent = 'You are subscribed. Welcome to the pack. Look for training tips and program updates.';
+    st.style.color = '#8fd6ae';
+    f.reset();
+    track('newsletter_signup', {});
+  });
+}
+
+/* ---------- cookie consent ---------- */
+
+function wireCookies(){
+  const bar = document.getElementById('cookie');
+  const prefs = document.getElementById('prefs');
+  const save = document.getElementById('ckSave');
+  const tog = document.getElementById('ckPrefs');
+  const show = () => bar.setAttribute('data-show','true');
+  const hide = () => bar.setAttribute('data-show','false');
+
+  setTimeout(show, 700);
+
+  document.getElementById('ckAccept').addEventListener('click', function(){
+    CONSENT.analytics = true; CONSENT.marketing = true;
+    hide();
+    track('consent_update', {analytics:true, marketing:true});
+  });
+  document.getElementById('ckReject').addEventListener('click', function(){
+    CONSENT.analytics = false; CONSENT.marketing = false;
+    hide();
+  });
+  tog.addEventListener('click', function(){
+    const open = prefs.getAttribute('data-show') !== 'true';
+    prefs.setAttribute('data-show', open ? 'true' : 'false');
+    tog.setAttribute('aria-expanded', open ? 'true' : 'false');
+    save.style.display = open ? 'inline-flex' : 'none';
+  });
+  save.addEventListener('click', function(){
+    CONSENT.analytics = document.getElementById('prefAnalytics').checked;
+    CONSENT.marketing = document.getElementById('prefAds').checked;
+    hide();
+    track('consent_update', {analytics:CONSENT.analytics, marketing:CONSENT.marketing});
+  });
+  document.getElementById('ckSettings').addEventListener('click', function(){
+    prefs.setAttribute('data-show','true');
+    tog.setAttribute('aria-expanded','true');
+    save.style.display = 'inline-flex';
+    show();
+    bar.scrollIntoView({block:'end'});
+  });
+}
+
+/* ---------- navigation ---------- */
+
+function wireNav(){
+  const nav = document.getElementById('nav');
+  const tog = document.getElementById('ntog');
+
+  function closeDrops(){
+    document.querySelectorAll('.dd').forEach(d => d.setAttribute('data-open','false'));
+    document.querySelectorAll('.nav__b').forEach(b => b.setAttribute('aria-expanded','false'));
+  }
+  function setOpen(o){
+    nav.setAttribute('data-open', o ? 'true' : 'false');
+    tog.setAttribute('aria-expanded', o ? 'true' : 'false');
+  }
+  setOpen(false);
+
+  tog.addEventListener('click', function(){ setOpen(nav.getAttribute('data-open') !== 'true'); });
+  nav.addEventListener('click', function(e){ if(e.target.closest('a')){ setOpen(false); closeDrops(); } });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      if(nav.getAttribute('data-open') === 'true'){ setOpen(false); tog.focus(); }
+      closeDrops();
+    }
+  });
+
+  document.addEventListener('click', function(e){
+    if(nav.getAttribute('data-open') === 'true' && !nav.contains(e.target) && !tog.contains(e.target)) setOpen(false);
+    const b = e.target.closest ? e.target.closest('.nav__b') : null;
+    if(!b){
+      if(!(e.target.closest && e.target.closest('.dd'))) closeDrops();
+      return;
+    }
+    const panel = document.getElementById(b.getAttribute('aria-controls'));
+    const open = b.getAttribute('aria-expanded') !== 'true';
+    closeDrops();
+    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if(panel) panel.setAttribute('data-open', open ? 'true' : 'false');
+  });
+}
+
+/* ---------- router + SEO ---------- */
+
+function setMeta(id, val){
+  const el = document.getElementById(id);
+  if(el) el.setAttribute('content', val);
+}
+
+function renderRoute(){
+  const raw = (location.hash || '#/').replace(/^#/, '') || '/';
+  let path = raw.split('?')[0];
+  if(path === '' || path === '/index.html') path = '/';
+  const key = PAGES[path] ? path : '/404';
+  const page = PAGES[key];
+  const app = document.getElementById('app');
+
+  app.innerHTML = page.render();
+
+  document.title = page.title;
+  const md = document.querySelector('meta[name="description"]');
+  if(md) md.setAttribute('content', page.desc);
+
+  const url = SITE.origin + (key === '/' ? '/' : key);
+  const canon = document.getElementById('canonical');
+  if(canon) canon.setAttribute('href', url);
+  setMeta('ogTitle', page.title);
+  setMeta('ogDesc', page.desc);
+  setMeta('ogUrl', url);
+
+  const old = document.getElementById('ldPage');
+  if(old) old.remove();
+  const bc = [{name:'Home', url:SITE.origin + '/'}];
+  if(key !== '/'){
+    const name = key.replace(/^\//,'').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    bc.push({name:name, url:SITE.origin + key});
+  }
+  const ld = document.createElement('script');
+  ld.type = 'application/ld+json';
+  ld.id = 'ldPage';
+  ld.textContent = JSON.stringify({
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement": bc.map((c,i) => ({"@type":"ListItem","position":i+1,"name":c.name,"item":c.url}))
+  });
+  document.head.appendChild(ld);
+
+  document.querySelectorAll('[data-nav]').forEach(function(a){
+    if(a.getAttribute('data-nav') === key) a.setAttribute('aria-current','page');
+    else a.removeAttribute('aria-current');
+  });
+
+  const st = document.getElementById('routeStatus');
+  if(st) st.textContent = document.title + ' page loaded';
+
+  window.scrollTo(0,0);
+  app.focus({preventScroll:true});
+
+  track('page_view', {page_path:'#' + key, page_title:document.title});
+
+  wireForm();
+}
+
+window.addEventListener('hashchange', renderRoute);
+
+/* ---------- init ---------- */
+
+(function init(){
+  const y = document.getElementById('year');
+  if(y) y.textContent = new Date().getFullYear();
+
+  wireNav();
+  wireNews();
+  wireCookies();
+
+  const toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function(){
+    toTop.setAttribute('data-show', window.scrollY > 600 ? 'true' : 'false');
+  }, {passive:true});
+  toTop.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  if(!location.hash) location.hash = '#/';
+  renderRoute();
+})();
