@@ -11,19 +11,26 @@
 }
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:110px}
-body{margin:0;font-family:var(--font);line-height:1.6;color:var(--body);background:#FFFFFF;font-size:clamp(1rem,.25vw + .96rem,1.0625rem);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{margin:0;font-family:var(--font);line-height:1.6;color:#242021;background:#FFFFFF;font-size:clamp(1rem,.25vw + .96rem,1.0625rem);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 h1,h2,h3,h4{color:var(--ink);margin:0 0 .55em;line-height:1.16;letter-spacing:-.02em;font-weight:800}
 h1{font-size:clamp(1.9rem,1.1rem + 3.3vw,3.3rem);letter-spacing:-.035em}
-h2{font-size:clamp(1.42rem,.9rem + 2vw,2.2rem)}
+h2{
+    font-size: clamp(1.42rem,.9rem + 2vw,2.2rem);
+    color: #242021;
+}
 h3{font-size:clamp(1.08rem,.5rem + .85vw,1.34rem)}
 h4{font-size:1.02rem}
 p{
     margin: 0 0 1em;
-    color: #242021;
+    color: #24201;
 }
 a{color:#FFFFFF;text-underline-offset:3px;text-decoration-thickness:1.5px}
 a:hover{color:#75C9FF}
-ul,ol{margin:0 0 1em;padding-left:1.25em}
+ul,ol{
+    margin: 0 0 1em;
+    padding-left: 1.25em;
+    color: #FFFFFF;
+}
 li{margin-bottom:.35em}
 img,svg{
     max-width: 100%;
@@ -33,31 +40,62 @@ img,svg{
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .skip{position:absolute;left:1rem;top:-140px;z-index:1000;background:var(--ink);color:#fff;padding:.8rem 1.2rem;border-radius:0 0 8px 8px;font-weight:700;text-decoration:none;transition:top .18s}
 .skip:focus{top:0;color:#fff}
-.wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gutter)}
+.wrap{
+    width: 100%;
+    max-width: var(--maxw);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    color: #FFFFFF;
+}
 .section{padding-block:var(--secy)}
-.s-surface{background:var(--surface)}
-.s-cream{background:var(--cream)}
-.s-dark{background:var(--ink);color:#c3ced6}
+.s-surface{
+    color: #240221;
+}
+#app {
+}
+.s-cream{
+    /* [disabled]background-color: var(; */
+    color: #000000;
+}
+.s-dark{
+    background: #242021;
+    color: #FFFFFF
+}
 .s-dark h2,.s-dark h3,.s-dark h4{color:#fff}
 .s-dark a{color:#f0c874}
 .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#242021;margin-bottom:.85rem}
 .eyebrow::before{content:"";width:1.4rem;height:2px;background:#242021;display:inline-block}
-.s-dark .eyebrow{color:#242021}
-.lede{font-size:clamp(1rem,.5vw + .9rem,1.14rem);color:var(--muted);max-width:64ch}
-.s-dark .lede{color:#a9b7c0}
+.s-dark .eyebrow{
+    color: #FFFFFF
+}
+.lede{
+    font-size: clamp(1rem,.5vw + .9rem,1.14rem);
+    color: #242021;
+    max-width: 64ch
+}
+.s-dark .lede{
+    color: #FFFFFF
+}
 .measure{max-width:70ch}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font:inherit;font-weight:700;text-decoration:none;cursor:pointer;padding:.85rem 1.4rem;border-radius:var(--pill);border:2px solid transparent;transition:transform .15s,background-color .15s,border-color .15s,color .15s;min-height:48px;text-align:center}
 .btn:hover{transform:translateY(-2px)}
-.btn-p{background:#4683E0;color:#FFFFFF;border-color:#078C7F}
-.btn-p:hover{background:#32D9D9;color:#FFFFFF}
-.btn-g{background:#E04646);color:#fff;border-color:var(--green)}
+.btn-p{background:#4683E0;color:#242021;border-color:#078C7F}
+.btn-p:hover{background:#32D9D9;color:#4683E0}
+.btn-g{
+    background: #11BAED;
+    color: #1E59D0;
+    border-color: var(--green)
+}
 .btn-g:hover{background:#E04646;color:#fff}
 .btn-o{background:#078C7F;color:#FFFFFF;border-color:#078C7F}
 .btn-o:hover{border-color:#3BD8FF;color:#FFFFFF;background:#32D9D9}
 .s-dark .btn-o{color:#fff;border-color:rgba(255,255,255,.4)}
 .s-dark .btn-o:hover{background:rgba(255,255,255,.1);border-color:#fff;color:#fff}
 .btn-sm{padding:.55rem 1rem;font-size:.9rem;min-height:42px}
-.btn-blk{width:100%}
+.btn-blk{
+    width: 100%;
+    background-color: #FF0004;
+}
 .btnrow{display:flex;flex-wrap:wrap;gap:.7rem}
 .util{background:#0ABAB0;color:#242021;font-size:.82rem}
 .util a{color:#242021;text-decoration:none;font-weight:600}
@@ -68,11 +106,24 @@ img,svg{
 @media(max-width:780px){.hidesm{display:none}}
 .hdr{position:sticky;top:0;z-index:120;background:rgba(250,248,244,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .hdr__in{display:flex;align-items:center;gap:1rem;min-height:76px}
-.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:#242021;flex:0 0 auto}
+.brand{
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    text-decoration: none;
+    color: #242021;
+    flex: 0 0 auto
+}
 .brand__m{width:44px;height:44px;flex:0 0 44px;border-radius:12px;background:var(-muted);display:grid;place-items:center}
 .brand__t{display:flex;flex-direction:column;line-height:1.1}
 .brand__t b{font-size:1.15rem;font-weight:900;letter-spacing:-.03em}
-.brand__t span{font-size:.75rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#242021}
+.brand__t span{
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: #242021;
+}
 @media(max-width:420px){.brand__t span{display:none}}
 .nav{margin-left:auto;display:flex;align-items:center;gap:.15rem}
 .nav__i{position:relative}
@@ -150,16 +201,237 @@ img,svg{
 @media(min-width:980px){.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:clamp(1.15rem,2.2vw,1.55rem);display:flex;flex-direction:column}
 .card h3{margin-bottom:.45rem}
-.card p:last-child,.card ul:last-child{margin-bottom:0}
+.card p:last-child,.card ul:last-child{
+    margin-bottom: 0;
+    color: #000000;
+}
 .card__ic{width:46px;height:46px;border-radius:12px;background:var(--gtint);color:#242021;display:grid;place-items:center;margin-bottom:.95rem;flex:0 0 auto}
 .card-acc .card__ic{background:#242021);color:#242021}
 .card__f{margin-top:auto;padding-top:1rem}
-.s-dark .card{background:var(--ink2);border-color:#2c3a44}
-.s-dark .card p{color:#a9b7c0}
+.s-dark .card{background:#242021;border-color:#2c3a44}
+.s-dark .card p{color:##242021}
 .s-dark .card__ic{background:rgba(200,145,47,.16);color:#f0c874}
-.tag{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green);background:#FFFFFF;border-radius:var(--pill);padding:.28rem .7rem;margin-bottom:.6rem;align-self:flex-start}
-.tag-b{color:var(--brass2);background:var(--btint)}
-.s-dark .tag{color:#f0c874;background:rgba(240,200,116,.14)}
+.tag{
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: .1em;
+    color: #242021;
+    border-radius: var(--pill);
+    padding: .28rem .7rem;
+    margin-bottom: .6rem;
+    /* [disabled]align-self: flex-start; */
+    text-decoration: none;
+}
+.tag-b{
+    color: #242021;
+    background: #ED1111
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Taurus K9 | Dog Training in Aransas Pass & Corpus Christi, TX</title>
+<meta name="description" content="Taurus K9 provides professional dog training in Aransas Pass, Corpus Christi and the Coastal Bend: Board & Train, private lessons, puppy foundations, behavior modification, detection, sport and police K9 training. Certified Police K9 Master Trainers. Free meet & greet." />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+<meta name="theme-color" content="#0E219A" />
+<meta name="geo.region" content="US-TX" />
+<meta name="geo.placename" content="Aransas Pass, Texas" />
+<link rel="canonical" id="canonical" href="https://www.taurusk9.com/" />
+<meta property="og:site_name" content="Taurus K9" />
+<meta property="og:type" content="website" />
+<meta property="og:title" id="ogTitle" content="Taurus K9 | Professional Dog Training in South Texas" />
+<meta property="og:description" id="ogDesc" content="Pet dog training and professional working dog training in Aransas Pass, Corpus Christi and the Coastal Bend." />
+<meta property="og:url" id="ogUrl" content="https://www.taurusk9.com/" />
+<meta property="og:image" content="https://www.taurusk9.com/social/taurus-k9-og-1200x630.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/png" href="https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Logo/Taurus%20K9%20NBG.png" />
+<link rel="apple-touch-icon" href="https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Logo/Taurus%20K9%20NBG.png" /> 
+<link rel="stylesheet" href="css/style.css" />
+<script type="application/ld+json" id="ldBase">
+{
+ "@context":"https://schema.org","@type":["LocalBusiness","ProfessionalService"],
+ "@id":"https://www.taurusk9.com/#organization","name":"Taurus K9","alternateName":"Taurus K9 LLC",
+ "slogan":"We make sit happen.",
+ "description":"Professional dog training in Aransas Pass, Corpus Christi and the Texas Coastal Bend: Board and Train, private lessons, puppy foundations, behavior modification, detection, sport and police K9 training.",
+ "url":"https://www.taurusk9.com/","telephone":"+1-361-230-1932","email":"taurusk9tx@gmail.com",
+ "priceRange":"Contact for quote",
+ "address":{"@type":"PostalAddress","addressLocality":"Aransas Pass","addressRegion":"TX","postalCode":"78336","addressCountry":"US"},
+ "geo":{"@type":"GeoCoordinates","latitude":27.9095,"longitude":-97.1499},
+ "areaServed":[{"@type":"City","name":"Aransas Pass"},{"@type":"City","name":"Corpus Christi"},{"@type":"City","name":"Portland"},{"@type":"City","name":"Rockport"},{"@type":"City","name":"Ingleside"},{"@type":"City","name":"Port Aransas"},{"@type":"City","name":"Sinton"},{"@type":"City","name":"Robstown"},{"@type":"AdministrativeArea","name":"Texas Coastal Bend"},{"@type":"Country","name":"United States"}],
+ "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"06:00","closes":"18:00"}],
+ "sameAs":["https://www.facebook.com/TaurusK9LLC","https://www.instagram.com/taurusk9","https://www.tiktok.com/@taurusk9llc"],
+ "hasOfferCatalog":{"@type":"OfferCatalog","name":"Dog Training Programs","itemListElement":[
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Board and Train"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Private Dog Training Lessons"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Puppy Foundations"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Behavior Modification"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Detection Dog and Police K9 Training"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Sport Dog Training"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Personal Protection Dog Training"}}]},
+ "knowsAbout":["dog obedience training","behavior modification","police K9 training","narcotics detection dogs","e-collar conditioning","sport protection","decoy work"],
+ "founder":[{"@type":"Person","name":"Greg","jobTitle":"Police K9 Master Trainer"},{"@type":"Person","name":"Rebecca","jobTitle":"Police K9 Master Trainer"}]
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#app">Skip to main content</a>
+
+<div class="util">
+  <div class="wrap util__in">
+    <span><svg width="14" height="14" viewBox="0 0 16 16" fill="#242021" aria-hidden="true"><path d="M3.6 1.4 5.5 1c.4-.1.8.1 1 .5l.8 2a.9.9 0 0 1-.2 1L6 5.9a8.7 8.7 0 0 0 4.1 4.1l1.4-1.1a.9.9 0 0 1 1-.2l2 .8c.4.2.6.6.5 1l-.4 1.9c-.1.4-.4.7-.8.7A12.4 12.4 0 0 1 2.9 2.2c0-.4.3-.7.7-.8Z"/></svg><a href="tel:+13612301932" data-track="click_to_call" data-loc="utility">361-230-1932</a></span>
+    <span class="hidesm"><svg width="14" height="14" viewBox="0 0 16 16" fill="#242021" aria-hidden="true"><path d="M1.5 3.5h13v9h-13v-9Zm1.3 1 .2.1L8 8.1l4.8-3.5.2-.1H2.8Z"/></svg><a href="mailto:taurusk9tx@gmail.com" data-track="click_to_email">taurusk9tx@gmail.com</a></span>
+    <span class="hidesm">Mon&ndash;Fri 8:00 AM &ndash; 8:00 PM CT</span>
+    <span class="util__sp"></span>
+    <span class="hidesm">Aransas Pass, TX &middot; Serving the Coastal Bend</span>
+  </div>
+</div>
+
+<header class="hdr">
+  <div class="wrap hdr__in">
+    <a class="brand" href="#/" aria-label="Taurus K9 home">
+      <span class="brand__m">
+  <img src="https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Logo/Taurus%20K9%20NBG.png"
+       alt="Taurus K9 logo"
+       width="95" height="95"
+       style="display:block;object-fit:contain;">
+</span>
+      <span class="brand__t">
+       <b>Taurus K9 LLC</b>
+       <span>Dog and Working K9 Training</span>
+</span>
+    </a>
+    <button class="ntog" id="ntog" aria-expanded="false" aria-controls="nav" type="button">
+      <svg width="17" height="17" viewBox="0 0 16 16" fill="#242021" aria-hidden="true"><rect y="2" width="16" height="2" rx="1"/><rect y="7" width="16" height="2" rx="1"/><rect y="12" width="16" height="2" rx="1"/></svg><span>Menu</span>
+    </button>
+    <nav class="nav" id="nav" aria-label="Primary">
+      <div class="nav__i">
+        <button class="nav__b" type="button" aria-expanded="false" aria-controls="ddPet">Pet Dog Training <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M6 9 1.5 3.5h9L6 9Z"/></svg></button>
+        <div class="dd" id="ddPet">
+          <a href="#/board-train">Board &amp; Train <small>Immersive residential training, 4&ndash;12 weeks</small></a>
+          <a href="#/private-lessons">Private Lessons <small>One-on-one coaching in your environment</small></a>
+          <a href="#/puppy-foundations">Puppy Foundations <small>Start right, from 8 weeks</small></a>
+          <a href="#/pet-training">All Pet Services <small>Compare every program</small></a>
+        </div>
+      </div>
+      <div class="nav__i">
+        <button class="nav__b" type="button" aria-expanded="false" aria-controls="ddWork">Working Dogs <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M6 9 1.5 3.5h9L6 9Z"/></svg></button>
+        <div class="dd" id="ddWork">
+          <a href="#/working-dogs">Specialty &amp; Working Dogs <small>Sport, detection, police K9, protection</small></a>
+          <a href="#/detection-agency">Detection &amp; Agency Programs <small>Departments, units and private handlers</small></a>
+        </div>
+      </div>
+      <div class="nav__i">
+        <button class="nav__b" type="button" aria-expanded="false" aria-controls="ddAbout">About <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M6 9 1.5 3.5h9L6 9Z"/></svg></button>
+        <div class="dd" id="ddAbout">
+          <a href="#/about">Our Story &amp; Team <small>Who you are handing your dog to</small></a>
+          <a href="#/reviews">Reviews &amp; Transformations <small>Real client outcomes</small></a>
+          <a href="#/service-area">Service Area <small>Where we train</small></a>
+          <a href="#/faq">FAQ <small>Answers before you book</small></a>
+        </div>
+      </div>
+      <div class="nav__i"><a class="nav__l" href="#/faq" data-nav="/faq">FAQ</a></div>
+      <div class="nav__i"><a class="nav__l" href="#/contact" data-nav="/contact">Contact</a></div>
+      <div class="nav__cta"><a class="btn btn-p" href="#/contact" data-track="cta_header_book">Book Free Meet &amp; Greet</a></div>
+    </nav>
+  </div>
+</header>
+
+<p class="sr-only" role="status" aria-live="polite" id="routeStatus"></p>
+<main id="app" tabindex="-1"></main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="fbrand">
+        <a class="brand" href="#/" style="color:#fff">
+          <span class="brand__m" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4.5l3 6.1 6.7.95-4.85 4.72 1.15 6.63L16 19.75l-5.99 3.15 1.15-6.63L6.3 11.55l6.7-.95L16 4.5z" fill="#c8912f"/><circle cx="10" cy="25.6" r="1.7" fill="#c8912f"/><circle cx="16" cy="27.2" r="1.7" fill="#c8912f"/><circle cx="22" cy="25.6" r="1.7" fill="#c8912f"/></svg></span>
+          <span class="brand__t"><b style="color:#fff">Taurus K9</b><span style="color:#8b9aa4">We make "sit" happen.</span></span>
+        </a>
+        <p style="margin-top:1rem">Professional dog training for family pets and professional working dogs, built on temperament-first assessment, clear communication, and motivational, low-stress methods.</p>
+        <ul class="social">
+          <li><a href="https://www.facebook.com/TaurusK9LLC" target="_blank" rel="noopener" aria-label="Taurus K9 on Facebook" data-track="social_click" data-loc="facebook"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h3l1-3h-4v-2c0-.6.4-1 1-1Z"/></svg></a></li>
+          <li><a href="https://www.instagram.com/taurusk9" target="_blank" rel="noopener" aria-label="Taurus K9 on Instagram" data-track="social_click" data-loc="instagram"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a></li>
+          <li><a href="https://www.tiktok.com/@taurusk9llc" target="_blank" rel="noopener" aria-label="Taurus K9 on TikTok" data-track="social_click" data-loc="tiktok"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 3h-3v11.2a2.4 2.4 0 1 1-2.4-2.4c.25 0 .5.04.7.1V8.8a5.6 5.6 0 1 0 4.7 5.5V8.6a5.6 5.6 0 0 0 3.3 1.1V6.6a3.6 3.6 0 0 1-3.3-3.6Z"/></svg></a></li>
+        </ul>
+      </div>
+      <div><h2>Pet Training</h2><ul>
+        <li><a href="#/board-train">Board &amp; Train</a></li><li><a href="#/private-lessons">Private Lessons</a></li>
+        <li><a href="#/puppy-foundations">Puppy Foundations</a></li><li><a href="#/day-training">Day Training</a></li>
+        <li><a href="#/pet-training">Behavior Modification</a></li></ul></div>
+      <div><h2>Working Dogs</h2><ul>
+        <li><a href="#/working-dogs">Specialty Training</a></li><li><a href="#/detection-agency">Detection &amp; Agency</a></li>
+        <li><a href="#/working-dogs">Sport Training</a></li><li><a href="#/working-dogs">Personal Protection</a></li>
+        <li><a href="#/working-dogs">Decoy Services</a></li></ul></div>
+      <div><h2>Contact</h2><ul>
+        <li><a href="tel:+13612301932" data-track="click_to_call" data-loc="footer">361-230-1932</a></li>
+        <li><a href="mailto:taurusk9tx@gmail.com" data-track="click_to_email">taurusk9tx@gmail.com</a></li>
+        <li>Aransas Pass, TX 78336</li><li>Mon&ndash;Fri 6:00 AM &ndash; 6:00 PM CT</li></ul>
+        <h2 style="margin-top:1.5rem">Get training tips</h2>
+        <form class="news" id="newsForm" novalidate>
+          <label class="sr-only" for="nlEmail">Email address for the Taurus K9 newsletter</label>
+          <input type="email" id="nlEmail" name="email" placeholder="you@email.com" autocomplete="email" required />
+          <button class="btn btn-p btn-sm" type="submit">Subscribe</button>
+        </form>
+        <p class="fnote" id="nlStatus" role="status" style="margin-top:.5rem;color:#8b9aa4">Newsletter only. Unsubscribe anytime.</p>
+      </div>
+    </div>
+    <div class="fbot">
+      <span>&copy; <span id="year">2026</span> Taurus K9. All rights reserved. Aransas Pass, Texas.</span>
+      <ul>
+        <li><a href="#/privacy">Privacy Policy</a></li><li><a href="#/accessibility">Accessibility</a></li>
+        <li><a href="#/terms">Terms of Service</a></li>
+        <li><button type="button" id="ckSettings">Cookie Settings</button></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<div class="cookie" id="cookie" role="region" aria-label="Cookie and privacy preferences" data-show="false">
+  <div class="cookie__in">
+    <div>
+      <p><strong>We use cookies to improve your experience.</strong> Essential cookies keep the site working. Optional analytics and marketing cookies help us understand which programs people need and measure our advertising. Change your choice any time via <em>Cookie Settings</em>. See our <a href="#/privacy">Privacy Policy</a>.</p>
+      <div class="prefs" id="prefs">
+        <label><input type="checkbox" checked disabled /> <span><b>Strictly necessary</b> &mdash; security, form submission, load balancing. Always on.</span></label>
+        <label><input type="checkbox" id="prefAnalytics" checked /> <span><b>Analytics</b> &mdash; Google Analytics 4 and heatmaps, to improve pages and programs.</span></label>
+        <label><input type="checkbox" id="prefAds" /> <span><b>Marketing</b> &mdash; Google Ads, Meta, and call-tracking conversions.</span></label>
+      </div>
+    </div>
+    <div class="cookie__a">
+      <button class="btn btn-p btn-sm" type="button" id="ckAccept">Accept all</button>
+      <button class="btn btn-o btn-sm" type="button" id="ckReject">Reject non-essential</button>
+      <button class="btn btn-o btn-sm" type="button" id="ckPrefs" aria-expanded="false" aria-controls="prefs">Preferences</button>
+      <button class="btn btn-g btn-sm" type="button" id="ckSave" style="display:none">Save choices</button>
+    </div>
+  </div>
+</div>
+
+<div class="mbar" role="group" aria-label="Quick contact actions">
+  <a class="btn btn-g" href="tel:+13612301932" data-track="click_to_call" data-loc="mobile_bar">Call</a>
+  <a class="btn btn-o" href="sms:+13612301932" data-track="click_to_text" data-loc="mobile_bar">Text</a>
+  <a class="btn btn-p" href="#/contact" data-track="cta_mobile_book">Book Free Meet</a>
+</div>
+
+<button class="totop" id="toTop" type="button" aria-label="Back to top" data-show="false"><svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 3.5 14 10h-4v3H6v-3H2L8 3.5Z"/></svg></button>
+
+<noscript>
+  <div class="wrap section">
+    <h2>JavaScript is off &mdash; here is the essential information</h2>
+    <p><strong>Taurus K9</strong> &mdash; professional dog training in Aransas Pass, Corpus Christi and the Texas Coastal Bend. Call <a href="tel:+13612301932">361-230-1932</a> or email <a href="mailto:taurusk9tx@gmail.com">taurusk9tx@gmail.com</a> (Mon&ndash;Fri, 6:00 AM&ndash;6:00 PM CT).</p>
+    <p>Programs: Board &amp; Train (Basic Obedience 4&ndash;6 weeks, Advanced Obedience 6&ndash;8 weeks, Behavior Modification 8&ndash;12 weeks), Private Lessons, Puppy Foundations, Day Training, Detection, Sport, Police K9, Personal Protection and police decoy training support. Free in-person meet &amp; greet available.</p>
+  </div>
+</noscript>
+
+<script src="js/script.js" defer></script>
+</body>
+</html>}
+.s-dark .tag{
+    color: #242021;
+    background-color: #242021;
+}
 .check{list-style:none;padding:0;margin:1rem 0 0}
 .check li{position:relative;padding-left:1.7rem;margin-bottom:.5rem;font-size:.95rem;color:#2b3a45}
 .check li::before{content:"";position:absolute;left:0;top:.42em;width:.72rem;height:.42rem;border-left:2.5px solid var(--green);border-bottom:2.5px solid var(--green);transform:rotate(-45deg);border-radius:1px}
@@ -177,8 +449,12 @@ img,svg{
 .steps{list-style:none;padding:0;margin:0;display:grid;gap:1rem;counter-reset:s}
 @media(min-width:780px){.steps{grid-template-columns:repeat(2,1fr)}}
 .steps li{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:1.15rem 1.25rem 1.15rem 4rem;margin:0}
-.steps li::before{counter-increment:s;content:counter(s,decimal-leading-zero);position:absolute;left:1.1rem;top:1.15rem;font-weight:900;font-size:.82rem;color:var(--green);background:var(--gtint);border-radius:8px;padding:.22rem .48rem;line-height:1.4}
-.steps h3{font-size:1rem;margin-bottom:.25rem}
+.steps li::before{counter-increment:s;content:counter(s,decimal-leading-zero);position:absolute;left:1.1rem;top:1.15rem;font-weight:900;font-size:.82rem;color:#242021;background:var(--gtint);border-radius:8px;padding:.22rem .48rem;line-height:1.4}
+.steps h3{
+    font-size: 1rem;
+    margin-bottom: .25rem;
+    color: #000000;
+}
 .steps p{margin:0;font-size:.93rem;color:var(--muted)}
 .tiers{display:grid;gap:1.25rem}
 @media(min-width:900px){.tiers{grid-template-columns:repeat(3,1fr)}}
@@ -262,10 +538,30 @@ legend{padding:0 .4rem}
 .hours{list-style:none;padding:0;margin:.4rem 0 0;font-size:.9rem}
 .hours li{display:flex;justify-content:space-between;gap:1rem;margin:0;padding:.15rem 0;color:var(--muted)}
 .hours b{color:var(--ink)}
-.band{background:linear-gradient(135deg,var(--green),#1a3d30);border-radius:var(--rlg);padding:clamp(1.6rem,4vw,2.5rem);display:grid;gap:1.5rem;align-items:center;box-shadow:var(--sh3);color:#d5e5dd}
-@media(min-width:880px){.band{grid-template-columns:1.5fr 1fr}}
-.band h2{color:#fff;margin-bottom:.4rem}
-.band p{color:#c3ddd1;margin:0}
+.band{
+    border-radius: var(--rlg);
+    padding: clamp(1.6rem,4vw,2.5rem);
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+    box-shadow: var( --sh3 );
+    color: #FFFFFF;
+    -webkit-box-shadow: var( --sh3 );
+    background-color: #0AD3F2;
+}
+@media(min-width:880px){.band{
+    grid-template-columns: 1.5fr 1fr;
+    color: #FFFFFF;
+    background-color: #A1AAAD;
+}}
+.band h2{
+    color: #fffFFF;
+    margin-bottom: .4rem
+}
+.band p{
+    color: #242021;
+    margin: 0
+}
 .ftr{background:var(--ink);color:#9fb0ba;font-size:.92rem;padding-block:3rem 1.5rem}
 .fgrid{display:grid;gap:2rem}
 @media(min-width:720px){.fgrid{grid-template-columns:1.6fr 1fr 1fr 1.3fr}}
@@ -306,11 +602,17 @@ legend{padding:0 .4rem}
 .prose h3{margin-top:1.5rem;font-size:1.04rem}
 .note{border-left:4px solid var(--brass);background:var(--btint);padding:.9rem 1.1rem;border-radius:0 8px 8px 0;font-size:.92rem}
 .note p:last-child{margin-bottom:0}
-.disc{border:1px dashed var(--line2);border-radius:var(--r);padding:1rem 1.1rem;font-size:.9rem;color:var(--muted);background:var(--surface)}
+.disc{
+    border: 1px dashed var(--line2);
+    border-radius: var(--r);
+    padding: 1rem 1.1rem;
+    font-size: .9rem;
+    color: #242021;
+    background: var(--surface)
+}
 table.data{width:100%;border-collapse:collapse;font-size:.92rem}
 table.data th,table.data td{text-align:left;padding:.65rem .7rem;border-bottom:1px solid var(--line);vertical-align:top}
 table.data th{background:var(--cream);color:var(--ink)}
 table.data caption{text-align:left;font-weight:800;color:var(--ink);padding-bottom:.5rem}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}html{scroll-behavior:auto}}
 @media print{.hdr,.mbar,.cookie,.totop,.util{display:none!important}}
-
