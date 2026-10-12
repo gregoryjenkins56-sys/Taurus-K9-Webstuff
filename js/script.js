@@ -545,10 +545,20 @@ PAGES['/'] = {
         ],'g4')
       })
     + sec({
-        bg:'cream', eyebrow:'Client outcomes', h2:'Real clients, real transformations',
-        body:`<p class="disc" style="margin-bottom:1.5rem"><strong>Template content:</strong> the review cards below are placeholders. Replace them with verified Google and Facebook reviews before launch.</p>
-          ${grid(REVIEWS.slice(0,3).map(revBlock),'g3')}
-          <p style="margin-top:1.5rem"><a class="btn btn-o btn-sm" href="#/reviews">Read more reviews</a></p>`
+        bg:'cream', eyebrow:'Credentials & standards', h2:'Trained by certified professionals',
+        body:`<p style="margin-bottom:1.5rem">Every program is built and delivered by trainers with recognized law enforcement and working-dog credentials.</p>
+          ${grid([
+            `<article class="card"><h3>Police K9 Master Trainer</h3>
+              <p><strong>Tarheel Canine Inc.</strong></p>
+              <p>Advanced training in patrol, detection and handler development for working dog teams.</p></article>`,
+            `<article class="card"><h3>NEPOPO Silver School</h3>
+              <p><strong>Graduate</strong></p>
+              <p>Completed a nationally recognized police K9 school with a standards-based curriculum.</p></article>`,
+            `<article class="card"><h3>Police Decoy Level 1</h3>
+              <p><strong>Demanet Academy</strong></p>
+              <p>Certified decoy work that gives dogs safe, realistic scenario training.</p></article>`
+          ],'g3')}
+          <p style="margin-top:1.5rem"><a class="btn btn-o btn-sm" href="#/about">Meet the trainers</a></p>`
       })
     + sec({body: band({})});
   }
