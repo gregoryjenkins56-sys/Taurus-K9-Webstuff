@@ -19,7 +19,7 @@ h3{font-size:clamp(1.08rem,.5rem + .85vw,1.34rem)}
 h4{font-size:1.02rem}
 p{
     margin: 0 0 1em;
-    color: #FFFFFF;
+    color: #242021;
 }
 a{color:#FFFFFF;text-underline-offset:3px;text-decoration-thickness:1.5px}
 a:hover{color:#75C9FF}
