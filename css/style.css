@@ -35,6 +35,7 @@ li{margin-bottom:.35em}
 :focus-visible{outline:3px solid #E6FF00;outline-offset:3px;border-radius:5px}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gutter)}
+.wrap h2{color:#242021}
 .section{padding-block:var(--secy)}
 .s-surface{background:var(--surface)}
 .s-surface>.wrap{text-align:center}
@@ -198,6 +199,7 @@ li{margin-bottom:.35em}
 .card__ic{width:46px;height:46px;border-radius:12px;background:var(--gtint);color:#242021;display:grid;place-items:center;margin-bottom:.95rem;flex:0 0 auto}
 .card-acc .card__ic{background:#242021);color:#242021}
 .card__f{margin-top:auto;padding-top:1rem}
+.s-cream p,.s-cream article.card,.s-cream strong,.s-cream .card p{color:#242021}
 .s-dark .card{background:#242021;border-color:#2c3a44}
 .s-dark .card p{color:#242021}
 .s-dark .card__ic{background:rgba(200,145,47,.16);color:#242021}
@@ -544,7 +546,8 @@ legend{padding:0 .4rem}
 .ftr ul{list-style:none;padding:0;margin:0}
 .ftr li{margin-bottom:.5rem}
 .ftr a{color:#c3ced6;text-decoration:none}
-.ftr a:hover{color:#242021;text-decoration:underline}
+.ftr a:hover{color:#242021}
+.ftr li a:not([href^="tel:"]):not([href^="mailto:"]):hover{font-weight:700;text-decoration:underline}
 .ftr .brand:hover{text-decoration:none}
 .fbrand p{max-width:34ch}
 .social{display:flex;gap:.6rem;list-style:none;padding:0;margin:1rem 0 0}
