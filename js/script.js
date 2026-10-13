@@ -66,7 +66,9 @@ function hero(o){
 }
 
 function phero(o){
-  return `<section class="phero">${crumbs(o.crumbs)}<div class="wrap phero__in">
+    return `<section class="phero${o.video ? ' phero--video' : ''}">
+    ${o.video ? `<video class="phero__video" autoplay muted loop playsinline aria-hidden="true"><source src="${o.video}" type="video/mp4"></video>` : ''}
+    ${crumbs(o.crumbs)}<div class="wrap phero__in">
     ${o.tag ? `<span class="tagpill">${o.tag}</span>` : ''}
     <h1>${o.title}</h1>
     <p class="lede">${o.lede}</p>
@@ -86,14 +88,15 @@ function sec(o){
 
 function card(o){
   return `<article class="card${o.acc ? ' card-acc' : ''}"${o.id ? ` id="${o.id}"` : ''}>
-    ${o.icon ? `<span class="card__ic" aria-hidden="true">${o.icon}</span>` : ''}
-    ${o.tag ? `<span class="tag${o.acc ? ' tag-b' : ''}">${o.tag}</span>` : ''}
+    ${o.icon || o.tag ? `<div class="card__head">
+      ${o.icon ? `<span class="card__ic" aria-hidden="true">${o.icon}</span>` : ''}
+      ${o.tag ? `<span class="tag${o.acc ? ' tag-b' : ''}">${o.tag}</span>` : ''}
+    </div>` : ''}
     <h3>${o.h3}</h3>
     ${o.body || ''}
     ${o.foot ? `<div class="card__f">${o.foot}</div>` : ''}
   </article>`;
 }
-
 const chk = items => `<ul class="check">${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
 const grid = (items, cls) => `<div class="grid ${cls}">${items.join('')}</div>`;
 
@@ -639,6 +642,7 @@ PAGES['/board-train'] = {
       tag:'Board &amp; Train',
       title:'While you are at work, your dog is in training.',
       lede:'An immersive residential program where your dog lives with our certified trainers and works multiple structured sessions every day, in real-home and real-world settings, with updates you actually receive.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Untitled%20-%20October%2005%2c%202026%20at%2018.40.38-3.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Board & Train'}],
       actions: CTAB + CTAC
     })
@@ -679,6 +683,7 @@ PAGES['/private-lessons'] = {
       tag:'Private Lessons',
       title:'One-on-one training, built around your dog and your goals.',
       lede:'Some dogs need the training, some owners need the handling skills, and most need both. Private lessons put a certified trainer alongside you in your own environment, coaching the timing and communication that actually changes behavior.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/IMG_0027.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Private Lessons'}],
       actions: CTAB + CTAC
     })
@@ -713,6 +718,7 @@ PAGES['/puppy-foundations'] = {
       tag:'Puppy Foundations',
       title:'The behavior you build at 10 weeks lasts a lifetime.',
       lede:'The easiest dog to train is a puppy who has not learned the wrong habits yet. We build socialization, handling tolerance and household routines while your puppy is still in the highest-learning window.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/804886010.785997_7951783193232.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Puppy Foundations'}],
       actions: CTAB + CTAC
     })
@@ -756,6 +762,7 @@ PAGES['/working-dogs'] = {
       tag:'Specialty &amp; Working Dog Training',
       title:'Working dogs trained for real scenarios, not demonstrations.',
       lede:'Taurus K9 trains sport, detection and police K9 teams, with experienced certified police decoys providing real-world scenario work that prepares the dog for peak performance under pressure.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Combined%20Videos.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs'}],
       actions: CTAB + `<a class="btn btn-o" href="#/detection-agency">Agency programs</a>`
     })
@@ -813,6 +820,7 @@ PAGES['/detection-agency'] = {
       tag:'Detection &amp; Agency Programs',
       title:'Programs for departments, units and private handlers.',
       lede:'Whether you are starting a dog, fixing a handling problem, or maintaining a certified team, we deliver training that is documented, repeatable and defensible in the field.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Greg%20Decoy.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs',href:'#/working-dogs'},{label:'Detection and Agency'}],
       actions:`<a class="btn btn-p" href="#/contact?service=agency">Request Agency Proposal</a>${CTAC}`
     })
