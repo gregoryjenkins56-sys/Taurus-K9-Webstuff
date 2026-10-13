@@ -54,35 +54,11 @@ li{margin-bottom:.35em}
 .s-dark h2,.s-dark h3,.s-dark h4{color:#FFFFFF}
 .s-dark a{color:#FFFFFF}
 .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#FFFFFF;margin-bottom:.85rem}
-.eyebrow::before,
-.eyebrow::after {
-  content: "";
-  display: inline-block;
-  width: 1.4rem;
-  height: 2px;
-  background: #242021;
-}
-
-.section.s-dark .eyebrow {
-  color: #FFFFFF;
-}
-
-.section.s-dark .eyebrow::before,
-.section.s-dark .eyebrow::after {
-  background: #FFFFFF;
-}
-
-.section.s-cream .eyebrow,
-.section.s-surface .eyebrow {
-  color: #242021;
-}
-
-.section.s-cream .eyebrow::before,
-.section.s-cream .eyebrow::after,
-.section.s-surface .eyebrow::before,
-.section.s-surface .eyebrow::after {
-  background: #242021;
-}
+.eyebrow::before,.eyebrow::after{content:"";display:inline-block;width:1.4rem;height:2px;background:#242021}
+.section.s-dark .eyebrow{color:#FFFFFF}
+.section.s-dark .eyebrow::before,.section.s-dark .eyebrow::after{background:#FFFFFF}
+.section.s-cream .eyebrow,.section.s-surface .eyebrow{color:#242021}
+.section.s-cream .eyebrow::before,.section.s-cream .eyebrow::after,.section.s-surface .eyebrow::before,.section.s-surface .eyebrow::after{background:#242021}
 .lede{
     font-size: clamp(1rem,.5vw + .9rem,1.14rem);
     color: #242021;
@@ -638,32 +614,15 @@ legend{padding:0 .4rem}
 .band h2{color:#242021;margin-bottom:.4rem}
 .band p{color:#c3ddd1;margin:0}
 .ftr{background:var(--ink);color:#9fb0ba;font-size:.92rem;padding-block:3rem 1.5rem}
-.fgrid{
-    display: grid;
-    gap: 2rem;
-    color: #FFFFFF;
-}
-@media(min-width:720px){.fgrid{
-    grid-template-columns: 1.6fr 1fr 1fr 1.3fr;
-    color: #FFFFFF;
-}}
+.fgrid{display:grid;gap:2rem}
+@media(min-width:720px){.fgrid{grid-template-columns:1.6fr 1fr 1fr 1.3fr}}
 .ftr h2{color:#FFFFFF;font-size:.8rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:.9rem}
-.ftr h2{
-    color: #FFFFFF;
-    font-size: .8rem;
-    letter-spacing: .13em;
-    text-transform: uppercase;
-    margin-bottom: .9rem
-}
 .ftr ul{list-style:none;padding:0;margin:0}
 .ftr li{margin-bottom:.5rem}
 .ftr a{color:#c3ced6;text-decoration:none}
-.ftr a:hover{color:#FFFFFF;text-decoration:underline}
+.ftr a:hover{color:#FFFFFF}
 .ftr li a:not([href^="tel:"]):not([href^="mailto:"]):hover{font-weight:700;text-decoration:underline}
 .ftr .brand:hover{text-decoration:none}
-.ftr div a.links:hover{font-weight:700}
-.ftr .brand:hover{text-decoration:none}
-.ftr  .brand:hover{text-decoration:none}
 .fbrand p{max-width:34ch}
 .social{display:flex;gap:.6rem;list-style:none;padding:0;margin:1rem 0 0}
 .social a{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.08);color:#dfe8ec}
