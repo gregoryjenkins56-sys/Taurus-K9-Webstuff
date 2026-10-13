@@ -53,13 +53,14 @@ li{margin-bottom:.35em}
 .s-surface .card{text-align:left}
 .s-surface .band{text-align:left}
 .s-dark{background:var(--ink);color:#c3ced6}
-.s-dark h2,.s-dark h3,.s-dark h4{color:#242021}
+.s-dark h2,.s-dark h3,.s-dark h4{color:#FFFFFF}
 .s-dark a{color:#f0c874}
 .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#242021;margin-bottom:.85rem}
 .eyebrow::before{content:"";width:1.4rem;height:2px;background:#242021;display:inline-block}
 .s-dark .eyebrow{
     color: #FFFFFF
 }
+.s-dark .eyebrow::before{background:#FFFFFF}
 .lede{
     font-size: clamp(1rem,.5vw + .9rem,1.14rem);
     color: #242021;
