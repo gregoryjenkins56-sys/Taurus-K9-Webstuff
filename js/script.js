@@ -278,7 +278,7 @@ function leadForm(){
       <div class="score">
         <span class="score__v" id="scoreVal">0</span>
         <div class="score__bar"><div class="score__fill" id="scoreFill"></div></div>
-        <span id="scoreTier" style="font-weight:700;color:#f0c874">&mdash;</span>
+        <span id="scoreTier" style="font-weight:700;color:#242021">&mdash;</span>
       </div>
       <pre id="crmPreview">{}</pre>
     </div>
@@ -1237,7 +1237,7 @@ function wireNews(){
     const v = (input.value || '').trim();
     if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v)){
       st.textContent = 'Please enter a valid email address.';
-      st.style.color = '#f0c874';
+      st.style.color = '#242021';
       input.setAttribute('aria-invalid','true');
       input.focus();
       return;
