@@ -545,6 +545,7 @@ legend{padding:0 .4rem}
 .ftr li{margin-bottom:.5rem}
 .ftr a{color:#c3ced6;text-decoration:none}
 .ftr a:hover{color:#242021;text-decoration:underline}
+.ftr .brand:hover{text-decoration:none}
 .fbrand p{max-width:34ch}
 .social{display:flex;gap:.6rem;list-style:none;padding:0;margin:1rem 0 0}
 .social a{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.08);color:#dfe8ec}
