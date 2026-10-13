@@ -539,7 +539,7 @@ legend{padding:0 .4rem}
 .ftr{background:var(--ink);color:#9fb0ba;font-size:.92rem;padding-block:3rem 1.5rem}
 .fgrid{display:grid;gap:2rem}
 @media(min-width:720px){.fgrid{grid-template-columns:1.6fr 1fr 1fr 1.3fr}}
-.ftr h2{color:#242021;font-size:.8rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:.9rem}
+.ftr h2{color:#FFFFFF;font-size:.8rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:.9rem}
 .ftr ul{list-style:none;padding:0;margin:0}
 .ftr li{margin-bottom:.5rem}
 .ftr a{color:#c3ced6;text-decoration:none}
