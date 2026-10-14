@@ -1,0 +1,72 @@
+/* Base styles. */
+*{box-sizing:border-box}
+*::before{box-sizing:border-box}
+html{-webkit-text-size-adjust:var(--space-value-fae31ece);scroll-behavior:smooth;scroll-padding-top:var(--space-value-6625a535)}
+li{
+    color: var(--page-li-color, var(--li-color, var(--color-value-c659d630)));
+}
+body{margin:var(--space-value-b6589fc6);font-family:var(--type-value-dfaf9429);line-height:var(--type-value-4693695d);color:var(--color-text-body);background:var(--color-page-background);font-size:var(--type-value-84cb1e4e);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1{color:var(--page-h1-color, var(--h1-color, var(--ink)));margin:var(--space-value-991f41c8);line-height:var(--type-value-4845f9be);letter-spacing:var(--type-value-d4c1f27d);font-weight:var(--type-value-c291b0bf)}
+h2{color:var(--page-h2-color, var(--h2-color, var(--ink)));margin:var(--space-value-63562330);line-height:var(--type-value-4e3d0fb8);letter-spacing:var(--type-value-c0b4c89c);font-weight:var(--type-value-f2696551)}
+h3{color:var(--page-h3-color, var(--h3-color, var(--ink)));margin:var(--space-value-0d2cb0c9);line-height:var(--type-value-58f42ac4);letter-spacing:var(--type-value-e14423b4);font-weight:var(--type-value-f73fcfa1)}
+h4{color:var(--page-h4-color, var(--h4-color, var(--ink)));margin:var(--space-value-8f325628);line-height:var(--type-value-52e6ed0b);letter-spacing:var(--type-value-9d1568a1);font-weight:var(--type-value-659c3cbf)}
+h1{font-size:var(--type-value-2207249d);letter-spacing:var(--type-value-1a4fee44)}
+h2{
+    font-size: var(--type-value-8153a96e);
+    color: var(--page-h2-color, var(--h2-color, var(--color-value-c659d630)));
+}
+h3{font-size:var(--type-value-6daed047)}
+h4{font-size:var(--type-value-5950a7ba)}
+p{
+    margin: var(--space-value-31db320e);
+    color: var(--page-p-color, var(--p-color, var(--color-value-c659d630)
+))}
+a{
+    text-underline-offset: var(--space-value-7a328ebc);
+    text-decoration-thickness: var(--space-value-ec9db81c);
+    color: var(--page-a-color, var(--a-color, var(--color-value-c659d630)));
+}
+a:hover{
+    color: var(--page-a-hover-color, var(--a-hover-color, var(--color-value-442c2bc9)));
+}
+ul{
+    margin: var(--space-value-67a5d378);
+    padding-left: var(--space-value-f2749d47);
+    color: var(--page-ul-color, var(--ul-color, var(--color-value-d4e6d716)));
+}
+ol{
+    margin: var(--space-value-8c8f5dda);
+    padding-left: var(--space-value-f2749d47);
+    color: var(--page-ol-color, var(--ol-color, var(--color-value-d4e6d716)));
+}
+li{margin-bottom:var(--space-value-945f6f61)}
+:focus-visible{outline:var(--space-value-8dc85add);outline-offset:var(--space-value-7a328ebc);border-radius:var(--space-value-d176fd99)}
+.wrap{width:var(--space-value-fae31ece);max-width:var(--space-value-9846be38);margin-inline:var(--space-value-0d612c12);padding-inline:var(--space-value-d9e8b67e)}
+.lede{
+    font-size: var(--type-value-b1e47323);
+    color: var(--page-p-color, var(--p-color, var(--color-value-d4e6d716)));
+    max-width: var(--space-value-a66f139d);
+    font-family: var(--type-value-58c59f2e);
+}
+details.q{border:var(--space-value-a08a4ddf);border-radius:var(--space-value-9bd10294);background:var(--surface);overflow:hidden}
+details.q summary{cursor:pointer;list-style:none;padding:var(--space-value-be988b06);font-weight:var(--type-value-ede11a32);color:var(--page-details-color, var(--details-color, var(--ink)));display:flex;gap:var(--space-value-19feeb88);align-items:center;min-height:var(--space-value-332d7daf)}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary::after{content:"";margin-left:var(--space-value-0d612c12);flex:0 0 auto;width:var(--space-value-6b7f7522);height:var(--space-value-ebb09abb);border-right:var(--space-value-8f54ad9c);border-bottom:var(--space-value-8f54ad9c);transform:rotate(45deg);transition:var(--space-value-9c4e77b0)}
+details.q[open] summary::after{transform:rotate(225deg)}
+details.q summary:hover{background:var(--btint)}
+input{font:var(--type-value-3e26d675);color:var(--page-input-color, var(--input-color, var(--ink)));background:var(--surface);border:var(--space-value-3bdb1ac0);border-radius:var(--space-value-235d3774);padding:var(--space-value-9eedb6a6);min-height:var(--space-value-3263fd41);width:var(--space-value-36b78727)}
+select{font:var(--type-value-3e26d675);color:var(--page-select-color, var(--select-color, var(--ink)));background:var(--surface);border:var(--space-value-3bdb1ac0);border-radius:var(--space-value-1da4b315);padding:var(--space-value-d93b9cb0);min-height:var(--space-value-3263fd41);width:var(--space-value-308bbc07)}
+textarea{font:var(--type-value-3e26d675);color:var(--page-textarea-color, var(--textarea-color, var(--ink)));background:var(--surface);border:var(--space-value-3bdb1ac0);border-radius:var(--space-value-863afc26);padding:var(--space-value-76c6d531);min-height:var(--space-value-3263fd41);width:var(--space-value-3ce44345)}
+textarea{min-height:var(--space-value-b3d56fe0);resize:vertical}
+input:focus{border-color:var(--green);box-shadow:var(--space-value-4e322ab5);outline:var(--space-value-71f8e797)}
+select:focus{border-color:var(--green);box-shadow:var(--space-value-0246bc9d);outline:var(--space-value-71f8e797)}
+textarea:focus{border-color:var(--green);box-shadow:var(--space-value-25f492a7);outline:var(--space-value-71f8e797)}
+fieldset{border:var(--space-value-a08a4ddf);border-radius:var(--space-value-7a51e844);padding:var(--space-value-834e4bbe);margin:var(--space-value-0ceeaa92)}
+legend{padding:var(--space-value-192c1a6c)}
+@media(max-width:640px){body{padding-bottom:var(--space-value-5a56436f)}}
+table.data{width:var(--space-value-6ff04128);border-collapse:collapse;font-size:var(--type-value-bdee7ffd)}
+table.data th{text-align:left;padding:var(--space-value-b0e2c0f7);border-bottom:var(--space-value-a08a4ddf);vertical-align:top}
+table.data td{text-align:left;padding:var(--space-value-b0e2c0f7);border-bottom:var(--space-value-a08a4ddf);vertical-align:top}
+table.data th{background:var(--cream);color:var(--page-table-color, var(--table-color, var(--ink)))}
+table.data caption{text-align:left;font-weight:var(--type-value-ca670f36);color:var(--page-table-color, var(--table-color, var(--ink)));padding-bottom:var(--space-value-fd3d4db3)}
+svg{color:var(--page-svg-color,var(--section-svg-color,var(--svg-color,currentColor)))}

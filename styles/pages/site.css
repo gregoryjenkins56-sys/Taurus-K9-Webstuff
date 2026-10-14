@@ -1,0 +1,55 @@
+/* Pages styles. */
+*::after{box-sizing:border-box}
+.wrap h2{color:var(--page-h2-color, var(--wrap-h2-color, var(--h2-color, var(--color-value-d4e6d716))))}
+.section{padding-block:var(--space-value-75d4b67a)}
+.section--surface{background:var(--surface)}
+.section--surface>.wrap{text-align:center}
+.section--surface>.wrap>.lede{margin-inline:var(--space-value-0d612c12)}
+.section--surface>.wrap>.button-row{justify-content:center}
+.section--surface .card{text-align:left}
+.section--surface .band{text-align:left}
+.section--dark{background:var(--ink);color:var(--color-value-b7edfb36)}
+.section--dark h2{color:var(--page-h2-color, var(--s-dark-h2-color, var(--h2-color, var(--color-value-c659d630))))}
+.section--dark h3{color:var(--page-h3-color, var(--s-dark-h3-color, var(--h3-color, var(--color-value-c659d630))))}
+.section--dark h4{color:var(--page-h4-color, var(--s-dark-h4-color, var(--h4-color, var(--color-value-c659d630))))}
+.section--dark a{color:var(--page-a-color, var(--s-dark-a-color, var(--a-color, var(--color-value-c659d630))))}
+.eyebrow{display:inline-flex;align-items:center;gap:var(--space-value-fd3d4db3);font-size:var(--type-value-b0a544cd);font-weight:var(--type-value-290a52e4);letter-spacing:var(--type-value-fd04032e);text-transform:uppercase;color:var(--color-value-c659d630);margin-bottom:var(--space-value-56bd79d9)}
+.eyebrow::before{content:"";display:inline-block;width:var(--space-value-581ef1c0);height:var(--space-value-a0179b92);background:var(--color-value-d4e6d716)}
+.eyebrow::after{content:"";display:inline-block;width:var(--space-value-581ef1c0);height:var(--space-value-a0179b92);background:var(--color-value-d4e6d716)}
+.section.section--dark .eyebrow{color:var(--color-value-c659d630)}
+.section.section--dark .eyebrow::before{background:var(--color-value-c659d630)}
+.section.section--dark .eyebrow::after{background:var(--color-value-c659d630)}
+.section.section--cream .eyebrow{color:var(--color-value-d4e6d716)}
+.section.section--surface .eyebrow{color:var(--color-value-d4e6d716)}
+.section.section--cream .eyebrow::before{background:var(--color-value-d4e6d716)}
+.section.section--cream .eyebrow::after{background:var(--color-value-d4e6d716)}
+.section.section--surface .eyebrow::before{background:var(--color-value-d4e6d716)}
+.section.section--surface .eyebrow::after{background:var(--color-value-d4e6d716)}
+.section--dark .lede{
+    color: var(--page-p-color, var(--s-dark-p-color, var(--p-color, var(--color-value-c659d630)
+)))}
+@media(max-width:780px){.utility--hide-small{display:none}}
+@media(min-width:680px){.grid--two{
+    grid-template-columns: repeat(2,1fr);
+    color: var(--color-value-d4e6d716);
+    font-family: var(--type-value-fed8ff10);
+}}
+@media(min-width:980px){.grid--three{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:980px){.grid--four{grid-template-columns:repeat(4,1fr)}}
+.section--cream p{color:var(--page-p-color, var(--s-cream-p-color, var(--p-color, var(--color-value-d4e6d716))))}
+.section--cream article.card{color:var(--page-article-color, var(--s-cream-article-color, var(--article-color, var(--color-value-d4e6d716))))}
+.section--cream strong{color:var(--page-strong-color, var(--s-cream-strong-color, var(--strong-color, var(--color-value-d4e6d716))))}
+.section--cream .card p{color:var(--page-p-color, var(--s-cream-p-color, var(--p-color, var(--color-value-d4e6d716))))}
+.section--dark .card{background:var(--color-value-d4e6d716);border-color:var(--color-value-afbd3dd1)}
+.section--dark .card p{color:var(--page-p-color, var(--s-dark-p-color, var(--p-color, var(--color-value-d4e6d716))))}
+.section--dark .card__icon{background:var(--color-value-fff37af7);color:var(--color-value-d4e6d716)}
+.section--dark .tag{
+    color: var(--color-value-d4e6d716);
+    background-color: var(--color-value-d4e6d716);
+}
+.section--dark .check li{color:var(--page-li-color, var(--s-dark-li-color, var(--li-color, var(--color-value-b7edfb36))))}
+.section--dark .check li::before{border-color:var(--color-value-fa2bdaf2)}
+[aria-invalid="true"]{border-color:var(--danger);background:var(--color-value-41dc16d9)}
+.privacy{
+    color: var(--color-value-c659d630);
+}

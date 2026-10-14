@@ -1,0 +1,19 @@
+/* Footer styles. */
+.footer{background:var(--ink);color:var(--color-value-3f882367);font-size:var(--type-value-931f2013);padding-block:var(--space-value-2efb2fce)}
+.footer__grid{display:grid;gap:var(--space-value-c00ca4cc)}
+@media(min-width:720px){.footer__grid{grid-template-columns:1.6fr 1fr 1fr 1.3fr}}
+.footer h2{color:var(--page-h2-color, var(--ftr-h2-color, var(--h2-color, var(--color-value-c659d630))));font-size:var(--type-value-1fec8b65);letter-spacing:var(--type-value-60a85418);text-transform:uppercase;margin-bottom:var(--space-value-df724a4a)}
+.footer ul{list-style:none;padding:var(--space-value-dab32834);margin:var(--space-value-185d3397)}
+.footer li{margin-bottom:var(--space-value-fd3d4db3)}
+.footer a{color:var(--page-a-color, var(--ftr-a-color, var(--a-color, var(--color-value-b7edfb36))));text-decoration:none}
+.footer a:hover{color:var(--page-a-hover-color, var(--ftr-a-hover-color, var(--a-hover-color, var(--color-value-c659d630))))}
+.footer li a:not([href^="tel:"]):not([href^="mailto:"]):hover{font-weight:var(--type-value-005b7051);text-decoration:underline}
+.footer .brand:hover{text-decoration:none}
+.footer__brand p{max-width:var(--space-value-d90ad277)}
+.footer p{color:var(--page-p-color,var(--footer-p-color,var(--p-color)))}
+.social{display:flex;gap:var(--space-value-f3220ff5);list-style:none;padding:var(--space-value-b6589fc6);margin:var(--space-value-1f995445)}
+.social a{display:grid;place-items:center;width:var(--space-value-326bba6e);height:var(--space-value-f32be6c0);border-radius:var(--space-value-4a85d235);background:var(--color-value-0f1c00d7);color:var(--page-a-color, var(--social-a-color, var(--a-color, var(--color-value-a23a9229))))}
+.social a:hover{background:var(--color-value-fc66a213);color:var(--page-a-hover-color, var(--social-a-hover-color, var(--a-hover-color, var(--color-value-fc428cab))))}
+.footer__bottom{border-top:var(--space-value-9896dd02);margin-top:var(--space-value-f00c9397);padding-top:var(--space-value-3951047c);display:flex;flex-wrap:wrap;gap:var(--space-value-1f0dae1d);justify-content:space-between;font-size:var(--type-value-68df68d0)}
+.footer__bottom ul{display:flex;flex-wrap:wrap;gap:var(--space-value-19feeb88)}
+.footer__bottom button{background:none;border:var(--space-value-b6589fc6);color:var(--page-button-color, var(--fbot-button-color, var(--button-color, var(--color-value-b7edfb36))));font:var(--type-value-3e26d675);cursor:pointer;padding:var(--space-value-57b8abd6);text-decoration:underline}

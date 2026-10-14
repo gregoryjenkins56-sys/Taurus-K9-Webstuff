@@ -1,0 +1,7 @@
+/* Utility styles. */
+.utility-bar{background:var(--color-value-daedaf7b);color:var(--color-value-d4e6d716);font-size:var(--type-value-68df68d0)}
+.utility-bar a{color:var(--page-a-color, var(--util-a-color, var(--a-color, var(--color-value-d4e6d716))));text-decoration:none;font-weight:var(--type-value-873631db)}
+.utility-bar a:hover{color:var(--page-a-hover-color, var(--util-a-hover-color, var(--a-hover-color, var(--color-value-d4e6d716))));text-decoration:underline}
+.utility-bar__inner{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-value-1b9bc553);padding-block:var(--space-value-fd3d4db3);min-height:var(--space-value-0d893111)}
+.utility-bar__inner>*{display:flex;align-items:center;gap:var(--space-value-832075f3)}
+.utility-bar__spacer{margin-left:var(--space-value-0d612c12)}

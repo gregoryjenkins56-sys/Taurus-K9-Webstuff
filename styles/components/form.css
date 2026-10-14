@@ -1,0 +1,4 @@
+/* Forms styles. */
+.news{display:flex;gap:var(--space-value-fd3d4db3);flex-wrap:wrap;margin-top:var(--space-value-f3220ff5)}
+.news input{flex:1 1 var(--space-value-3391dba9);min-height:var(--space-value-3263fd41);background:var(--color-value-bdbe0bae);border-color:var(--color-value-bab0b826);color:var(--page-input-color, var(--news-input-color, var(--input-color, var(--color-value-d4e6d716))))}
+.news input::placeholder{color:var(--page-input-color, var(--news-input-color, var(--input-color, var(--color-value-c70f7488))))}

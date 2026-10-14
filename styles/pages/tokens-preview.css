@@ -1,0 +1,23 @@
+/* Standalone token and component gallery; isolated from production route styles. */
+.token-preview{padding:var(--space-value-c00ca4cc);background:var(--color-page-background);color:var(--color-text-body)}
+.token-preview__header,.token-preview__main,.token-preview__footer{width:100%;max-width:var(--maxw);margin-inline:auto}
+.token-preview__header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-value-c00ca4cc);padding-block:var(--space-value-c00ca4cc)}
+.token-preview__intro{max-width:var(--space-value-d90ad277)}
+.token-preview__section{margin-block:var(--space-value-c00ca4cc)}
+.token-preview__element-grid,.token-preview__component-grid,.token-preview__token-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--preview-min-column)),1fr));gap:var(--space-value-c00ca4cc)}
+.token-preview__panel,.token-preview__component,.token-preview__token{min-width:0;padding:var(--space-value-c00ca4cc);border:var(--space-value-a08a4ddf);border-radius:var(--space-value-9bc5fefa);background:var(--color-surface)}
+.token-preview__panel>*+*,.token-preview__component>*+*,.token-preview__token>*+*{margin-top:var(--space-value-19feeb88)}
+.token-preview__panel figure{margin:var(--space-value-b6589fc6)}
+.token-preview__panel img,.token-preview__panel video{display:block;max-width:100%;max-height:var(--preview-media-height)}
+.token-preview__panel svg{width:var(--preview-icon-size);height:var(--preview-icon-size)}
+.token-preview__component-sample{min-height:var(--preview-sample-height);display:grid;place-items:center;padding:var(--space-value-19feeb88)}
+.token-preview__component-sample>.back-to-top{position:static;display:grid;inset:auto}
+.token-preview__component-sample>.cookie,.token-preview__component-sample>.errm{position:static;display:block;inset:auto}
+.token-preview__component-sample>.err{position:static;display:flex;inset:auto}
+.token-preview__component-sample>.mobile-bar{position:static;display:flex;inset:auto}
+.token-preview__component-sample>.nav{position:static;display:flex;flex-direction:column;inset:auto}
+.token-preview__component-sample>.prefs{position:static;display:grid;inset:auto}
+.token-preview__component-sample>.hp{position:static;width:auto;height:auto;overflow:visible}
+.token-preview__token-name{overflow-wrap:anywhere}
+.token-preview__token-value,.token-preview__token-uses{overflow-wrap:anywhere}
+.token-preview__footer{padding-block:var(--space-value-c00ca4cc);border-top:var(--space-value-a08a4ddf)}

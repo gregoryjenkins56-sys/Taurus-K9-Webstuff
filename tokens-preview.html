@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Live reference for Taurus K9 design tokens, HTML elements, and reusable components.">
+  <title>Design Token Preview | Taurus K9</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <script type="module" src="scripts/pages/tokens-preview.js"></script>
+</head>
+<body class="token-preview" data-page="tokens-preview">
+  <header class="token-preview__header">
+    <div class="token-preview__intro">
+      <p class="eyebrow">Design system</p>
+      <h1>Tokens and component preview</h1>
+      <p>Inspect the active design tokens, HTML elements, and reusable style classes in both color themes.</p>
+    </div>
+    <button class="button button--outline" type="button" data-js="preview-theme-toggle" aria-pressed="false">Switch to dark theme</button>
+  </header>
+
+  <main class="token-preview__main">
+    <section class="token-preview__section" aria-labelledby="token-preview-elements-title">
+      <h2 id="token-preview-elements-title">Element gallery</h2>
+      <div class="token-preview__element-grid">
+        <article class="token-preview__panel">
+          <h3>Headings and text</h3>
+          <h1>Heading level one</h1>
+          <h2>Heading level two</h2>
+          <h3>Heading level three</h3>
+          <h4>Heading level four</h4>
+          <h5>Heading level five</h5>
+          <h6>Heading level six</h6>
+          <p>A paragraph with <a href="#token-preview-components-title">a link</a>, <b>bold text</b>, <strong>strong text</strong>, <em>emphasized text</em>, and <small>small text</small>.<br>Text after a line break.</p>
+          <blockquote>A block quotation demonstrates inherited text colors and spacing.</blockquote>
+          <pre>preformatted text</pre>
+          <hr>
+          <nav aria-label="Sample navigation">
+            <a href="#token-preview-elements-title">Sample navigation link</a>
+          </nav>
+          <aside>Aside content uses the same element tokens.</aside>
+        </article>
+
+        <article class="token-preview__panel">
+          <h3>Lists and disclosure</h3>
+          <ul>
+            <li>Unordered list item</li>
+            <li>Another list item</li>
+          </ul>
+          <ol>
+            <li>Ordered list item</li>
+            <li>Another ordered item</li>
+          </ol>
+          <details class="q">
+            <summary>Disclosure summary</summary>
+            <p>Disclosure content uses the same element and section tokens.</p>
+          </details>
+          <figure>
+            <img data-js="preview-logo" alt="Taurus K9 logo preview">
+            <figcaption>Image and caption element styles.</figcaption>
+          </figure>
+          <video controls preload="none" aria-label="Video element preview">
+            <source data-js="preview-video-source" type="video/mp4">
+          </video>
+        </article>
+
+        <article class="token-preview__panel">
+          <h3>Form elements</h3>
+          <form>
+            <fieldset>
+              <legend>Contact details</legend>
+              <label for="preview-name">Name</label>
+              <input id="preview-name" type="text" placeholder="Your name">
+              <label for="preview-service">Service</label>
+              <select id="preview-service">
+                <optgroup label="Training">
+                  <option>Private lessons</option>
+                  <option>Board and train</option>
+                </optgroup>
+              </select>
+              <label for="preview-message">Message</label>
+              <textarea id="preview-message" rows="3"></textarea>
+              <button class="button button--primary" type="button">Submit example</button>
+            </fieldset>
+          </form>
+        </article>
+
+        <article class="token-preview__panel">
+          <h3>Media and table</h3>
+          <svg viewBox="0 0 32 32" role="img" aria-label="Current-color icon preview">
+            <circle cx="16" cy="16" r="12" fill="none" stroke="currentColor"></circle>
+            <ellipse cx="16" cy="16" rx="5" ry="9" fill="none" stroke="currentColor"></ellipse>
+            <rect x="8" y="8" width="16" height="16" fill="none" stroke="currentColor"></rect>
+            <path d="M9 16h14M16 9v14" fill="none" stroke="currentColor"></path>
+          </svg>
+          <table class="data">
+            <caption>Sample table caption</caption>
+            <thead>
+              <tr><th scope="col">Element</th><th scope="col">Example</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Table cell</th><td>Table data</td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section class="token-preview__section" aria-labelledby="token-preview-components-title">
+      <h2 id="token-preview-components-title">Reusable component styles</h2>
+      <p>Each reusable block selector found in component, section, and page styles is shown below.</p>
+      <div class="token-preview__component-grid" data-js="preview-component-list"></div>
+    </section>
+
+    <section class="token-preview__section" aria-labelledby="token-preview-tokens-title">
+      <h2 id="token-preview-tokens-title">Token inventory</h2>
+      <p>Values are read from the loaded token stylesheets; theme-specific overrides are shown when present.</p>
+      <div data-js="preview-token-list" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer class="token-preview__footer">
+    <a href="index.html">Return to Taurus K9</a>
+  </footer>
+  <noscript><p>Enable JavaScript to inspect the live token and reusable component inventories.</p></noscript>
+</body>
+</html>
