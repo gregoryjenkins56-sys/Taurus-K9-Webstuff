@@ -130,9 +130,9 @@ li{margin-bottom:.35em}
 .brand__t{
     display: flex;
     flex-direction: column;
-    justify-content: center
-    line-height: 1.15;
-    min-width: 0
+    justify-content: center;
+    line-height: 1.2;
+    min-width: 0;
 }
 .brand__t b{
     display: block;
@@ -258,7 +258,7 @@ li{margin-bottom:.35em}
     font-family: Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
 }
 .card__ic{width:46px;height:46px;border-radius:12px;background:var(--gtint);color:#242021;display:grid;place-items:center;margin-bottom:.95rem;flex:0 0 auto}
-.card-acc .card__ic{background:#242021);color:#242021}
+.card-acc .card__ic{background:#242021;color:#242021}
 .card__f{margin-top:auto;padding-top:1rem}
 .s-cream p,.s-cream article.card,.s-cream strong,.s-cream .card p{color:#242021}
 .s-dark .card{background:#242021;border-color:#2c3a44}
@@ -279,7 +279,9 @@ li{margin-bottom:.35em}
 }
 .tag-b{
     color: #242021;
-    background: transparent
+  background: transparent;
+}
+/*
 
 <!DOCTYPE html>
 <html lang="en">
@@ -480,7 +482,7 @@ li{margin-bottom:.35em}
 
 <script src="js/script.js" defer></script>
 </body>
-</html>}
+*/
 .s-dark .tag{
     color: #242021;
     background-color: #242021;
@@ -723,4 +725,3 @@ table.data caption{text-align:left;font-weight:800;color:var(--ink);padding-bott
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}html{scroll-behavior:auto}}
 @media print{.hdr,.mbar,.cookie,.totop,.util{display:none!important}}
 .privacy {color: #FFFFFF;}
-
