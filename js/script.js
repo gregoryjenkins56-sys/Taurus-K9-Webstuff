@@ -47,7 +47,12 @@ function crumbs(items){
 
 function hero(o){
   const mini = (o.mini || []).map(m => `<li>${I.check} ${m}</li>`).join('');
-  return `<section class="hero">${o.crumbs ? crumbs(o.crumbs) : ''}
+  return `<section class="hero hero--video">
+    <video class="hero__video" autoplay muted loop playsinline>
+       <source src="https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Facebook%20Test%20Video.mp4" type="video/mp4">
+    </video>
+    <div class="hero__overlay"></div>
+    ${o.crumbs ? crumbs(o.crumbs) : ''}
   <div class="wrap hero__in">
     <div>
       ${o.tag ? `<span class="tagpill">${o.tag}</span>` : ''}
@@ -61,7 +66,9 @@ function hero(o){
 }
 
 function phero(o){
-  return `<section class="phero">${crumbs(o.crumbs)}<div class="wrap phero__in">
+    return `<section class="phero${o.video ? ' phero--video' : ''}">
+    ${o.video ? `<video class="phero__video" autoplay muted loop playsinline aria-hidden="true"><source src="${o.video}" type="video/mp4"></video>` : ''}
+    ${crumbs(o.crumbs)}<div class="wrap phero__in">
     ${o.tag ? `<span class="tagpill">${o.tag}</span>` : ''}
     <h1>${o.title}</h1>
     <p class="lede">${o.lede}</p>
@@ -70,7 +77,7 @@ function phero(o){
 }
 
 function sec(o){
-  return `<section class="section ${o.bg === 'dark' ? 's-dark' : (o.bg === 'cream' ? 's-cream' : 's-surface')}">
+  return `<section class="section ${o.bg === 'dark' ? 's-dark' : (o.bg === 'cream' ? 's-cream' : 's-surface')}${o.centerIntro ? ' center-intro' : ''}${o.centerLede ? ' center-lede' : ''}">
     <div class="wrap">
       ${o.eyebrow ? `<span class="eyebrow">${o.eyebrow}</span>` : ''}
       ${o.h2 ? `<h2>${o.h2}</h2>` : ''}
@@ -81,14 +88,16 @@ function sec(o){
 
 function card(o){
   return `<article class="card${o.acc ? ' card-acc' : ''}"${o.id ? ` id="${o.id}"` : ''}>
-    ${o.icon ? `<span class="card__ic" aria-hidden="true">${o.icon}</span>` : ''}
-    ${o.tag ? `<span class="tag${o.acc ? ' tag-b' : ''}">${o.tag}</span>` : ''}
+    ${o.icon || o.tag || o.step ? `<div class="card__head">
+      ${o.icon ? `<span class="card__ic" aria-hidden="true">${o.icon}</span>` : ''}
+      ${o.step ? `<span class="card__ic card__step" aria-hidden="true">${o.step}</span>` : ''}
+      ${o.tag ? `<span class="tag${o.acc ? ' tag-b' : ''}">${o.tag}</span>` : ''}
+    </div>` : ''}
     <h3>${o.h3}</h3>
     ${o.body || ''}
     ${o.foot ? `<div class="card__f">${o.foot}</div>` : ''}
   </article>`;
 }
-
 const chk = items => `<ul class="check">${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
 const grid = (items, cls) => `<div class="grid ${cls}">${items.join('')}</div>`;
 
@@ -273,7 +282,7 @@ function leadForm(){
       <div class="score">
         <span class="score__v" id="scoreVal">0</span>
         <div class="score__bar"><div class="score__fill" id="scoreFill"></div></div>
-        <span id="scoreTier" style="font-weight:700;color:#f0c874">&mdash;</span>
+        <span id="scoreTier" style="font-weight:700;color:#242021">&mdash;</span>
       </div>
       <pre id="crmPreview">{}</pre>
     </div>
@@ -501,18 +510,18 @@ PAGES['/'] = {
         <div><b>21 Years</b><span>U.S. Army veteran on staff</span></div>
       </div>`})
     + sec({
-        eyebrow:'Two divisions, one standard',
+        eyebrow:'Two Trainers, one standard', centerIntro:true,
         h2:'Pet dogs and working dogs. Same trainers, same rigor.',
-        lede:'Whether your dog needs to stop jumping on guests or needs to certify as a detection team, the process starts the same way: assess the individual dog, build a plan, set that dog up to succeed.',
+        lede:'Whether your dog needs to stop jumping on guests or needs to certify as a K9 team, the process starts the same way: assess the individual dog, build a plan, set that dog up to succeed.',
         body: grid([
           card({
-            icon:I.home, tag:'Pet owners', h3:'Pet Dog Training',
+            icon:'<img class="card__photo" src="images/pet-dog-at-home.jpg" alt="">', tag:'Pet owners', h3:'Pet Dog Training',
             body:`<p>For families who want a dog that is genuinely easy to live with, not one that behaves only in a training building.</p>
               ${chk(['Board &amp; Train (4&ndash;12 weeks)','Private one-on-one lessons','Puppy Foundations from 8 weeks','Behavior modification for reactivity, anxiety and aggression'])}`,
             foot:`<a class="btn btn-g btn-sm" href="#/pet-training">Explore Pet Training</a>`
           }),
           card({
-            icon:I.shield, acc:true, tag:'Handlers and agencies', h3:'Specialty &amp; Working Dog Training',
+            icon:'<img src="images/bia-police-badge.jpg" alt="">', acc:true, tag:'Handlers and agencies', h3:'Specialty &amp; Working Dog Training',
             body:`<p>For handlers, departments and owner-operators who need documented, repeatable performance under real pressure.</p>
               ${chk(['Sport protection and tracking','Contraband and narcotics detection','Police K9 and patrol support','Certified police decoy scenario work'])}`,
             foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Working Dogs</a>`
@@ -520,17 +529,17 @@ PAGES['/'] = {
         ],'g2')
       })
     + sec({
-        bg:'dark', eyebrow:'How it works', h2:'Four steps from first call to a trained dog',
+        bg:'dark', eyebrow:'How it works', h2:'Four steps from first call to a trained dog', centerIntro:true,
         lede:'No guesswork and no surprise invoices. You always know which stage you are in and what comes next.',
-        body: steps([
-          {h3:'Free meet and greet', p:'In person, no cost, no commitment. We assess temperament, environment and goals, then tell you what is realistic.'},
-          {h3:'A written plan and quote', p:'You get the recommended program, the length, any training tools, and the cost in writing before anything starts.'},
-          {h3:'Training with daily updates', p:'Board and Train runs multiple structured sessions daily across varied settings. Lessons run in your home and neighborhoods.'},
-          {h3:'Handoff and follow-through', p:'We hand you the handling skills, not just a trained dog, plus a maintenance plan and trainer support.'}
-        ])
+        body: grid([
+          card({step:'01', h3:'Free meet and greet', body:'<p>In person, no cost, no commitment. We assess temperament, environment and goals, then tell you what is realistic.</p>'}),
+          card({step:'02', h3:'A written plan and quote', body:'<p>You get the recommended program, the length, any training tools, and the cost in writing before anything starts.</p>'}),
+          card({step:'03', h3:'Training with daily updates', body:'<p>Board and Train runs multiple structured sessions daily across varied settings. Lessons run in your home and neighborhoods.</p>'}),
+          card({step:'04', h3:'Handoff and follow-through', body:'<p>We hand you the handling skills, not just a trained dog, plus a maintenance plan and trainer support.</p>'})
+        ],'g4')
       })
     + sec({
-        eyebrow:'Why clients choose us', h2:'What certified actually means here',
+        eyebrow:'Why clients choose us', h2:'What certified actually means here', centerIntro:true,
         lede:'Anyone can call themselves a dog trainer. These are the credentials you can verify before you hand over your dog.',
         body: grid([
           card({icon:I.chart, h3:'Temperament-first assessment', body:'<p>Our approach centers on understanding the individual temperament of each dog and building a strategy rooted in scientific principles, not a template applied to every dog.</p>'}),
@@ -540,10 +549,20 @@ PAGES['/'] = {
         ],'g4')
       })
     + sec({
-        bg:'cream', eyebrow:'Client outcomes', h2:'Real clients, real transformations',
-        body:`<p class="disc" style="margin-bottom:1.5rem"><strong>Template content:</strong> the review cards below are placeholders. Replace them with verified Google and Facebook reviews before launch, and keep the on-page text identical to the review text so Review markup stays compliant with Google policies.</p>
-          ${grid(REVIEWS.slice(0,3).map(revBlock),'g3')}
-          <p style="margin-top:1.5rem"><a class="btn btn-o btn-sm" href="#/reviews">Read more reviews</a></p>`
+        bg:'cream', eyebrow:'Credentials & standards', h2:'Trained by certified professionals', centerIntro:true,
+        lede:'Every program is built and delivered by trainers with recognized law enforcement and working-dog credentials.',
+        body:`${grid([
+            `<article class="card"><h3>Police K9 Master Trainer</h3>
+              <p><strong>Tarheel Canine Inc.</strong></p>
+              <p>Advanced training in patrol, detection and handler development for working dog teams.</p></article>`,
+            `<article class="card"><h3>NEPOPO Silver School</h3>
+              <p><strong>Graduate</strong></p>
+              <p>Completed a nationally recognized police K9 school with a standards-based curriculum.</p></article>`,
+            `<article class="card"><h3>Police Decoy Level 1</h3>
+              <p><strong>Demanet Academy</strong></p>
+              <p>Certified decoy work that gives dogs safe, realistic scenario training.</p></article>`
+          ],'g3')}
+          <p style="margin-top:1.5rem"><a class="btn btn-o btn-sm" href="#/about">Meet the trainers</a></p>`
       })
     + sec({body: band({})});
   }
@@ -624,11 +643,12 @@ PAGES['/board-train'] = {
       tag:'Board &amp; Train',
       title:'While you are at work, your dog is in training.',
       lede:'An immersive residential program where your dog lives with our certified trainers and works multiple structured sessions every day, in real-home and real-world settings, with updates you actually receive.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Untitled%20-%20October%2005%2c%202026%20at%2018.40.38-3.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Board & Train'}],
       actions: CTAB + CTAC
     })
     + sec({
-        bg:'cream', h2:'Three ways to board and train',
+        bg:'cream', h2:'Three ways to board and train', centerIntro:true,
         lede:'Every program includes daily updates, multiple daily sessions across varied settings, and a handoff so the behavior transfers home. Pick the depth that matches your dog.',
         body:`<div class="tiers">${tiers}</div>
           <p class="fnote" style="margin-top:1.25rem">Program lengths are the range we quote; final length depends on your dog starting point and your goals. Training tools refers to optional education and conditioning, never required.</p>`
@@ -643,7 +663,7 @@ PAGES['/board-train'] = {
         ],'g2')
       })
     + sec({
-        bg:'dark', eyebrow:'What to expect', h2:'Your dog stay, start to finish',
+        bg:'dark', eyebrow:'What to expect', h2:'Your dog stay, start to finish', centerIntro:true,
         body: steps([
           {h3:'Meet and greet with assessment', p:'Free and in person. We evaluate temperament, existing skills and the specific behaviors you want changed.'},
           {h3:'Plan, scope and quote', p:'You receive the program, the length, whether any training tools are recommended, and the cost, in writing.'},
@@ -651,7 +671,7 @@ PAGES['/board-train'] = {
           {h3:'Handoff and transfer sessions', p:'We teach you the handling and the commands, then follow up so the behavior holds at your house.'}
         ])
       })
-    + sec({h2:'Board and Train questions', body: faqBlock(faqPick([2,3,4,9,10]))})
+    + sec({h2:'Board and Train questions', centerIntro:true, body: faqBlock(faqPick([2,3,4,9,10]))})
     + sec({bg:'cream', body: band({h2:'Spots are limited. We only board a small number of dogs at a time.', cta:'Reserve My Dog Spot'})});
   }
 };
@@ -664,11 +684,12 @@ PAGES['/private-lessons'] = {
       tag:'Private Lessons',
       title:'One-on-one training, built around your dog and your goals.',
       lede:'Some dogs need the training, some owners need the handling skills, and most need both. Private lessons put a certified trainer alongside you in your own environment, coaching the timing and communication that actually changes behavior.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/IMG_0027.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Private Lessons'}],
       actions: CTAB + CTAC
     })
     + sec({
-        h2:'What private lessons cover',
+        h2:'What private lessons cover', centerIntro:true,
         lede:'Lessons are customized, not scripted. These are the most common goals clients bring us.',
         body: grid([
           card({icon:I.paw, h3:'Foundational obedience', body: chk(['Sit, down, stay, place','Loose-leash walking','Coming when called','Door and threshold manners'])}),
@@ -678,14 +699,14 @@ PAGES['/private-lessons'] = {
         ],'g2')
       })
     + sec({
-        bg:'cream', eyebrow:'Format', h2:'Where and how lessons run',
+        bg:'cream', eyebrow:'Format', h2:'Where and how lessons run', centerIntro:true,
         body: grid([
           card({h3:'In your home', body:'<p>Sessions where the behavior actually happens. Especially valuable for door manners, crate work and household structure.</p>'}),
           card({h3:'In your neighborhood', body:'<p>We train on your streets, parks and parking lots so the dog generalizes instead of performing only at home.</p>'}),
           card({h3:'Single sessions or packages', body:'<p>Start with one session to see if we are the right fit, or commit to a package for a defined goal and timeline.</p>'})
         ],'g3')
       })
-    + sec({h2:'Private lesson questions', body: faqBlock(faqPick([1,2,8,9]))})
+    + sec({h2:'Private lesson questions', centerIntro:true, body: faqBlock(faqPick([1,2,8,9]))})
     + sec({bg:'cream', body: band({h2:'Book a private lesson or start with the free meet and greet.', cta:'Book Free Meet and Greet'})});
   }
 };
@@ -698,6 +719,7 @@ PAGES['/puppy-foundations'] = {
       tag:'Puppy Foundations',
       title:'The behavior you build at 10 weeks lasts a lifetime.',
       lede:'The easiest dog to train is a puppy who has not learned the wrong habits yet. We build socialization, handling tolerance and household routines while your puppy is still in the highest-learning window.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/804886010.785997_7951783193232.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Puppy Foundations'}],
       actions: CTAB + CTAC
     })
@@ -707,7 +729,7 @@ PAGES['/puppy-foundations'] = {
         card({icon:I.check, h3:'Foundation commands', body: chk(['Name recognition and focus','Sit, down, come, place','Leash introduction without pulling','Building the habit of learning'])}),
         card({icon:I.chat, h3:'Owner education', body: chk(['What to do at each developmental stage','Preventing resource guarding','Managing children and puppy interactions','A clear plan for the next 6 months'])})
       ],'g2')})
-    + sec({bg:'cream', h2:'Puppy questions', body: faqBlock(faqPick([8,0,1]))})
+    + sec({bg:'cream', h2:'Puppy questions', centerIntro:true, body: faqBlock(faqPick([8,0,1]))})
     + sec({body: band({h2:'Start your puppy on the right foundation.', cta:'Book Free Meet and Greet'})});
   }
 };
@@ -741,6 +763,7 @@ PAGES['/working-dogs'] = {
       tag:'Specialty &amp; Working Dog Training',
       title:'Working dogs trained for real scenarios, not demonstrations.',
       lede:'Taurus K9 trains sport, detection and police K9 teams, with experienced certified police decoys providing real-world scenario work that prepares the dog for peak performance under pressure.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Combined%20Videos.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs'}],
       actions: CTAB + `<a class="btn btn-o" href="#/detection-agency">Agency programs</a>`
     })
@@ -766,7 +789,7 @@ PAGES['/working-dogs'] = {
             ${chk(['Temperament and nerve evaluation','Drive and hunt assessment','Suitability for discipline','Honest pass or fail reporting'])}`})
       ],'g2')})
     + sec({
-        bg:'dark', eyebrow:'Our credentials', h2:'Certifications behind the working dog division',
+        bg:'dark', eyebrow:'Our credentials', h2:'Certifications behind the working dog division', centerIntro:true,
         lede:'These are the qualifications we can document. Verify them before you hire any working dog trainer.',
         body: grid([
           card({h3:'Tarheel Canine Inc.', body:'<p><strong>Police K9 Master Trainer</strong> certification held by both Greg and Rebecca.</p>'}),
@@ -776,16 +799,16 @@ PAGES['/working-dogs'] = {
         ],'g2')
       })
     + sec({
-        eyebrow:'Training philosophy', h2:'Understanding the dog before writing the plan',
-        body:`<div class="measure">
+        eyebrow:'Training philosophy', h2:'Understanding the dog before writing the plan', centerIntro:true,
+        body:`<div class="measure training-philosophy">
           <p>Our approach centers on comprehending the unique temperament of each dog and devising a training strategy rooted in scientific principles to achieve the ultimate training objective effectively.</p>
           <p>We employ motivational techniques to ensure the dog learns with minimal stress, going well beyond mere command teaching to instill a broader understanding of how to perform in various situations. Our guiding principle is to create an environment where the dog is primed for success.</p>
           <p>For detection work specifically, that means building reinforcement schedules the right way: indirect reward on a variable schedule, so the dog works because the behavior itself has become the win, not because a treat is visible in the handler hand. Behavior reinforced on a variable schedule is the most resistant to extinction, which is exactly what you want in the field.</p>
         </div>
         <h3 style="margin-top:2.5rem" id="decoy">Decoy services</h3>
-        <div class="measure"><p>Scenario work is only as good as the decoy delivering it. Our decoy support is certified, safety-managed, and matched to your dog current level, building the dog up rather than overwhelming it.</p></div>`
+        <div class="measure decoy-summary"><p>Scenario work is only as good as the decoy delivering it. Our decoy support is certified, safety-managed, and matched to your dog current level, building the dog up rather than overwhelming it.</p></div>`
       })
-    + sec({bg:'cream', h2:'Working dog questions', body: faqBlock(faqPick([5,6,4,11]))})
+    + sec({bg:'cream', h2:'Working dog questions', centerIntro:true, body: faqBlock(faqPick([5,6,4,11]))})
     + sec({body: band({h2:'Working dog or agency program? Request a proposal.', cta:'Request a Proposal'})});
   }
 };
@@ -798,6 +821,7 @@ PAGES['/detection-agency'] = {
       tag:'Detection &amp; Agency Programs',
       title:'Programs for departments, units and private handlers.',
       lede:'Whether you are starting a dog, fixing a handling problem, or maintaining a certified team, we deliver training that is documented, repeatable and defensible in the field.',
+      video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Greg%20Decoy.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs',href:'#/working-dogs'},{label:'Detection and Agency'}],
       actions:`<a class="btn btn-p" href="#/contact?service=agency">Request Agency Proposal</a>${CTAC}`
     })
@@ -810,7 +834,7 @@ PAGES['/detection-agency'] = {
         card({icon:I.shield, h3:'Private handler support', body:'<p>Owner-operators in security, recovery and specialized fields: training and maintenance for working teams outside law enforcement.</p>'})
       ],'g2')})
     + sec({
-        bg:'cream', eyebrow:'Scope', h2:'How a contract typically runs',
+        bg:'cream', eyebrow:'Scope', h2:'How a contract typically runs', centerIntro:true,
         body: steps([
           {h3:'Needs assessment', p:'A call or visit to define the discipline, the number of teams, current certification status and the outcomes your unit needs.'},
           {h3:'Written proposal', p:'Scope, duration, travel, deliverables and cost. Clear enough to submit internally for approval.'},
@@ -819,14 +843,14 @@ PAGES['/detection-agency'] = {
         ]) + `<p class="fnote" style="margin-top:1.5rem">We travel for agency contracts and quote in all 50 states. Certificate of insurance available on request.</p>`
       })
     + sec({
-        eyebrow:'Real-world example', h2:'Contraband detection in a sober living community',
-        body:`<div class="measure">
+        eyebrow:'Real-world example', h2:'Contraband detection in a sober living community', centerIntro:true,
+        body:`<div class="measure training-philosophy">
           <p>A recent placement: a contraband (narcotics) detection dog with rock-solid obedience, working periodic sweeps to protect the sanctuary of a residential recovery home. Every sweep adds a layer of accountability, safety and peace of mind for residents.</p>
           <p>What that work looks like: precision narcotics detection on real odors, flawless obedience around real-world distractions, and reward delivered through an indirect reward system on a variable reinforcement schedule. The dog never knows exactly when the reward is coming, because the work itself has become the win.</p>
           <p>If your facility, venue or organization needs detection capability, we build the dog and train the handler.</p>
         </div>`
       })
-    + sec({bg:'cream', h2:'Agency questions', body: faqBlock(faqPick([6,5,11,7]))})
+    + sec({bg:'cream', h2:'Agency questions', centerIntro:true, body: faqBlock(faqPick([6,5,11,7]))})
     + sec({body: band({h2:'Talk to the working dog division.', p:'Tell us your discipline, your team size and your timeline. We will tell you what is realistic and send a written proposal.', cta:'Request a Proposal'})});
   }
 };
@@ -843,8 +867,8 @@ PAGES['/about'] = {
       actions: CTAB + CTAC
     })
     + sec({
-        bg:'cream', eyebrow:'Our story', h2:'Built to serve both ends of the leash',
-        body:`<div class="measure">
+        bg:'cream', eyebrow:'Our story', h2:'Built to serve both ends of the leash', centerIntro:true,
+        body:`<div class="measure training-philosophy">
           <p>Taurus K9 was founded with a mission to provide exceptional dog training services that transform both dogs and their owners. Our team of certified trainers brings years of experience in obedience, behavior modification, and specialized working dog techniques.</p>
           <p>We believe in positive reinforcement methods combined with clear communication to create lasting results. Whether you have a new puppy or an adult dog with behavioral challenges, we have the expertise to help.</p>
           <p style="font-weight:700;color:var(--ink)">Our philosophy is simple: every dog deserves training that enhances their life and strengthens their bond with their family.</p>
@@ -882,7 +906,7 @@ PAGES['/about'] = {
         ],'g2')
       })
     + sec({
-        bg:'dark', eyebrow:'Certifications',
+        bg:'dark', eyebrow:'Certifications', centerIntro:true,
         h2:'We maintain the highest standards in training education and methodology',
         body: grid([
           card({h3:'Tarheel Canine Inc.', body:'<p>Police K9 Master Trainer certification, a recognized credential in the working dog community.</p>'}),
@@ -955,19 +979,20 @@ PAGES['/service-area'] = {
       actions: CTAB + CTAC
     })
     + sec({
-        eyebrow:'Local', h2:'Cities and towns we serve in the Coastal Bend',
+        eyebrow:'Local', h2:'Cities and towns we serve in the Coastal Bend', centerLede:true,
         lede:'If you are within reasonable driving distance of Aransas Pass, contact us and we will confirm availability for your area. Board and Train clients can travel to us.',
         body:`<ul class="areas">${cityList}</ul><h3 style="margin-top:2.25rem">Counties</h3><ul class="areas">${countyList}</ul>`
       })
     + sec({
         bg:'cream', eyebrow:'Nationwide', h2:'Agency, department and working dog programs',
+        centerIntro:true,
         body: grid([
           card({icon:I.shield, h3:'On-site agency delivery', body:'<p>We travel to your department or facility for unit training days, decoy support, handler education and sustainment programs. Proposals are scoped per contract, including travel.</p>'}),
           card({icon:I.nose, h3:'Detection programs anywhere', body:'<p>Detection development, imprinting and certification preparation for departments and private handlers across the United States.</p>'}),
           card({icon:I.chat, h3:'Remote consultations', body:'<p>Not local? We can consult remotely on selection, program design and training problems before committing to travel.</p>'})
         ],'g3')
       })
-    + sec({h2:'Coverage questions', body: faqBlock(faqPick([7,6,0]))})
+    + sec({h2:'Coverage questions', centerIntro:true, body: faqBlock(faqPick([7,6,0]))})
     + sec({bg:'cream', body: band({h2:'Not sure if we cover your area? Ask us.', cta:'Check My Area'})});
   }
 };
@@ -983,7 +1008,7 @@ PAGES['/faq'] = {
       crumbs:[{label:'Home',href:'#/'},{label:'FAQ'}],
       actions: CTAB + CTAC
     })
-    + sec({body: faqBlock(FAQS)})
+    + sec({centerIntro:true, body: faqBlock(FAQS)})
     + sec({bg:'cream', body: band({h2:'Still have a question? Call us.', cta:'Book Free Meet and Greet'})});
   }
 };
@@ -1038,7 +1063,7 @@ PAGES['/contact'] = {
           </aside>
         </div>`
       })
-    + sec({bg:'cream', h2:'Before you book, these may help', body: faqBlock(FAQS.slice(0,4))});
+    + sec({bg:'cream', h2:'Before you book, these may help', centerIntro:true, body: faqBlock(FAQS.slice(0,4))});
   }
 };
 
@@ -1222,7 +1247,7 @@ function wireNews(){
     const v = (input.value || '').trim();
     if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v)){
       st.textContent = 'Please enter a valid email address.';
-      st.style.color = '#f0c874';
+      st.style.color = '#242021';
       input.setAttribute('aria-invalid','true');
       input.focus();
       return;
