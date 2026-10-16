@@ -522,20 +522,20 @@ PAGES['/'] = {
           }),
           card({
             icon:'<img src="images/bia-police-badge.jpg" alt="">', acc:true, tag:'Handlers and agencies', h3:'Specialty &amp; Working Dog Training',
-            body:`<p>For handlers, departments and owner-operators who need documented, repeatable performance under real pressure.</p>
+            body:`<p>This program is designed for handlers, departments, and owner-operators who require reliable working dogs and complete documentation in actual situations.</p>
               ${chk(['Sport protection and tracking','Contraband and narcotics detection','Police K9 and patrol support','Certified police decoy scenario work'])}`,
             foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Working Dogs</a>`
           })
         ],'g2')
       })
     + sec({
-        bg:'dark', eyebrow:'How it works', h2:'Four steps from first call to a trained dog', centerIntro:true,
-        lede:'No guesswork and no surprise invoices. You always know which stage you are in and what comes next.',
+        bg:'dark', eyebrow:'How it works', h2:'We use four simple steps to guide you from your first call to a fully trained dog.', centerIntro:true,
+        lede:'There are no surprises or hidden fees. You’ll always know what stage you’re in and what comes next.',
         body: grid([
-          card({step:'01', h3:'Free meet and greet', body:'<p>In person, no cost, no commitment. We assess temperament, environment and goals, then tell you what is realistic.</p>'}),
-          card({step:'02', h3:'A written plan and quote', body:'<p>You get the recommended program, the length, any training tools, and the cost in writing before anything starts.</p>'}),
-          card({step:'03', h3:'Training with daily updates', body:'<p>Board and Train runs multiple structured sessions daily across varied settings. Lessons run in your home and neighborhoods.</p>'}),
-          card({step:'04', h3:'Handoff and follow-through', body:'<p>We hand you the handling skills, not just a trained dog, plus a maintenance plan and trainer support.</p>'})
+          card({step:'01', h3:'Free meet and greet', body:'<p>In person, at no cost or obligation. We assess your dog’s temperament, environment, and goals, then provide realistic recommendations.</p>'}),
+          card({step:'02', h3:'A written plan and quote', body:'<p>You’ll get a clear program recommendation, timeline, list of training tools, and a written price before you decide. We show you all options up front so you can plan ahead.</p>'}),
+          card({step:'03', h3:'Training with daily updates', body:'<p>Board & Train dogs get several training sessions each day in different places. We also do lessons in your home and around your neighborhood.</p>'}),
+          card({step:'04', h3:'Handoff and follow-through', body:'<p>We teach you the handling skills you need, give you a simple plan to keep up progress, and offer support after training. This includes follow-up sessions, plus phone or email help for up to three months. You can contact as often as you need. We also offer refresher lessons if you want extra help later. We are here to help you and your dog succeed, even after training ends.</p>'})
         ],'g4')
       })
     + sec({
