@@ -550,14 +550,14 @@ PAGES['/'] = {
       })
     + sec({
         bg:'cream', eyebrow:'Credentials & standards', h2:'Trained by certified professionals', centerIntro:true,
-        lede:'Every program is built and delivered by trainers with recognized law enforcement and working-dog credentials.',
+        lede:'Trainers with real experience, professional education, and recognized certifications in obedience, behavior, sport, detection, and K9 work develop and teach every program.',
         body:`${grid([
             `<article class="card"><h3>Police K9 Master Trainer</h3>
               <p><strong>Tarheel Canine Inc.</strong></p>
-              <p>Advanced training in patrol, detection and handler development for working dog teams.</p></article>`,
+              <p>We have advanced training in patrol, detection, and handler development for working dog teams.</p></article>`,
             `<article class="card"><h3>NEPOPO Silver School</h3>
               <p><strong>Graduate</strong></p>
-              <p>Completed a nationally recognized police K9 school with a standards-based curriculum.</p></article>`,
+              <p>We are trained in the NEPOPO® system, which focuses on explicit communication, motivation, and reliable behavior in real life.</p></article>`,
             `<article class="card"><h3>Police Decoy Level 1</h3>
               <p><strong>Demanet Academy</strong></p>
               <p>Certified decoy work that gives dogs safe, realistic scenario training.</p></article>`
