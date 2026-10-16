@@ -533,19 +533,19 @@ PAGES['/'] = {
         lede:'There are no surprises or hidden fees. You’ll always know what stage you’re in and what comes next.',
         body: grid([
           card({step:'01', h3:'Free meet and greet', body:'<p>In person, at no cost or obligation. We assess your dog’s temperament, environment, and goals, then provide realistic recommendations.</p>'}),
-          card({step:'02', h3:'A written plan and quote', body:'<p>You’ll get a clear program recommendation, timeline, list of training tools, and a written price before you decide. We show you all options up front so you can plan ahead.</p>'}),
-          card({step:'03', h3:'Training with daily updates', body:'<p>Board & Train dogs get several training sessions each day in different places. We also do lessons in your home and around your neighborhood.</p>'}),
-          card({step:'04', h3:'Handoff and follow-through', body:'<p>We teach you the handling skills you need, give you a simple plan to keep up progress, and offer support after training. This includes follow-up sessions, plus phone or email help for up to three months. You can contact as often as you need. We also offer refresher lessons if you want extra help later. We are here to help you and your dog succeed, even after training ends.</p>'})
+          card({step:'02', h3:'A written plan and quote', body:'<p>You'll get a clear program recommendation, timeline, training tools, and pricing before deciding. We show all options upfront for planning.</p>'}),
+          card({step:'03', h3:'Training with daily updates', body:'<p>Board & Train dogs get several training sessions daily in different locations. We also provide lessons in your home and neighborhood.</p>'}),
+          card({step:'04', h3:'Handoff and follow-through', body:'<p>We teach you handling skills, provide a maintenance plan, and support you for three months after training ends completely today.</p>'})
         ],'g4')
       })
     + sec({
-        eyebrow:'Why clients choose us', h2:'What certified actually means here', centerIntro:true,
-        lede:'Anyone can call themselves a dog trainer. These are the credentials you can verify before you hand over your dog.',
+        eyebrow:'Why clients choose us', h2:'What certified actually means at Taurus K9.', centerIntro:true,
+        lede:'Check our credentials before you trust us with your dog.',
         body: grid([
-          card({icon:I.chart, h3:'Temperament-first assessment', body:'<p>Our approach centers on understanding the individual temperament of each dog and building a strategy rooted in scientific principles, not a template applied to every dog.</p>'}),
-          card({icon:I.paw, h3:'Low-stress, motivational methods', body:'<p>We use motivational techniques so your dog learns with minimal stress. A dog that is not shut down learns faster and keeps the behavior longer.</p>'}),
-          card({icon:I.bolt, h3:'Real-world proofing', body:'<p>Skills are trained in varied settings: home, parks, parking lots and public spaces, so reliability survives contact with the real world.</p>'}),
-          card({icon:I.chat, h3:'You are trained too', body:'<p>A dog that is only obedient for the trainer is not trained. Handoff includes handler education so the results stay yours.</p>'})
+          card({icon:I.chart, h3:'Temperament-first assessment', body:'<p>We start by looking at your dog’s temperament and build a plan that fits, not a one-size-fits-all program.</p>'}),
+          card({icon:I.paw, h3:'Low-stress, motivational methods', body:'<p>We apply training methods that are based on rewards and involve low stress so that your dog stays interested and is able to learn more quickly.</p>'}),
+          card({icon:I.bolt, h3:'Real-world proofing', body:'<p>We practice skills in real places like homes, parks, parking lots, and public spaces so your dog listens in everyday life.</p>'}),
+          card({icon:I.chat, h3:'You are trained too', body:'<p>We teach you how to handle your dog so your dog listens to you, not just the trainer. Our handoff includes hands-on practice for lasting results.</p>'})
         ],'g4')
       })
     + sec({
