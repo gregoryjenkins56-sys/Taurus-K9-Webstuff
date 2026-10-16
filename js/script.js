@@ -493,7 +493,7 @@ PAGES['/'] = {
 
     return hero({
       tag:'We make "sit" happen.',
-      title:'We help your dog listen at home, on walks, and around distractions.',
+      title:'We help your dog listen at home, on walks, and around distractions yo!!!.',
       lede:'We work with family and working dogs in Texas Coastal Bend areas. We meet your dog, learn your goals, and provide clear recommendations. You receive a customized plan, regular updates, and honest answers.',
       actions:`${CTAB}<a class="btn btn-o" href="#/pet-training">See all programs</a>`,
       mini:['Free in-person meet and greet','Certified Police K9 Master Trainers','Daily progress updates','Agency and department programs'],
