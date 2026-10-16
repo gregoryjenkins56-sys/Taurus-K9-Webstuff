@@ -493,30 +493,30 @@ PAGES['/'] = {
 
     return hero({
       tag:'We make "sit" happen.',
-      title:'We help your dog listen at home, on walks, and around distractions yo!!!.',
+      title:'We help your dog listen at home, on walks, and around distractions.',
       lede:'We work with family and working dogs in Texas Coastal Bend areas. We meet your dog, learn your goals, and provide clear recommendations. You receive a customized plan, regular updates, and honest answers.',
       actions:`${CTAB}<a class="btn btn-o" href="#/pet-training">See all programs</a>`,
       mini:['Free in-person meet and greet','Certified Police K9 Master Trainers','Daily progress updates','Agency and department programs'],
       aside:`<aside class="hcard" aria-labelledby="hcH">
-        <h2 id="hcH">Which path is your dog on?</h2>
+        <h2 id="hcH">What does your dog need next?</h2>
         ${trows}
         <p>Not sure? The free meet and greet settles it in person.</p>
       </aside>`
     })
     + sec({bg:'cream', body:`<div class="strip">
-        <div><b>Police K9 Master Trainer</b><span>Tarheel Canine Inc. certified</span></div>
-        <div><b>NEPOPO Silver School</b><span>Graduate trainers</span></div>
+        <div><b>Police K9 Master Trainer</b><span>Tarheel Canine Inc. Graduates</span></div>
+        <div><b>NEPOPO Silver School</b><span>Graduates</span></div>
         <div><b>Decoy Level 1</b><span>Demanet Academy certified</span></div>
-        <div><b>21 Years</b><span>U.S. Army veteran on staff</span></div>
+        <div><b>21 Years</b><span>U.S. Army veteran</span></div>
       </div>`})
     + sec({
-        eyebrow:'Two Trainers, one standard', centerIntro:true,
+        eyebrow:'Two trainers, one consistent standard', centerIntro:true,
         h2:'Pet dogs and working dogs. Same trainers, same rigor.',
-        lede:'Whether your dog needs to stop jumping on guests or needs to certify as a K9 team, the process starts the same way: assess the individual dog, build a plan, set that dog up to succeed.',
+        lede:'We work together to assess and train your dog. Most dogs meet both trainers, and either one may lead your sessions depending on your dog’s needs. You can expect the same clear plan and consistent methods every time.',
         body: grid([
           card({
             icon:'<img class="card__photo" src="images/pet-dog-at-home.jpg" alt="">', tag:'Pet owners', h3:'Pet Dog Training',
-            body:`<p>For families who want a dog that is genuinely easy to live with, not one that behaves only in a training building.</p>
+            body:`<p>This is a good fit for families who want a dog that listens and behaves at home, not just during training.</p>
               ${chk(['Board &amp; Train (4&ndash;12 weeks)','Private one-on-one lessons','Puppy Foundations from 8 weeks','Behavior modification for reactivity, anxiety and aggression'])}`,
             foot:`<a class="btn btn-g btn-sm" href="#/pet-training">Explore Pet Training</a>`
           }),
