@@ -1008,7 +1008,7 @@ PAGES['/faq'] = {
       crumbs:[{label:'Home',href:'#/'},{label:'FAQ'}],
       actions: CTAB + CTAC
     })
-    + sec({centerIntro:true, body: faqBlock(FAQS)})
+    + sec({ centerIntro: true, body: faqBlock(FAQS) })
     + sec({bg:'cream', body: band({h2:'Still have a question? Call us.', cta:'Book Free Meet and Greet'})});
   }
 };
