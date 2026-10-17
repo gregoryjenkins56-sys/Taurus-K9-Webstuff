@@ -706,8 +706,8 @@ PAGES['/puppy-foundations'] = {
     + sec({h2:'Skills for a strong start', body: grid([
         card({icon:I.paw, h3:'Positive early experiences', body: chk(['Let your puppy meet new people and discover different surfaces and sounds.','Watch for signs that show if your puppy feels comfortable or stressed.','Give your puppy new experiences at a pace they can handle.','Help your puppy feel calm and confident during daily activities.'])}),
         card({icon:I.home, h3:'Comfortable home routines', body: chk(['Make the crate a positive and comfortable place for your puppy.','Set up a simple and consistent potty routine.','Encourage your puppy to chew on suitable toys instead of hands or furniture.','Teach your puppy how to relax and stay calm indoors.'])}),
-        card({icon:I.check, h3:'Everyday foundations', body: chk(['* Help your puppy learn to respond to their name and pay attention to you.','Teach your puppy basic commands like sit, down, come, and place.','Introduce your puppy to the leash in a gentle and comfortable way.','Learning how to learn.'])}),
-        card({icon:I.chat, h3:'Guidance for you', body: chk(['* Learn what changes to expect as your puppy grows.','Build positive habits around food and toys','Support safe interactions with children','Take home a practical plan for the next six months'])})
+        card({icon:I.check, h3:'Everyday foundations', body: chk(['Help your puppy learn to respond to their name and pay attention to you.','Teach your puppy basic commands like sit, down, come, and place.','Introduce your puppy to the leash in a gentle and comfortable way.','Learning how to learn.'])}),
+        card({icon:I.chat, h3:'Guidance for you', body: chk(['Learn what changes to expect as your puppy grows.','Build positive habits around food and toys','Support safe interactions with children','Take home a practical plan for the next six months'])})
       ],'g2')})
     + sec({bg:'cream', h2:'Puppy questions', centerIntro:true, body: faqBlock(faqPick([8,0,1]))})
     + sec({body: band({h2:'Give your puppy a confident start.', cta:'Schedule a Free Meet &amp; Greet'})});
