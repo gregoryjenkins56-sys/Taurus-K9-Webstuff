@@ -683,6 +683,10 @@ legend{padding:0 .4rem}
 .social{display:flex;gap:.6rem;list-style:none;padding:0;margin:1rem 0 0}
 .social a{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.08);color:#dfe8ec}
 .social a:hover{background:#F08B74;color:#241a06}
+.social a[data-loc="facebook"]:hover,.social a[data-loc="facebook"]:focus-visible{background:#0866ff;color:#fff}
+.social a[data-loc="instagram"]:hover,.social a[data-loc="instagram"]:focus-visible{background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);color:#fff}
+.social a[data-loc="tiktok"]:hover,.social a[data-loc="tiktok"]:focus-visible{background:#010101;color:#fff}
+.social a[data-loc="tiktok"]:hover svg,.social a[data-loc="tiktok"]:focus-visible svg{filter:drop-shadow(-2px 0 #25f4ee) drop-shadow(2px 0 #fe2c55)}
 .news{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
 .news input{flex:1 1 190px;min-height:48px;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22);color:#242021}
 .news input::placeholder{color:#8b9aa4}
