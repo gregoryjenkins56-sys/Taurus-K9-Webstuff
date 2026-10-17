@@ -582,7 +582,7 @@ PAGES['/pet-training'] = {
       ],'g2')})
     + sec({
         bg:'cream', eyebrow:'Find your fit', h2:'Which training format works for you?',
-        body:`<table class="data">
+        body:`<div class="table-scroll" role="region" aria-label="Training format comparison" tabindex="0"><table class="data">
           <caption>A quick comparison of training formats</caption>
           <thead><tr><th scope="col">Format</th><th scope="col">Best for</th><th scope="col">Typical length</th><th scope="col">Your involvement</th></tr></thead>
           <tbody>
@@ -591,7 +591,7 @@ PAGES['/pet-training'] = {
             <tr><th scope="row">Puppy Foundations</th><td>Puppies from 8 weeks to 6 months</td><td>4&ndash;8 weeks</td><td>Every session</td></tr>
             <tr><th scope="row">Behavior Modification</th><td>Reactivity, anxiety or aggression</td><td>8&ndash;12+ weeks</td><td>Consistent owner involvement</td></tr>
           </tbody>
-        </table>`
+        </table></div>`
       })
     + sec({body: band({h2:'Not sure where to begin? Let’s talk it through.', cta:'Schedule a Free Meet &amp; Greet'})});
   }
@@ -768,7 +768,7 @@ PAGES['/working-dog-training'] = {
       ],'g2')})
     + sec({
         bg:'cream', eyebrow:'Choose with confidence', h2:'Find the right working dog program',
-        body:`<table class="data">
+        body:`<div class="table-scroll" role="region" aria-label="Working dog program comparison" tabindex="0"><table class="data">
           <caption>Working dog programs at a glance</caption>
           <thead><tr><th scope="col">Program</th><th scope="col">Best for</th><th scope="col">Training focus</th><th scope="col">Handler involvement</th></tr></thead>
           <tbody>
@@ -778,7 +778,7 @@ PAGES['/working-dog-training'] = {
             <tr><th scope="row">Police K9</th><td>Departments and law enforcement units</td><td>Patrol, dual-purpose, sustainment</td><td>Unit and scenario training</td></tr>
             <tr><th scope="row">Evaluation</th><td>Handlers and departments selecting a dog</td><td>Temperament, drive and suitability</td><td>Selection consultation</td></tr>
           </tbody>
-        </table>`
+        </table></div>`
       })
     + sec({bg:'dark', h2:'How working dog programs begin', body:steps([
         {h3:'Define the objective', p:'We discuss your discipline, experience, operational needs and the outcomes you expect.'},
