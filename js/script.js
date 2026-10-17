@@ -1069,12 +1069,12 @@ PAGES['/privacy'] = {
     return phero({title:'Privacy Policy', lede:'How we handle the information you give us.', crumbs:[{label:'Home',href:'#/'},{label:'Privacy Policy'}]})
     + sec({
         body:`<div class="prose">
-          <div class="note"><p><strong>Template notice.</strong> This policy is a complete, usable starting draft written to US standards. Have it reviewed by qualified counsel and confirm it matches your actual tools (CRM, analytics, call tracking) before publishing. Replace bracketed placeholders.</p></div>
+          <div class="note"><p><strong>Draft policy.</strong> Before publishing, ask qualified counsel to review this policy and confirm it reflects the tools you use, including your CRM, analytics and call tracking. Replace all bracketed placeholders.</p></div>
           <p><em>Last updated: [DATE]</em></p>
           <h2>Who we are</h2><p>Taurus K9 operates www.taurusk9.com and provides dog training services from Aransas Pass, Texas. Contact us at <a href="mailto:${SITE.email}">${SITE.email}</a> or <a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a>.</p>
           <h2>Information we collect</h2>
           <ul>
-            <li><strong>Information you give us:</strong> name, email, phone number, city, your dog name, breed, age, the service you are interested in, your message and your communication preferences.</li>
+            <li><strong>Information you give us:</strong> your name, email, phone number and city; your dog’s name, breed and age; the service you’re interested in; your message; and your communication preferences.</li>
             <li><strong>Automatically collected:</strong> IP address, device and browser type, pages viewed, referring URL and campaign parameters such as UTM codes and click identifiers used to understand how visitors find us.</li>
             <li><strong>Communications:</strong> records of calls, emails and text messages so we can follow up accurately.</li>
           </ul>
@@ -1112,7 +1112,7 @@ PAGES['/accessibility'] = {
     return phero({title:'Accessibility Statement', lede:'Our commitment to an accessible website for every visitor.', crumbs:[{label:'Home',href:'#/'},{label:'Accessibility'}]})
     + sec({
         body:`<div class="prose">
-          <div class="note"><p><strong>Template notice.</strong> Replace bracketed items and confirm your actual audit results before publishing. Accessibility statements must be accurate.</p></div>
+          <div class="note"><p><strong>Draft statement.</strong> Replace bracketed items and confirm your audit results before publishing. Keep this statement accurate and up to date.</p></div>
           <p><em>Last updated: [DATE]</em></p>
           <h2>Our commitment</h2><p>Taurus K9 is committed to ensuring digital accessibility for people with disabilities. We continually work to improve the experience for everyone and apply the relevant accessibility standards.</p>
           <h2>Standards we target</h2><p>We aim to conform to the Web Content Accessibility Guidelines (WCAG) 2.2 at Level AA, as well as accessibility requirements applicable under the Americans with Disabilities Act (ADA).</p>
@@ -1127,7 +1127,7 @@ PAGES['/accessibility'] = {
             <li>Alternative text for meaningful images and hidden decorative graphics</li>
             <li>Status messages announced to screen readers</li>
           </ul>
-          <h2>Known limitations</h2><p>We are actively improving: [LIST ANY KNOWN ISSUES, such as third-party embedded scheduling widgets or older PDF documents]. We are working with our vendors to resolve them.</p>
+          <h2>Known limitations</h2><p>We are actively improving: [LIST ANY KNOWN ISSUES, such as third-party embedded scheduling widgets or older PDF documents]. We are working with our vendors to address them.</p>
           <h2>Third-party content</h2><p>Some features, such as scheduling or review widgets, are provided by third parties and may not fully conform. We provide equivalent contact methods below.</p>
           <h2>Feedback and assistance</h2>
           <p>If you encounter an accessibility barrier, or need information in an alternative format, contact us and we will provide the information through an alternative means:</p>
@@ -1149,13 +1149,13 @@ PAGES['/terms'] = {
     return phero({title:'Terms of Service', lede:'The terms that govern our website and training services.', crumbs:[{label:'Home',href:'#/'},{label:'Terms of Service'}]})
     + sec({
         body:`<div class="prose">
-          <div class="note"><p><strong>Template notice.</strong> General informational terms only, not legal advice. Have counsel draft or review your final agreements, and confirm insurance, vaccination and liability language with your carrier.</p></div>
+          <div class="note"><p><strong>Draft terms.</strong> These terms are general information, not legal advice. Have qualified counsel review your final agreements, and confirm insurance, vaccination and liability language with your carrier.</p></div>
           <p><em>Last updated: [DATE]</em></p>
           <h2>Agreement</h2><p>By using www.taurusk9.com or purchasing services from Taurus K9, you agree to these terms. If you do not agree, do not use the site or services.</p>
           <h2>Services</h2><p>We provide dog training services including Board and Train, private lessons, puppy programs, day training, behavior modification, and working dog or agency programs. Program scope and pricing are confirmed in writing before training begins. Program lengths quoted are typical ranges; actual duration depends on the individual dog.</p>
           <h2>Booking and payment</h2><p>[DEPOSIT TERMS] [PAYMENT SCHEDULE] [ACCEPTED PAYMENT METHODS] Reservations may require a deposit. Balances are due as stated in your agreement.</p>
           <h2>Cancellation and rescheduling</h2><p>[CANCELLATION WINDOW] [RESCHEDULING POLICY] [REFUND POLICY, if any]. Please give us as much notice as possible so we can offer the slot to another client.</p>
-          <h2>Health, vaccinations and behavior disclosure</h2><p>You agree to disclose your dog known health conditions, medications, bite history and prior training. You confirm your dog is current on vaccinations and free of communicable illness, or that a veterinarian has cleared training. Failure to disclose a bite history or aggression may result in termination of services.</p>
+          <h2>Health, vaccinations and behavior disclosure</h2><p>You agree to disclose your dog’s known health conditions, medications, bite history and prior training. You confirm your dog is current on vaccinations and free of communicable illness, or that a veterinarian has cleared training. Failure to disclose a bite history or aggression may result in termination of services.</p>
           <h2>Risk and liability</h2><p>Working with animals involves inherent risk. [LIABILITY LANGUAGE TO BE COMPLETED WITH COUNSEL AND INSURER.] Taurus K9 carries business insurance; a certificate of insurance is available on request.</p>
           <h2>Training tools</h2><p>Where training tools are used, they are optional and introduced through proper imprinting, conditioning and handler education. You may decline their use.</p>
           <h2>Intellectual property</h2><p>Site content, written training plans and materials are the property of Taurus K9 and may not be reproduced or redistributed without permission.</p>
