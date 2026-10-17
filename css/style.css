@@ -394,7 +394,6 @@ li{margin-bottom:.35em}
         <button class="nav__b" type="button" aria-expanded="false" aria-controls="ddAbout">About <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M6 9 1.5 3.5h9L6 9Z"/></svg></button>
         <div class="dd" id="ddAbout">
           <a href="#/about">Our Story &amp; Team <small>Who you are handing your dog to</small></a>
-          <a href="#/reviews">Reviews &amp; Transformations <small>Real client outcomes</small></a>
           <a href="#/service-area">Service Area <small>Where we train</small></a>
           <a href="#/faq">FAQ <small>Answers before you book</small></a>
         </div>
