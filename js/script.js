@@ -641,8 +641,8 @@ PAGES['/board-train'] = {
 
     return phero({
       tag:'Board &amp; Train',
-      title:'While you are at work, your dog is in training.',
-      lede:'An immersive residential program where your dog lives with our certified trainers and works multiple structured sessions every day, in real-home and real-world settings, with updates you actually receive.',
+      title:'While you go about your day, your dog learns new skills with us.',
+      lede:'Your dog stays with us and trains several times a day, both at home and out in the community.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Untitled%20-%20October%2005%2c%202026%20at%2018.40.38-3.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Board & Train'}],
       actions: CTAB + CTAC
