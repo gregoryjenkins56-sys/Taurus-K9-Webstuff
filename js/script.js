@@ -964,42 +964,6 @@ PAGES['/about'] = {
   }
 };
 
-PAGES['/reviews'] = {
-  title:'Client Feedback | Taurus K9',
-  desc:'Learn how to share feedback about training with Taurus K9 in Aransas Pass and the Texas Coastal Bend.',
-  render(){
-    return phero({
-      tag:'Client Feedback',
-      title:'Good training is a team effort.',
-      lede:'We’re collecting verified feedback from the people and teams we’ve worked with. Have a question about a program? We’re happy to talk.',
-      crumbs:[{label:'Home',href:'#/'},{label:'Reviews'}],
-      actions: CTAB
-    })
-    + sec({
-        body:`<p class="disc" style="margin-bottom:1.75rem">We only share feedback with permission and keep client reviews in their own words. If you have trained with us, we’d love to hear about your experience.</p>
-          <div class="btnrow" style="margin-top:1.75rem">
-            <a class="btn btn-o" href="https://www.facebook.com/TaurusK9LLC" target="_blank" rel="noopener" data-track="social_click" data-loc="facebook">Reviews on Facebook</a>
-            <a class="btn btn-o" href="#/contact">Talk with a trainer</a>
-          </div>`
-      })
-    + sec({
-        bg:'cream', h2:'What training can focus on',
-        body:`<table class="data">
-          <caption>Examples of goals and typical program ranges</caption>
-          <thead><tr><th scope="col">Program</th><th scope="col">Common training goals</th><th scope="col">Typical timeframe</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Board &amp; Train, Basic</th><td>Home manners, everyday cues and off-leash foundations</td><td>4&ndash;6 weeks</td></tr>
-            <tr><th scope="row">Board &amp; Train, Advanced</th><td>Reliable skills and calm manners in public</td><td>6&ndash;8 weeks</td></tr>
-            <tr><th scope="row">Behavior Modification</th><td>Thoughtful support for reactivity, anxiety or aggression</td><td>8&ndash;12+ weeks</td></tr>
-            <tr><th scope="row">Private Lessons</th><td>Practical obedience and confident handling</td><td>Weekly</td></tr>
-            <tr><th scope="row">Agency and Detection</th><td>Team development and field readiness</td><td>Per contract</td></tr>
-          </tbody>
-        </table>`
-      })
-    + sec({body: band({})});
-  }
-};
-
 PAGES['/service-area'] = {
   title:'Where We Train | Taurus K9, Texas Coastal Bend',
   desc:'Taurus K9 serves Aransas Pass, Corpus Christi and communities throughout the Coastal Bend. We travel nationwide for working dog and agency programs.',
