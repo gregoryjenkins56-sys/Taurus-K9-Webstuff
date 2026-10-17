@@ -648,7 +648,7 @@ legend{padding:0 .4rem}
 .hours{list-style:none;padding:0;margin:.4rem 0 0;font-size:.9rem}
 .hours li{display:flex;justify-content:space-between;gap:1rem;margin:0;padding:.15rem 0;color:var(--muted)}
 .hours b{color:var(--ink)}
-.band{background:linear-gradient(135deg,var(--green),#1a3d30);border-radius:var(--rlg);padding:clamp(1.6rem,4vw,2.5rem);display:grid;gap:1.5rem;align-items:center;box-shadow:var(--sh3);color:#d5e5dd}
+.band{background:linear-gradient(135deg,#1a3d30,var(--green));border-radius:var(--rlg);padding:clamp(1.6rem,4vw,2.5rem);display:grid;gap:1.5rem;align-items:center;box-shadow:var(--sh3);color:#d5e5dd}
 @media(min-width:880px){.band{grid-template-columns:1.5fr 1fr}}
 .band h2{color:#242021;margin-bottom:.4rem}
 .band p{color:#c3ddd1;margin:0}
@@ -683,6 +683,10 @@ legend{padding:0 .4rem}
 .social{display:flex;gap:.6rem;list-style:none;padding:0;margin:1rem 0 0}
 .social a{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.08);color:#dfe8ec}
 .social a:hover{background:#F08B74;color:#241a06}
+.social a[data-loc="facebook"]:hover,.social a[data-loc="facebook"]:focus-visible{background:#0866ff;color:#fff}
+.social a[data-loc="instagram"]:hover,.social a[data-loc="instagram"]:focus-visible{background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);color:#fff}
+.social a[data-loc="tiktok"]:hover,.social a[data-loc="tiktok"]:focus-visible{background:#010101;color:#fff}
+.social a[data-loc="tiktok"]:hover svg,.social a[data-loc="tiktok"]:focus-visible svg{filter:drop-shadow(-2px 0 #25f4ee) drop-shadow(2px 0 #fe2c55)}
 .news{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
 .news input{flex:1 1 190px;min-height:48px;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22);color:#242021}
 .news input::placeholder{color:#8b9aa4}

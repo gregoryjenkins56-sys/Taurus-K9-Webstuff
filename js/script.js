@@ -508,7 +508,7 @@ PAGES['/'] = {
             icon:'<img src="images/bia-police-badge.jpg" alt="">', acc:true, tag:'Handlers and agencies', h3:'Specialty &amp; Working Dog Training',
             body:`<p>For handlers, departments and owner-operators who need capable teams, practical training and clear documentation for real-world work.</p>
               ${chk(['Sport protection and tracking','Contraband and narcotics detection','Police K9 and patrol support','Certified police decoy scenario work'])}`,
-            foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Working Dogs</a>`
+            foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Sport &amp; Personal Protection</a>`
           })
         ],'g2')
       })
@@ -735,17 +735,73 @@ PAGES['/day-training'] = {
   }
 };
 
-PAGES['/working-dogs'] = {
-  title:'Working Dog, Police K9 & Detection Training | Taurus K9',
-  desc:'Practical training for sport, detection, police K9 and protection teams, with certified decoy support. Agency programs and travel available nationwide.',
+PAGES['/working-dog-training'] = {
+  title:'Working Dog Training Programs | Taurus K9, Texas',
+  desc:'Explore sport dog, personal protection, detection and police K9 training programs from Taurus K9. Working dog and agency services available nationwide.',
   render(){
     return phero({
-      tag:'Specialty &amp; Working Dog Training',
-      title:'Prepare working dogs for the work they need to do.',
-      lede:'We train sport, detection and police K9 teams through structured practice built around real demands. Certified police decoys support safe, realistic scenario work.',
+      tag:'Working Dog Training',
+      title:'Purpose-built training for working dogs and their handlers.',
+      lede:'From sport and personal protection to detection and police K9 work, we develop dogs and handlers through clear standards, practical scenarios and plans built around the work ahead.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Working Dog Training'}],
+      actions:`<a class="btn btn-p" href="#/contact?service=agency">Discuss a Working Dog Program</a>${CTAC}`
+    })
+    + sec({h2:'Programs', body: grid([
+        card({icon:I.shield, tag:'Sport', h3:'Sport Training',
+          body:`<p>Progressive development for sport handlers, from obedience under drive to protection phases, tracking and trial preparation.</p><p><strong>Built around your discipline and goals.</strong></p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Sport Training</a>`}),
+        card({icon:I.bolt, tag:'Personal Protection', h3:'Personal Protection Dogs',
+          body:`<p>Individual assessment and structured development for owners seeking a capable family dog with controlled protective skills.</p><p><strong>Suitability and safe handling come first.</strong></p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Personal Protection</a>`}),
+        card({icon:I.nose, tag:'Detection', h3:'Detection Dog Programs',
+          body:`<p>Odor imprinting, search development and handler education for contraband and narcotics detection teams.</p><p><strong>Vehicle, building and area search work.</strong></p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Detection Programs</a>`}),
+        card({icon:I.chat, acc:true, tag:'Law Enforcement', h3:'Police K9 Programs',
+          body:`<p>Patrol and dual-purpose development, handler training, scenario work and sustainment support for departments.</p><p><strong>Team training and nationwide agency support.</strong></p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Police K9 Programs</a>`}),
+        card({icon:I.paw, tag:'Scenario Support', h3:'Certified Police Decoy Services',
+          body:`<p>Realistic, safety-managed scenario work delivered by Demanet Academy Police Decoy Level 1 certified decoys.</p><p><strong>Available for working dog teams and agencies.</strong></p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Decoy Support</a>`}),
+        card({icon:I.check, tag:'Selection', h3:'Working Dog Evaluation',
+          body:`<p>Temperament, drive, nerve and suitability assessment to help handlers and departments choose the right dog.</p><p><strong>Clear findings before you invest.</strong></p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Evaluation Services</a>`})
+      ],'g2')})
+    + sec({
+        bg:'cream', eyebrow:'Choose with confidence', h2:'Find the right working dog program',
+        body:`<table class="data">
+          <caption>Working dog programs at a glance</caption>
+          <thead><tr><th scope="col">Program</th><th scope="col">Best for</th><th scope="col">Training focus</th><th scope="col">Handler involvement</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Sport Training</th><td>Sport handlers and competition teams</td><td>Obedience, protection phases, tracking</td><td>Throughout development</td></tr>
+            <tr><th scope="row">Personal Protection</th><td>Suitable owners and family dogs</td><td>Obedience, controlled protective skills</td><td>Assessment and handling education</td></tr>
+            <tr><th scope="row">Detection</th><td>Private handlers and agency teams</td><td>Odor, search patterns, indication</td><td>Handler education and team practice</td></tr>
+            <tr><th scope="row">Police K9</th><td>Departments and law enforcement units</td><td>Patrol, dual-purpose, sustainment</td><td>Unit and scenario training</td></tr>
+            <tr><th scope="row">Evaluation</th><td>Handlers and departments selecting a dog</td><td>Temperament, drive and suitability</td><td>Selection consultation</td></tr>
+          </tbody>
+        </table>`
+      })
+    + sec({bg:'dark', h2:'How working dog programs begin', body:steps([
+        {h3:'Define the objective', p:'We discuss your discipline, experience, operational needs and the outcomes you expect.'},
+        {h3:'Assess the dog and team', p:'We evaluate suitability, current skills and the training environment before recommending a plan.'},
+        {h3:'Set a written scope', p:'You receive a clear program outline, timeline and proposal before training begins.'},
+        {h3:'Train and sustain', p:'We deliver practical training and handler development, then outline next steps for maintaining performance.'}
+      ])})
+    + sec({bg:'cream', h2:'Working dog questions', centerIntro:true, body:faqBlock(faqPick([5,6,7,11]))})
+    + sec({body:band({h2:'Planning a working dog program?', p:'Tell us your discipline, team and timeline. We will discuss the right next step.', cta:'Discuss a Working Dog Program'})});
+  }
+};
+
+PAGES['/working-dogs'] = {
+  title:'Sport & Personal Protection Dogs in Texas | Taurus K9',
+  desc:'Sport dog and personal protection dog training in Texas. Taurus K9 also provides detection, police K9, patrol support and agency programs nationwide.',
+  render(){
+    return phero({
+      tag:'Sport &amp; Personal Protection Dogs',
+      title:'Sport and protection dogs trained for real life.',
+      lede:'Taurus K9 develops sport dogs and personal protection dogs with a foundation in obedience, clear handling, and controlled real-world scenarios. Detection and police K9 programs are available through our agency services.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Combined%20Videos.mp4',
-      crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs'}],
-      actions: CTAB + `<a class="btn btn-o" href="#/detection-agency">Agency programs</a>`
+      crumbs:[{label:'Home',href:'#/'},{label:'Working Dog Training',href:'#/working-dog-training'},{label:'Sport and Personal Protection Dogs'}],
+      actions: CTAB + `<a class="btn btn-o" href="#/detection-agency">Police K9 programs</a>`
     })
     + sec({id:'sport', h2:'Disciplines we train', body: grid([
         card({icon:I.shield, tag:'Sport', h3:'Sport training',
@@ -794,24 +850,24 @@ PAGES['/working-dogs'] = {
 };
 
 PAGES['/detection-agency'] = {
-  title:'Detection & Agency K9 Programs | Taurus K9',
-  desc:'Detection development, handler education, decoy support and ongoing training for law enforcement agencies and private working dog teams. Nationwide agency travel available.',
+  title:'Police K9 Programs & Detection Dog Training | Taurus K9, Texas',
+  desc:'Police K9 programs, contraband and narcotics detection dog training, handler education and department K9 services. Training days, decoy support and sustainment for police and private teams. Nationwide travel for agency contracts.',
   render(){
     return phero({
-      tag:'Detection &amp; Agency Programs',
-      title:'Practical K9 training for agencies and handlers.',
-      lede:'Whether you are developing a new dog, working through a team challenge or maintaining a certified team, we build a clear training plan with documented, repeatable field practice.',
+      tag:'Police K9 Programs',
+      title:'Programs for departments, units and private handlers.',
+      lede:'Whether you are starting a dog, fixing a handling problem, or maintaining a certified team, we deliver training that is documented, repeatable and defensible in the field.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Greg%20Decoy.mp4',
-      crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs',href:'#/working-dogs'},{label:'Detection and Agency'}],
-      actions:`<a class="btn btn-p" href="#/contact?service=agency">Request Agency Proposal</a>${CTAC}`
+      crumbs:[{label:'Home',href:'#/'},{label:'Working Dog Training',href:'#/working-dog-training'},{label:'Police K9 Programs'}],
+      actions:`<a class="btn btn-p" href="#/contact?service=agency">Request Police K9 Proposal</a>${CTAC}`
     })
-    + sec({h2:'Agency and handler services', body: grid([
-        card({icon:I.nose, h3:'Detection development', body:'<p>Odor imprinting, search patterns and indications, with practice across vehicles, buildings, open areas and luggage.</p>'}),
-        card({icon:I.chat, h3:'Handler training days', body:'<p>Focused unit training shaped around your teams, your handlers and the challenges you need to address.</p>'}),
-        card({icon:I.paw, h3:'Certified decoy support', body:'<p>Realistic scenario work for patrol and protection teams, delivered with sound mechanics and a safe progression.</p>'}),
-        card({icon:I.chart, h3:'Ongoing team development', body:'<p>Regular practice helps certified teams stay prepared between annual certifications. Progress is documented.</p>'}),
-        card({icon:I.check, h3:'Dog evaluation and selection', body:'<p>Independent evaluation helps departments assess candidate dogs before investing in a team.</p>'}),
-        card({icon:I.shield, h3:'Private handler support', body:'<p>Training and ongoing support for working teams in security, recovery and other specialized fields.</p>'})
+    + sec({h2:'Police K9 and handler services', body: grid([
+        card({icon:I.nose, h3:'Detection development', body:'<p>Odor imprinting, search pattern mechanics, indication finalization, and proofing across vehicles, buildings, open area and luggage.</p>'}),
+        card({icon:I.chat, h3:'Handler training days', body:'<p>Unit-level training built around your dogs, your handlers and the problems you are actually facing, not a generic curriculum.</p>'}),
+        card({icon:I.paw, h3:'Certified decoy support', body:'<p>Scenario pressure delivered to standard, with correct mechanics and safe progression for patrol and protection work.</p>'}),
+        card({icon:I.chart, h3:'Sustainment programs', body:'<p>Recurring maintenance to keep certified teams sharp between annual certifications, with documented progress.</p>'}),
+        card({icon:I.check, h3:'Selection and procurement', body:'<p>Independent evaluation of candidate dogs so departments invest in the right dog instead of inheriting a problem.</p>'}),
+        card({icon:I.shield, h3:'Private handler support', body:'<p>Owner-operators in security, recovery and specialized fields: training and maintenance for working teams outside law enforcement.</p>'})
       ],'g2')})
     + sec({
         bg:'cream', eyebrow:'Working together', h2:'A straightforward process for your team', centerIntro:true,
@@ -831,7 +887,7 @@ PAGES['/detection-agency'] = {
         </div>`
       })
     + sec({bg:'cream', h2:'Agency questions', centerIntro:true, body: faqBlock(faqPick([6,5,11,7]))})
-    + sec({body: band({h2:'Talk to the working dog division.', p:'Tell us your discipline, your team size and your timeline. We will tell you what is realistic and send a written proposal.', cta:'Request a Proposal'})});
+    + sec({body: band({h2:'Talk to our Police K9 team.', p:'Tell us your discipline, your team size and your timeline. We will tell you what is realistic and send a written proposal.', cta:'Request a Proposal'})});
   }
 };
 
