@@ -105,9 +105,9 @@ const steps = items => `<ol class="steps">${items.map(s => `<li><h3>${s.h3}</h3>
 
 function band(o){
   o = o || {};
-  const h2 = o.h2 || 'Ready to meet the trainers? No cost, no commitment.';
-  const p = o.p || 'Book a free in-person meet &amp; greet, or call and tell us where your dog is right now. We will tell you honestly what is realistic.';
-  const cta = o.cta || 'Book Free Meet &amp; Greet';
+  const h2 = o.h2 || 'Let’s find the right next step for your dog.';
+  const p = o.p || 'Meet the trainers, talk through your goals and get an honest recommendation. The in-person meet and greet is free, with no obligation.';
+  const cta = o.cta || 'Schedule a Free Meet &amp; Greet';
   return `<div class="band"><div><h2>${h2}</h2><p>${p}</p></div>
     <div class="btnrow">
       <a class="btn btn-p" href="#/contact" data-track="cta_band_book">${cta}</a>
@@ -132,18 +132,18 @@ const REVIEWS = [
 ];
 
 const FAQS = [
-  {q:'What is a free meet &amp; greet, and what happens?',a:'<p>It is an in-person consultation, free of charge and with no commitment. You meet the trainers, we meet your dog, and we go through temperament, history, household environment and what you want to change. You leave with a straight answer on which program fits and how long it should take, not a sales pitch.</p>'},
-  {q:'What training methods do you use?',a:'<p>Our approach starts with understanding the unique temperament of each dog, then builds a plan rooted in behavioral science. We use motivational techniques so the dog learns with minimal stress, pairing positive reinforcement with clear, consistent communication. The goal is never just teaching a command; it is teaching the dog how to perform in a wide range of real situations. Our guiding principle is to create an environment where the dog is set up for success.</p>'},
-  {q:'Do you use e-collars?',a:'<p>We offer training-tool education as an <em>optional</em> part of many programs. If a tool is used, it is introduced properly with imprinting, conditioning and clear education for the handler first, so the tool communicates rather than corrects. We run e-collar education sessions for owners and teams who want to understand how these tools work and how to use them safely. You are never required to use one.</p>'},
-  {q:'How long is Board &amp; Train, and what are the options?',a:'<p>Three tracks. <strong>Basic Obedience</strong> (4&ndash;6 weeks) covers foundation life skills and off-leash groundwork. <strong>Advanced Obedience</strong> (6&ndash;8 weeks) adds public reliability, off-leash work and public manners. <strong>Behavior Modification</strong> (8&ndash;12 weeks) is a custom plan for aggression, anxiety or reactivity. All include daily structured sessions, daily updates and varied real-world settings.</p>'},
-  {q:'Will I get updates while my dog is boarding?',a:'<p>Yes. You get real-time updates and progress reports throughout your dog stay, plus a handoff session when training is complete so the behavior transfers home instead of staying with the trainer.</p>'},
-  {q:'Do you train working dogs as well as pets?',a:'<p>Both. Alongside pet obedience and behavior work we train sport, detection and police K9 teams, and our certified decoys provide real-world scenario work. Our trainers hold Police K9 Master Trainer credentials through Tarheel Canine Inc., are NEPOPO Silver School graduates, and hold Demanet Academy Police Decoy Level 1 certification.</p>'},
-  {q:'Do you work with law enforcement agencies and departments?',a:'<p>Yes, including unit-level training days, decoy support, handler education and sustainment. We travel for agency contracts, so departments outside the Coastal Bend can request a proposal for their team.</p>'},
-  {q:'What areas do you serve?',a:'<p>Our core service area is Aransas Pass, Corpus Christi, Portland, Ingleside, Rockport, Port Aransas, Sinton, Robstown and the surrounding Coastal Bend counties. For working dog and agency programs we travel, and we quote those engagements across the United States.</p>'},
-  {q:'How old should a puppy be to start?',a:'<p>Puppies can begin Puppy Foundations as early as 8 weeks. Early sessions focus on socialization, handling, household routines and the foundation that prevents problems later.</p>'},
-  {q:'How much does training cost?',a:'<p>Pricing depends on the track, the program length and your dog needs, so we quote each dog individually after the meet and greet. The consultation itself is free, and you receive a written quote with the program scope before you commit to anything.</p>'},
-  {q:'What if my dog has a bite history or severe aggression?',a:'<p>We assess these cases, but we handle them honestly. Some dogs need a custom behavior modification plan and a longer timeline; some need a veterinary behaviorist working alongside us. We will tell you which applies rather than take the booking and hope.</p>'},
-  {q:'Are you insured?',a:'<p>Yes, Taurus K9 carries business insurance. A current certificate of insurance is available on request for agency and facility contracts.</p>'}
+  {q:'What happens at a free meet and greet?',a:'<p>You meet the trainers, and we get to know you and your dog. We talk through your dog’s temperament, history, home life and your goals, then recommend a program and realistic timeline. It is in person, free and pressure-free—you will get a clear answer, not a sales pitch.</p>'},
+  {q:'How do you train dogs?',a:'<p>We start by learning who your dog is, then build a plan around their temperament and your goals. Training uses motivation, positive reinforcement and clear, consistent communication to keep learning low-stress. We want skills to work in everyday situations—not just when a command is practiced.</p>'},
+  {q:'Do you use e-collars?',a:'<p>Tool education is optional. If an e-collar is part of your dog’s plan, we introduce it gradually through conditioning and teach you how to use it safely and clearly. We also offer education sessions for owners and teams who want to understand these tools. You never have to use one.</p>'},
+  {q:'How long does Board &amp; Train take?',a:'<p>There are three tracks: <strong>Basic Obedience</strong> (4&ndash;6 weeks) for everyday skills and off-leash foundations; <strong>Advanced Obedience</strong> (6&ndash;8 weeks) for reliability in public and off leash; and <strong>Behavior Modification</strong> (8&ndash;12 weeks) for a tailored approach to aggression, anxiety or reactivity. Each includes structured daily sessions, regular updates and practice in real-world settings.</p>'},
+  {q:'Will you keep me updated while my dog is with you?',a:'<p>Yes. You will receive progress updates throughout your dog’s stay, then work with the trainer at handoff to carry those skills into life at home.</p>'},
+  {q:'Do you train working dogs as well as family dogs?',a:'<p>Yes. We train family dogs, sport and detection dogs, and police K9 teams. Our certified decoys also provide real-world scenario training. Greg and Rebecca hold Police K9 Master Trainer credentials through Tarheel Canine Inc. and are NEPOPO Silver School graduates; Greg holds Demanet Academy Police Decoy Level 1 certification.</p>'},
+  {q:'Do you work with law enforcement agencies?',a:'<p>Yes. We offer unit training days, decoy support, handler education and ongoing team development. We travel for agency contracts, so departments beyond the Coastal Bend can request a proposal.</p>'},
+  {q:'Where do you provide training?',a:'<p>We serve Aransas Pass, Corpus Christi, Portland, Ingleside, Rockport, Port Aransas, Sinton, Robstown and nearby Coastal Bend communities. For working dog and agency programs, we travel and can provide proposals across the United States.</p>'},
+  {q:'When can my puppy start training?',a:'<p>Puppies can start Puppy Foundations at 8 weeks. Early training focuses on socialization, handling, household routines and the everyday skills that help set your puppy up for success.</p>'},
+  {q:'How much does training cost?',a:'<p>Every dog and program is different, so we provide an individual quote after the meet and greet. The consultation is free, and you will have the program scope and price in writing before you decide.</p>'},
+  {q:'Can you help a dog with a bite history or serious aggression?',a:'<p>We assess these cases carefully and give you an honest recommendation. Some dogs need a custom behavior plan and more time; others may benefit from working alongside a veterinary behaviorist. We will explain what we believe is appropriate before recommending a program.</p>'},
+  {q:'Do you carry insurance?',a:'<p>Yes. Taurus K9 carries business insurance. We can provide a current certificate of insurance on request for agency or facility contracts.</p>'}
 ];
 
 const faqPick = idx => idx.map(i => FAQS[i]);
@@ -153,14 +153,14 @@ const faqPick = idx => idx.map(i => FAQS[i]);
 function leadForm(){
   return `<form class="form" id="leadForm" novalidate>
   <div class="errm" id="errm" role="alert" data-show="false" tabindex="-1">
-    <h3>Please fix these items</h3>
+    <h3>Let’s take care of a few details</h3>
     <ul id="errList"></ul>
   </div>
   <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
   <fieldset>
-    <legend class="fl-legend">What do you need help with? <span class="req" aria-hidden="true">*</span></legend>
-    <p class="hint">Choose the closest match. We will confirm the details at your meet and greet.</p>
+    <legend class="fl-legend">What would you like help with? <span class="req" aria-hidden="true">*</span></legend>
+    <p class="hint">Choose the closest fit. We can talk through the details together.</p>
     <div class="field" style="margin-top:.85rem">
       <label for="service">Training service</label>
       <select id="service" name="service" required aria-describedby="serviceErr">
@@ -181,7 +181,7 @@ function leadForm(){
           <option value="decoy">Decoy services</option>
           <option value="evaluation">Dog evaluation &amp; selection</option>
         </optgroup>
-        <option value="unsure">Not sure yet, advise me</option>
+        <option value="unsure">I’m not sure yet—please help me choose</option>
       </select>
       <span class="err" id="serviceErr" data-show="false">Please choose a service.</span>
     </div>
@@ -189,7 +189,7 @@ function leadForm(){
 
   <div class="frow frow2">
     <div class="field">
-      <label for="owner">Your name <span class="req" aria-hidden="true">*</span></label>
+      <label for="owner">Name <span class="req" aria-hidden="true">*</span></label>
       <input id="owner" name="owner" type="text" autocomplete="name" required aria-describedby="ownerErr" />
       <span class="err" id="ownerErr" data-show="false">Please enter your name.</span>
     </div>
@@ -224,23 +224,23 @@ function leadForm(){
       <select id="state" name="state" autocomplete="address-level1"><option>TX</option><option>Other</option></select>
     </div>
     <div class="field">
-      <label for="dogInfo">Breed &amp; age</label>
+      <label for="dogInfo">Dog’s breed and age</label>
       <input id="dogInfo" name="dogInfo" type="text" placeholder="e.g. GSD, 14 months" />
     </div>
   </div>
 
   <fieldset>
-    <legend class="fl-legend">How soon do you want to start?</legend>
+    <legend class="fl-legend">When would you like to begin?</legend>
     <div class="radios radios-row" style="margin-top:.85rem">
-      <label class="radio"><input type="radio" name="timeline" value="asap" /><span>As soon as possible<small>Within 2 weeks</small></span></label>
-      <label class="radio"><input type="radio" name="timeline" value="30-days" /><span>Within 30 days<small>Planning ahead</small></span></label>
-      <label class="radio"><input type="radio" name="timeline" value="researching" /><span>Just researching<small>Gathering information</small></span></label>
+      <label class="radio"><input type="radio" name="timeline" value="asap" /><span>As soon as possible<small>In the next two weeks</small></span></label>
+      <label class="radio"><input type="radio" name="timeline" value="30-days" /><span>Within a month<small>I’m planning ahead</small></span></label>
+      <label class="radio"><input type="radio" name="timeline" value="researching" /><span>I’m exploring options<small>No rush to start</small></span></label>
     </div>
   </fieldset>
 
   <div class="field">
-    <label for="message">What would you like to change or achieve?</label>
-    <textarea id="message" name="message" placeholder="Tell us what your dog does now, what you want instead, and anything we should know (bite history, health conditions, prior training, other dogs in the home)."></textarea>
+    <label for="message">What would you like life with your dog to look like?</label>
+    <textarea id="message" name="message" placeholder="Share what’s going well, what you’d like to change, and anything that could help us understand your dog—such as health needs, training history or other pets at home."></textarea>
   </div>
 
   <div class="field">
@@ -261,25 +261,25 @@ function leadForm(){
   </div>
 
   <fieldset>
-    <legend class="fl-legend">How would you like us to respond? <span class="req" aria-hidden="true">*</span></legend>
-    <p class="hint">Choose at least one. Your choice is logged with a timestamp for your protection.</p>
+    <legend class="fl-legend">How may we contact you? <span class="req" aria-hidden="true">*</span></legend>
+    <p class="hint">Choose at least one way for us to reply about your inquiry.</p>
     <div style="display:grid;gap:.7rem;margin-top:.85rem">
-      <label class="consent"><input type="checkbox" id="consentEmail" name="consentEmail" /><span>Yes, email me about my inquiry and Taurus K9 services.</span></label>
-      <label class="consent"><input type="checkbox" id="consentSms" name="consentSms" /><span>Yes, text me about my inquiry. Message frequency varies; message and data rates may apply. Reply STOP to unsubscribe. Consent is not a condition of purchase.</span></label>
+      <label class="consent"><input type="checkbox" id="consentEmail" name="consentEmail" /><span>Email me about this inquiry and Taurus K9 services.</span></label>
+      <label class="consent"><input type="checkbox" id="consentSms" name="consentSms" /><span>Text me about this inquiry. Message frequency varies; message and data rates may apply. Reply STOP to unsubscribe. Consent is not a condition of purchase.</span></label>
     </div>
-    <span class="err" id="consentErr" data-show="false" style="margin-top:.6rem">Please choose at least one way to contact you.</span>
+    <span class="err" id="consentErr" data-show="false" style="margin-top:.6rem">Select at least one way for us to contact you.</span>
   </fieldset>
 
   <div>
-    <button class="btn btn-p btn-blk" type="submit" data-track="form_submit" style="min-height:54px">Request My Free Meet &amp; Greet</button>
-    <p class="fnote" style="margin-top:.75rem">Online inquiries are not currently connected. Do not enter sensitive information; call <a href="tel:${SITE.phone}" style="color:var(--ink)">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}" style="color:var(--ink)">${SITE.email}</a> instead.</p>
-    <p class="fnote" style="margin-top:.75rem">We respond within one business day. Your information is never sold. See our <a href="#/privacy">Privacy Policy</a>.</p>
+    <button class="btn btn-p btn-blk" type="submit" data-track="form_submit" style="min-height:54px">Check my inquiry</button>
+    <p class="fnote" style="margin-top:.75rem">This online form is not connected yet, so nothing entered here will be sent. To book or ask a question, call <a href="tel:${SITE.phone}" style="color:var(--ink)">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}" style="color:var(--ink)">${SITE.email}</a>.</p>
+    <p class="fnote" style="margin-top:.75rem">Please don’t enter sensitive information. Read our <a href="#/privacy">Privacy Policy</a>.</p>
   </div>
 
   <details style="margin-top:.5rem">
-    <summary style="cursor:pointer;font-weight:700;color:var(--muted);font-size:.88rem">QA: preview the inquiry data (not submitted)</summary>
+    <summary style="cursor:pointer;font-weight:700;color:var(--muted);font-size:.88rem">Preview information (not sent)</summary>
     <div class="crm" style="margin-top:.75rem">
-      <h4>Preview only — no CRM submission is configured</h4>
+      <h4>This preview is for display only—nothing is sent.</h4>
       <div class="score">
         <span class="score__v" id="scoreVal">0</span>
         <div class="score__bar"><div class="score__fill" id="scoreFill"></div></div>
@@ -436,22 +436,22 @@ function wireForm(){
     ['service','owner','email','phone','city'].forEach(id => setErr(id, false));
     document.getElementById('consentErr').setAttribute('data-show','false');
     const errHeading = errm.querySelector('h3');
-    if(errHeading) errHeading.textContent = 'Please fix these items';
+    if(errHeading) errHeading.textContent = 'Let’s take care of a few details';
 
     if(d.company){ location.hash = '#/thank-you'; return; }
 
-    if(!d.service){ setErr('service', true); errs.push(['service','Please choose a service.']); }
-    if(!d.owner){ setErr('owner', true); errs.push(['owner','Please enter your name.']); }
+    if(!d.service){     setErr('service', true); errs.push(['service','Choose the service you’re interested in.']); }
+    if(!d.owner){     setErr('owner', true); errs.push(['owner','Enter your name.']); }
     if(!d.email || !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(d.email)){
-      setErr('email', true); errs.push(['email','Please enter a valid email address.']);
+      setErr('email', true); errs.push(['email','Enter a valid email address.']);
     }
     if(!d.phone || d.phone.replace(/\D/g,'').length < 10){
-      setErr('phone', true); errs.push(['phone','Please enter a 10-digit phone number.']);
+      setErr('phone', true); errs.push(['phone','Enter a 10-digit phone number.']);
     }
-    if(!d.city){ setErr('city', true); errs.push(['city','Please enter your city.']); }
+    if(!d.city){ setErr('city', true); errs.push(['city','Enter your city.']); }
     if(!d.consentEmail && !d.consentSms){
       document.getElementById('consentErr').setAttribute('data-show','true');
-      errs.push(['consentEmail','Please choose at least one way to contact you.']);
+      errs.push(['consentEmail','Choose at least one way for us to contact you.']);
     }
 
     if(errs.length){
@@ -462,8 +462,8 @@ function wireForm(){
       return;
     }
 
-    if(errHeading) errHeading.textContent = 'Online inquiry unavailable';
-    errList.innerHTML = `<li>Your information was not sent. Please call <a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}">${SITE.email}</a>.</li>`;
+    if(errHeading) errHeading.textContent = 'Your inquiry is ready—but this form is not connected yet';
+    errList.innerHTML = `<li>Nothing was sent. Call <a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}">${SITE.email}</a>, and we’ll help you take the next step.</li>`;
     errm.setAttribute('data-show','true');
     errm.focus();
   });
