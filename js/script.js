@@ -272,13 +272,14 @@ function leadForm(){
 
   <div>
     <button class="btn btn-p btn-blk" type="submit" data-track="form_submit" style="min-height:54px">Request My Free Meet &amp; Greet</button>
+    <p class="fnote" style="margin-top:.75rem">Online inquiries are not currently connected. Do not enter sensitive information; call <a href="tel:${SITE.phone}" style="color:var(--ink)">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}" style="color:var(--ink)">${SITE.email}</a> instead.</p>
     <p class="fnote" style="margin-top:.75rem">We respond within one business day. Your information is never sold. See our <a href="#/privacy">Privacy Policy</a>.</p>
   </div>
 
   <details style="margin-top:.5rem">
-    <summary style="cursor:pointer;font-weight:700;color:var(--muted);font-size:.88rem">QA: preview the CRM record this form creates</summary>
+    <summary style="cursor:pointer;font-weight:700;color:var(--muted);font-size:.88rem">QA: preview the inquiry data (not submitted)</summary>
     <div class="crm" style="margin-top:.75rem">
-      <h4>Lead record &amp; routing (HubSpot-standard)</h4>
+      <h4>Preview only — no CRM submission is configured</h4>
       <div class="score">
         <span class="score__v" id="scoreVal">0</span>
         <div class="score__bar"><div class="score__fill" id="scoreFill"></div></div>
@@ -434,6 +435,8 @@ function wireForm(){
     const errs = [];
     ['service','owner','email','phone','city'].forEach(id => setErr(id, false));
     document.getElementById('consentErr').setAttribute('data-show','false');
+    const errHeading = errm.querySelector('h3');
+    if(errHeading) errHeading.textContent = 'Please fix these items';
 
     if(d.company){ location.hash = '#/thank-you'; return; }
 
@@ -459,15 +462,10 @@ function wireForm(){
       return;
     }
 
-    const payload = buildPayload(d);
-    window.__lastLead = payload; /* replace with a real CRM POST */
-    track('generate_lead', {
-      service: d.service,
-      tier: d.tier,
-      score: payload.scoring.score,
-      tier_label: payload.scoring.tier
-    });
-    location.hash = '#/thank-you';
+    if(errHeading) errHeading.textContent = 'Online inquiry unavailable';
+    errList.innerHTML = `<li>Your information was not sent. Please call <a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}">${SITE.email}</a>.</li>`;
+    errm.setAttribute('data-show','true');
+    errm.focus();
   });
 }
 
@@ -533,9 +531,9 @@ PAGES['/'] = {
         lede:'There are no surprises or hidden fees. You’ll always know what stage you’re in and what comes next.',
         body: grid([
           card({step:'01', h3:'Free meet and greet', body:'<p>In person, at no cost or obligation. We assess your dog’s temperament, environment, and goals, then provide realistic recommendations.</p>'}),
-          card({step:'02', h3:'A written plan and quote', body:'<p>You'll get a clear program recommendation, timeline, training tools, and pricing before deciding. We show all options upfront for planning.</p>'}),
+          card({step:'02', h3:'A written plan and quote', body:`<p>You'll get a clear program recommendation, timeline, training tools, and pricing before deciding. We show all options upfront for planning.</p>`}),
           card({step:'03', h3:'Training with daily updates', body:'<p>Board & Train dogs get several training sessions daily in different locations. We also provide lessons in your home and neighborhood.</p>'}),
-          card({step:'04', h3:'Handoff and follow-through', body:'<p>We teach you handling skills, provide a maintenance plan, and support you for three months after training ends completely today.</p>'})
+          card({step:'04', h3:'Handoff and follow-through', body:'<p>We teach you handling skills, provide a maintenance plan, and support you for three months after training ends.</p>'})
         ],'g4')
       })
     + sec({
@@ -1068,25 +1066,18 @@ PAGES['/contact'] = {
 };
 
 PAGES['/thank-you'] = {
-  title:'Thank You | Your Inquiry Was Received | Taurus K9',
-  desc:'Your training inquiry has been received by Taurus K9. Here is what happens next.',
+  title:'Contact Taurus K9 | Online Inquiry Unavailable',
+  desc:'The online inquiry form is not connected. Contact Taurus K9 by phone or email.',
   render(){
     return phero({
-      tag:'Inquiry received',
-      title:'Thank you. Your inquiry is in.',
-      lede:'We have your information and it is already routed to the right trainer. Here is exactly what happens next.',
-      crumbs:[{label:'Home',href:'#/'},{label:'Thank you'}]
+      tag:'Online inquiry unavailable',
+      title:'Your inquiry was not sent.',
+      lede:'The online inquiry form is not connected. Please contact Taurus K9 directly by phone or email.',
+      crumbs:[{label:'Home',href:'#/'},{label:'Contact'}],
+      actions:`<a class="btn btn-p" href="tel:${SITE.phone}">Call ${SITE.phoneDisplay}</a>
+        <a class="btn btn-o" href="mailto:${SITE.email}">Email ${SITE.email}</a>`
     })
-    + sec({
-        body: grid([
-          card({icon:I.check, h3:'1. Confirmation', body:'<p>You will receive an email confirmation immediately. If you opted into text messages, you may also get a short text from our team.</p>'}),
-          card({icon:I.chat, h3:'2. A real reply', body:'<p>A trainer reviews your inquiry and responds within one business day, often same-day during business hours. Expect a question or two about your dog.</p>'}),
-          card({icon:I.paw, h3:'3. Your free meet and greet', body:'<p>We schedule the in-person consultation at your convenience, your dog comes too, and you leave with a written recommendation and quote.</p>'})
-        ],'g3')
-        + `<p style="margin-top:2rem">Need to talk sooner? <a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="thankyou">Call ${SITE.phoneDisplay}</a> (Mon&ndash;Fri, 6:00 AM &ndash; 6:00 PM CT).</p>
-          <p class="fnote">A record of this submission was created in our CRM with a timestamped consent record. <a href="#/privacy">Privacy Policy</a> &middot; <a href="#/contact">Submit another inquiry</a></p>`
-      })
-    + sec({bg:'cream', body: band({h2:'While you wait, explore our programs.', cta:'See All Programs', p:'Board and Train, private lessons, puppy foundations, detection and police K9 training.'})});
+    + sec({h2:'Need to reach us?', body:`<p>Call <a href="tel:${SITE.phone}" style="color:var(--ink)">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}" style="color:var(--ink)">${SITE.email}</a> to arrange your free meet and greet.</p>`});
   }
 };
 
