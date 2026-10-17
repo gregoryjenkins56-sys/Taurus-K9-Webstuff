@@ -604,7 +604,7 @@ PAGES['/board-train'] = {
     const tiers = [
       {h3:'Basic Obedience', meta:'4&ndash;6 weeks &middot; Everyday manners and listening', flag:'',
        items:['Build reliable sit, down, come, place and leave-it skills.','Practice relaxed leash walking and everyday focus.','Help your dog settle at home and greet visitors calmly.','Lay the groundwork for off-leash skills.','Practice around real-life distractions at a manageable pace.','Get regular updates on your dog’s progress.']},
-      {h3:'Advanced Obedience', meta:'6&ndash;8 weeks &middot; Reliability in public', flag:'Most chosen',
+      {h3:'Advanced Obedience', meta:'6&ndash;8 weeks &middot; Reliability in public', flag:'Most popular',
        items:['Strengthen obedience and dependable responses.','Build recall and off-leash reliability where appropriate.','Practice calm manners in parks and public spaces.','Work through distractions with steady focus.','Prepare for the people, sounds and movement of everyday outings.','Get regular updates on your dog’s progress.']},
       {h3:'Behavior Modification', meta:'8&ndash;12 weeks &middot; Individual plan', flag:'',
        items:['Address reactivity, fear, aggression or resource guarding.','Build practical skills to support safer handling.','Practice calm behavior at home and in appropriate public settings.','Work through triggers with a thoughtful, structured plan.','Set routines that support progress beyond the program.','Get regular updates on your dog’s progress.']}
