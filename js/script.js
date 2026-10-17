@@ -488,10 +488,10 @@ PAGES['/'] = {
       </aside>`
     })
     + sec({bg:'cream', body:`<div class="strip">
-        <div><b>Police K9 Master Trainer</b><span>Tarheel Canine Inc. Graduates</span></div>
-        <div><b>NEPOPO Silver School</b><span>Graduates</span></div>
-        <div><b>Decoy Level 1</b><span>Demanet Academy certified</span></div>
-        <div><b>21 Years</b><span>U.S. Army veteran</span></div>
+        <div><b>Police K9 Master Trainer</b><span>Tarheel Canine Inc.</span></div>
+        <div><b>NEPOPO Silver School</b><span>Graduate training</span></div>
+        <div><b>Police Decoy Level 1</b><span>Demanet Academy</span></div>
+        <div><b>21 years of service</b><span>U.S. Army veteran</span></div>
       </div>`})
     + sec({
         eyebrow:'Two trainers, one shared approach', centerIntro:true,
@@ -658,12 +658,12 @@ PAGES['/board-train'] = {
 
 PAGES['/private-lessons'] = {
   title:'Private Dog Training Lessons in Corpus Christi & the Coastal Bend | Taurus K9',
-  desc:'One-on-one private dog training lessons in your home and neighborhoods across Aransas Pass, Corpus Christi and the Coastal Bend. Customized to your goals, with handling skills for the owner.',
+  desc:'One-on-one dog training in your home and neighborhood across Aransas Pass, Corpus Christi and the Coastal Bend. Build practical skills and confidence handling your dog.',
   render(){
     return phero({
       tag:'Private Lessons',
       title:'One-on-one training, built around your dog and your goals.',
-      lede:'Some dogs need the training, some owners need the handling skills, and most need both. Private lessons put a certified trainer alongside you in your own environment, coaching the timing and communication that actually changes behavior.',
+      lede:'Private lessons bring a certified trainer to your home or neighborhood to work with you and your dog. Practice clear communication, build handling confidence and work on the behaviors that matter in your daily life.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/IMG_0027.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Private Lessons'}],
       actions: CTAB + CTAC
@@ -716,7 +716,7 @@ PAGES['/puppy-foundations'] = {
 
 PAGES['/day-training'] = {
   title:'Day Training for Dogs in Corpus Christi & the Coastal Bend | Taurus K9',
-  desc:'Trainer-led day training sessions for dogs in Aransas Pass, Corpus Christi and the Coastal Bend. Structured daytime training with transfer sessions so handling skills become yours.',
+  desc:'Trainer-led day training in Aransas Pass, Corpus Christi and the Coastal Bend, with hands-on transfer sessions to help you use new skills at home.',
   render(){
     return phero({
       tag:'Day Training',
