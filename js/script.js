@@ -117,20 +117,6 @@ function band(o){
 
 const faqBlock = items => `<div class="faq">${items.map(q => `<details class="q"><summary>${q.q}</summary><div class="qbody">${q.a}</div></details>`).join('')}</div>`;
 
-const revBlock = r => `<figure class="review">
-  <div class="stars" role="img" aria-label="${r.stars} out of 5 stars">${'\u2605'.repeat(r.stars)}</div>
-  <blockquote>${r.text}</blockquote>
-  <figcaption><b>${r.name}</b>${r.detail}</figcaption>
-</figure>`;
-
-/* PLACEHOLDER REVIEWS - replace with verified Google and Facebook reviews before launch */
-const REVIEWS = [
-  {stars:5,name:'Client name',detail:'Corpus Christi, TX &middot; Board &amp; Train, Basic Obedience',text:'Placeholder for a verified Google or Facebook review. Paste the real review text here, with the reviewer name and permission.'},
-  {stars:5,name:'Client name',detail:'Aransas Pass, TX &middot; Private Lessons',text:'Placeholder for a verified review. Keep it specific to the program named in the caption so future clients can match their situation.'},
-  {stars:5,name:'Client name',detail:'Rockport, TX &middot; Behavior Modification',text:'Placeholder for a verified review. Behavior modification reviews are the highest-intent social proof for this service line.'},
-  {stars:5,name:'Agency or handler',detail:'Detection &amp; Police K9',text:'Placeholder for a verified review from a working dog or agency client. These build credibility with departments evaluating contracts.'}
-];
-
 const FAQS = [
   {q:'What is a free meet &amp; greet, and what happens?',a:'<p>It is an in-person consultation, free of charge and with no commitment. You meet the trainers, we meet your dog, and we go through temperament, history, household environment and what you want to change. You leave with a straight answer on which program fits and how long it should take, not a sales pitch.</p>'},
   {q:'What training methods do you use?',a:'<p>Our approach starts with understanding the unique temperament of each dog, then builds a plan rooted in behavioral science. We use motivational techniques so the dog learns with minimal stress, pairing positive reinforcement with clear, consistent communication. The goal is never just teaching a command; it is teaching the dog how to perform in a wide range of real situations. Our guiding principle is to create an environment where the dog is set up for success.</p>'},
@@ -975,43 +961,6 @@ PAGES['/about'] = {
         ],'g2')
       })
     + sec({bg:'cream', body: band({cta:'Schedule Free Meet and Greet'})});
-  }
-};
-
-PAGES['/reviews'] = {
-  title:'Reviews & Transformations | Taurus K9 Dog Training, Coastal Bend TX',
-  desc:'Client reviews for Taurus K9 dog training in Aransas Pass, Corpus Christi and the Texas Coastal Bend, including Board and Train, private lessons, behavior modification and agency K9 programs.',
-  render(){
-    return phero({
-      tag:'Reviews &amp; Transformations',
-      title:'Real clients, real transformations.',
-      lede:'The proof of a training program is what happens thirty days after handoff. These are the outcomes clients report.',
-      crumbs:[{label:'Home',href:'#/'},{label:'Reviews'}],
-      actions: CTAB
-    })
-    + sec({
-        body:`<p class="disc" style="margin-bottom:1.75rem"><strong>Template content, replace before launch.</strong> Do not publish invented testimonials. Pull your real Google and Facebook reviews, keep the wording verbatim, and only add Review structured data for reviews you can verify.</p>
-          ${grid(REVIEWS.map(revBlock),'g2')}
-          <div class="btnrow" style="margin-top:1.75rem">
-            <a class="btn btn-o" href="https://www.facebook.com/TaurusK9LLC" target="_blank" rel="noopener" data-track="social_click" data-loc="facebook">Reviews on Facebook</a>
-            <a class="btn btn-o" href="#/contact?service=board-train">Start my dog program</a>
-          </div>`
-      })
-    + sec({
-        bg:'cream', h2:'Results by program',
-        body:`<table class="data">
-          <caption>What clients typically report after each program</caption>
-          <thead><tr><th scope="col">Program</th><th scope="col">Typical reported outcome</th><th scope="col">Timeframe</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Board &amp; Train, Basic</th><td>House manners, reliable commands, off-leash foundation</td><td>4&ndash;6 weeks</td></tr>
-            <tr><th scope="row">Board &amp; Train, Advanced</th><td>Off-leash reliability and public manners</td><td>6&ndash;8 weeks</td></tr>
-            <tr><th scope="row">Behavior Modification</th><td>Managed reactivity, reduced anxiety, household safety</td><td>8&ndash;12+ weeks</td></tr>
-            <tr><th scope="row">Private Lessons</th><td>Owner handling confidence plus measurable obedience gains</td><td>Weekly</td></tr>
-            <tr><th scope="row">Agency and Detection</th><td>Certification readiness and sustained field performance</td><td>Per contract</td></tr>
-          </tbody>
-        </table>`
-      })
-    + sec({body: band({})});
   }
 };
 
