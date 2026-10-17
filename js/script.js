@@ -558,42 +558,42 @@ PAGES['/pet-training'] = {
   render(){
     return phero({
       tag:'Pet Dog Training',
-      title:'Training that fits the life you share with your dog.',
-      lede:'Build useful skills at home, on your street and out in the world. Choose the training format that fits your dog, your goals and your schedule.',
+      title:'Training you can use every day with your dog.',
+      lede:'Help your dog learn useful skills at home, around your neighborhood, and when you’re out together. Pick the training that matches your dog, your goals, and your schedule',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training'}],
       actions: CTAB + CTAC
     })
     + sec({h2:'Programs', body: grid([
         card({icon:I.home, tag:'Most popular', h3:'Board &amp; Train',
-          body:`<p>Your dog stays with our trainers for several structured sessions each day, with practice in different real-world settings.</p><p><strong>4&ndash;12 weeks</strong>, depending on the program.</p>`,
+          body:`<p>Your dog will stay with trainers each day and join several sessions to practice in those situations.</p><p><strong>4&ndash;12 weeks</strong>, depending on which option you choose.</p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/board-train">Compare Board &amp; Train options</a>`}),
         card({icon:I.user, h3:'Private Lessons',
-          body:`<p>One-on-one coaching built around your dog’s needs, in the places you need skills most. Learn alongside your trainer.</p><p><strong>Single sessions or packages.</strong></p>`,
-          foot:`<a class="btn btn-g btn-sm" href="#/private-lessons">Explore private lessons</a>`}),
+          body:`<p>Receive one-on-one coaching tailored to your dog's specific needs right at the point where you require the most assistance.</p><p><strong>Single sessions or packages.</strong></p>`,
+          foot:`<a class="btn btn-g btn-sm" href="#/private-lessons">Learn from your trainer.</a>`}),
         card({icon:I.paw, h3:'Puppy Foundations',
-          body:`<p>Build confidence, healthy routines and good habits from 8 weeks old.</p>`,
+          body:`<p>Build your puppy's confidence, establish healthy routines, and develop good habits from age eight weeks.</p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/puppy-foundations">Explore Puppy Foundations</a>`}),
         card({icon:I.shield, acc:true, tag:'Advanced', h3:'Behavior Modification',
-          body:`<p>A thoughtful, individualized plan for reactivity, anxiety or aggression, with careful management and realistic expectations.</p>`,
+          body:`<p>We create a personal plan for dogs that show reactivity, anxiety, or aggression, focusing on careful management and achievable objectives.</p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/board-train">Discuss behavior support</a>`}),
         card({icon:I.check, h3:'Personal Protection',
-          body:`<p>For owners seeking a family dog with protective skills. Every dog and household is assessed first; this program is not right for everyone.</p>`,
+          body:`<p>If you want your family dog to have a protective instinct, we can help. Because this program isn’t right for every situation, we’ll look at each dog and home individually.</p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore protection training</a>`})
       ],'g2')})
     + sec({
-        bg:'cream', eyebrow:'Find your fit', h2:'Which training format works for you?',
+        bg:'cream', eyebrow:'Find your fit', h2:'What training option should you choose?',
         body:`<div class="table-scroll" role="region" aria-label="Training format comparison" tabindex="0"><table class="data">
-          <caption>A quick comparison of training formats</caption>
+          <caption>Here’s a quick look at our training options</caption>
           <thead><tr><th scope="col">Format</th><th scope="col">Best for</th><th scope="col">Typical length</th><th scope="col">Your involvement</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Board &amp; Train</th><td>Structured training with your dog staying with us</td><td>4&ndash;12 weeks</td><td>Handoff and transfer sessions</td></tr>
+            <tr><th scope="row">Board &amp; Train</th><td>We provide structured training for your dog while they stay with us</td><td>4&ndash;12 weeks</td><td>Includes handover and transfer sessions</td></tr>
             <tr><th scope="row">Private Lessons</th><td>Learning handling skills with your dog</td><td>Weekly or ongoing</td><td>Every session</td></tr>
             <tr><th scope="row">Puppy Foundations</th><td>Puppies from 8 weeks to 6 months</td><td>4&ndash;8 weeks</td><td>Every session</td></tr>
             <tr><th scope="row">Behavior Modification</th><td>Reactivity, anxiety or aggression</td><td>8&ndash;12+ weeks</td><td>Consistent owner involvement</td></tr>
           </tbody>
         </table></div>`
       })
-    + sec({body: band({h2:'Not sure where to begin? Let’s talk it through.', cta:'Schedule a Free Meet &amp; Greet'})});
+    + sec({body: band({h2:'If you’re not sure where to start, we’re here to help. Come talk with our trainers, discuss your goals, and get some clear advice. Our in-person meeting is free, and there’s no obligation to sign up.', cta:'Schedule a Free Meet &amp; Greet'})});
   }
 };
 
