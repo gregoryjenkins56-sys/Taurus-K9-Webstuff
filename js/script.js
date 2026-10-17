@@ -106,7 +106,7 @@ const steps = items => `<ol class="steps">${items.map(s => `<li><h3>${s.h3}</h3>
 function band(o){
   o = o || {};
   const h2 = o.h2 || 'Let’s find the right next step for your dog.';
-  const p = o.p || 'Meet the trainers, talk through your goals and get an honest recommendation. The in-person meet and greet is free, with no obligation.';
+  const p = o.p || 'Meet the trainers, talk through your goals and get an honest recommendation. The in-person meet and greet is free and no obligation.';
   const cta = o.cta || 'Schedule a Free Meet &amp; Greet';
   return `<div class="band"><div><h2>${h2}</h2><p>${p}</p></div>
     <div class="btnrow">
@@ -476,9 +476,9 @@ PAGES['/'] = {
       </div>`).join('');
 
     return hero({
-      tag:'Clear training. Confident dogs.',
-      title:'Build a dog who listens at home, on walks and in the moments that matter.',
-      lede:'We train family dogs and working K9 teams across the Texas Coastal Bend. First, we get to know your dog and your goals. Then we give you a clear plan, regular progress updates and honest guidance at every step.',
+      tag:'We make "sit" happen.',
+      title:'Raise a dog who listens by your side at home, on every walk, and when it matters most..',
+      lede:'From loyal family companions to skilled K9 teams, we help dogs thrive across the Texas Coastal Bend. We start by learning about your dog and your hopes, then craft a clear plan, keep you updated, and guide you with honesty at every turn.',
       actions:`${CTAB}<a class="btn btn-o" href="#/pet-training">See all programs</a>`,
       mini:['Free, in-person meet and greet','Certified Police K9 Master Trainers','Regular progress updates','Programs for handlers and agencies'],
       aside:`<aside class="hcard" aria-labelledby="hcH">
@@ -489,7 +489,7 @@ PAGES['/'] = {
     })
     + sec({bg:'cream', body:`<div class="strip">
         <div><b>Police K9 Master Trainer</b><span>Tarheel Canine Inc.</span></div>
-        <div><b>NEPOPO Silver School</b><span>Graduate training</span></div>
+        <div><b>NEPOPO Silver School</b><span>Graduates</span></div>
         <div><b>Police Decoy Level 1</b><span>Demanet Academy</span></div>
         <div><b>21 years of service</b><span>U.S. Army veteran</span></div>
       </div>`})
@@ -500,26 +500,26 @@ PAGES['/'] = {
         body: grid([
           card({
             icon:'<img class="card__photo" src="images/pet-dog-at-home.jpg" alt="">', tag:'Pet owners', h3:'Pet Dog Training',
-            body:`<p>For families who want everyday skills that last beyond the training session—at home, on walks and around the people they love.</p>
-              ${chk(['Board &amp; Train (4&ndash;12 weeks)','Private one-on-one lessons','Puppy Foundations from 8 weeks','Behavior modification for reactivity, anxiety and aggression'])}`,
+            body:`<p>For families who want everyday skills that shine beyond the training session, whether at home, on walks, or among the people your dog loves most.</p>
+              ${chk(['Board &amp; Train (4&ndash;12 weeks)','Private one-on-one lessons','Puppy Foundations from 8 weeks','Behavior modification for reactivity, anxiety, and aggression'])}`,
             foot:`<a class="btn btn-g btn-sm" href="#/pet-training">Explore Pet Training</a>`
           }),
           card({
             icon:'<img src="images/bia-police-badge.jpg" alt="">', acc:true, tag:'Handlers and agencies', h3:'Specialty &amp; Working Dog Training',
-            body:`<p>For handlers, departments and owner-operators who need capable teams, practical training and clear documentation for real-world work.</p>
+            body:`<p>For handlers, departments and owner-operators who need capable teams, hands-on training, and clear records for real-world challenges.</p>
               ${chk(['Sport protection and tracking','Contraband and narcotics detection','Police K9 and patrol support','Certified police decoy scenario work'])}`,
             foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Sport &amp; Personal Protection</a>`
           })
         ],'g2')
       })
     + sec({
-        bg:'dark', eyebrow:'Your next steps', h2:'A clear path from first conversation to confident handling.', centerIntro:true,
-        lede:'We explain the plan, timeline and cost before training begins, so you always know what comes next.',
+        bg:'dark', eyebrow:'Your next steps', h2:'Your journey from first hello to confident handling is clearly mapped out.', centerIntro:true,
+        lede:'Before training begins, we walk you through the plan, timeline, and cost, so you always know what to expect next.',
         body: grid([
-          card({step:'01', h3:'Meet and talk it through', body:'<p>We meet you and your dog, learn what matters to you, and assess temperament, routines and goals. Then we recommend a realistic next step.</p>'}),
-          card({step:'02', h3:'Get a plan in writing', body:`<p>Before you decide, you’ll see the recommended program, timeline, any suggested tools and the full cost.</p>`}),
+          card({step:'01', h3:'Meet and talk it through', body:'<p>We meet you and your dog, listen to what matters most, and learn your routines and goals. Then we suggest the next step that fits your life.</p>'}),
+          card({step:'02', h3:'Get a plan in writing', body:`<p>You will see the recommended program, timeline, any suggested tools and the full cost before you decide.</p>`}),
           card({step:'03', h3:'Train with regular updates', body:'<p>Board &amp; Train includes structured daily sessions in varied settings. Private lessons bring training into your home and neighborhood.</p>'}),
-          card({step:'04', h3:'Bring the skills home', body:'<p>We practice handling with you, share a plan for keeping progress going and support you for three months after training ends.</p>'})
+          card({step:'04', h3:'Bring the skills home', body:'<p>We practice handling with you, share a plan for keeping progress going, and support you for three months after training ends.</p>'})
         ],'g4')
       })
     + sec({
@@ -533,8 +533,8 @@ PAGES['/'] = {
         ],'g4')
       })
     + sec({
-        bg:'cream', eyebrow:'Credentials and experience', h2:'Training grounded in experience and education', centerIntro:true,
-        lede:'Greg and Rebecca bring professional education and recognized credentials in working dog development, police K9 training and decoy work.',
+        bg:'cream', eyebrow:'Credentials and experience', h2:'Training grounded in experience and education.', centerIntro:true,
+        lede:'Greg and Rebecca bring professional education and recognized credentials in working dog development, controlled aggression for police K9 training and decoy work.',
         body:`${grid([
             `<article class="card"><h3>Police K9 Master Trainer</h3>
               <p><strong>Tarheel Canine Inc.</strong></p>
