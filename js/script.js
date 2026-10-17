@@ -959,45 +959,45 @@ PAGES['/reviews'] = {
 };
 
 PAGES['/service-area'] = {
-  title:'Service Area | Dog Training in the Texas Coastal Bend & Nationwide K9 Programs',
-  desc:'Taurus K9 serves Aransas Pass, Corpus Christi, Portland, Ingleside, Rockport, Port Aransas, Sinton, Robstown and the Coastal Bend counties, with working dog and agency programs available nationwide.',
+  title:'Where We Train | Taurus K9, Texas Coastal Bend',
+  desc:'Taurus K9 serves Aransas Pass, Corpus Christi and communities throughout the Coastal Bend. We travel nationwide for working dog and agency programs.',
   render(){
     const cityList = SITE.cities.map(c => `<li>${c}</li>`).join('');
     const countyList = SITE.counties.map(c => `<li>${c} County</li>`).join('');
     return phero({
       tag:'Service Area',
-      title:'Local on the Texas Coast. Nationwide for working dogs.',
-      lede:'Our core pet training area is the Coastal Bend, centered on Aransas Pass and Corpus Christi. For working dog and agency programs, we travel, and we quote across the United States.',
+      title:'Based in the Coastal Bend. Ready to travel for working teams.',
+      lede:'We work with family dogs across the Texas Coastal Bend, including Aransas Pass and Corpus Christi. For working dog and agency programs, we travel nationwide.',
       crumbs:[{label:'Home',href:'#/'},{label:'Service Area'}],
       actions: CTAB + CTAC
     })
     + sec({
-        eyebrow:'Local', h2:'Cities and towns we serve in the Coastal Bend', centerLede:true,
-        lede:'If you are within reasonable driving distance of Aransas Pass, contact us and we will confirm availability for your area. Board and Train clients can travel to us.',
+        eyebrow:'Our local service area', h2:'Serving families across the Coastal Bend', centerLede:true,
+        lede:'Not sure if you’re in range? Get in touch and we’ll confirm availability. Board &amp; Train clients can also travel to us.',
         body:`<ul class="areas">${cityList}</ul><h3 style="margin-top:2.25rem">Counties</h3><ul class="areas">${countyList}</ul>`
       })
     + sec({
-        bg:'cream', eyebrow:'Nationwide', h2:'Agency, department and working dog programs',
+        bg:'cream', eyebrow:'Nationwide programs', h2:'Support for agencies and working dog teams',
         centerIntro:true,
         body: grid([
-          card({icon:I.shield, h3:'On-site agency delivery', body:'<p>We travel to your department or facility for unit training days, decoy support, handler education and sustainment programs. Proposals are scoped per contract, including travel.</p>'}),
-          card({icon:I.nose, h3:'Detection programs anywhere', body:'<p>Detection development, imprinting and certification preparation for departments and private handlers across the United States.</p>'}),
-          card({icon:I.chat, h3:'Remote consultations', body:'<p>Not local? We can consult remotely on selection, program design and training problems before committing to travel.</p>'})
+          card({icon:I.shield, h3:'On-site agency training', body:'<p>We travel to your department or facility for team training, decoy support, handler education and ongoing development. Each proposal accounts for your scope and travel needs.</p>'}),
+          card({icon:I.nose, h3:'Detection programs nationwide', body:'<p>Detection development, odor imprinting and certification preparation for departments and private handlers across the country.</p>'}),
+          card({icon:I.chat, h3:'Remote consultations', body:'<p>Outside our local area? We can discuss dog selection, program design and training challenges before planning a visit.</p>'})
         ],'g3')
       })
     + sec({h2:'Coverage questions', centerIntro:true, body: faqBlock(faqPick([7,6,0]))})
-    + sec({bg:'cream', body: band({h2:'Not sure if we cover your area? Ask us.', cta:'Check My Area'})});
+    + sec({bg:'cream', body: band({h2:'Wondering if we serve your area? Let’s find out.', cta:'Ask About My Area'})});
   }
 };
 
 PAGES['/faq'] = {
-  title:'Dog Training FAQ | Taurus K9, Aransas Pass & Corpus Christi TX',
-  desc:'Answers about Taurus K9 dog training: methods, e-collar education, Board and Train lengths, updates, working dog programs, service area, pricing, and what happens at the free meet and greet.',
+  title:'Dog Training Questions, Answered | Taurus K9',
+  desc:'Find clear answers about dog training methods, program lengths, pricing, working dog services and what to expect at a free meet and greet.',
   render(){
     return phero({
       tag:'FAQ',
-      title:'Answers before you hand over your dog.',
-      lede:'The questions we get asked most, answered the same way we would answer them on the phone.',
+      title:'Clear answers. No pressure.',
+      lede:'Here are the questions we hear most often, answered as plainly as we would over the phone.',
       crumbs:[{label:'Home',href:'#/'},{label:'FAQ'}],
       actions: CTAB + CTAC
     })
@@ -1007,32 +1007,32 @@ PAGES['/faq'] = {
 };
 
 PAGES['/contact'] = {
-  title:'Contact Taurus K9 | Book a Free Meet & Greet | Aransas Pass, TX',
-  desc:'Book your free in-person dog training consultation with Taurus K9 in Aransas Pass, TX. Call 361-230-1932 or send an inquiry for Board and Train, private lessons, detection or police K9 programs.',
+  title:'Contact Taurus K9 | Schedule a Free Meet & Greet',
+  desc:'Talk with Taurus K9 about dog training in Aransas Pass and the Coastal Bend. Call, email or schedule your free in-person meet and greet.',
   render(){
     const hours = SITE.hours.map(h => `<li><span>${h[0]}</span><b>${h[1]}</b></li>`).join('');
     return phero({
       tag:'Contact &amp; Booking',
-      title:'Book your free meet and greet.',
-      lede:'Tell us about your dog and what you want to change. We will respond with the right next step, usually within one business day and often the same day during business hours.',
+      title:'Let’s talk about your dog.',
+      lede:'Call or email us with your questions, or use the booking calendar to schedule a free, in-person meet and greet. We’ll listen, learn what you’re looking for and help you choose a next step.',
       crumbs:[{label:'Home',href:'#/'},{label:'Contact'}],
       actions:`<a class="btn btn-p" href="tel:${SITE.phone}" data-track="click_to_call" data-loc="contact_hero">Call ${SITE.phoneDisplay}</a>
-        <a class="btn btn-o" href="${SITE.bookingUrl}" target="_blank" rel="noopener" data-track="schedule_click">Open the booking calendar</a>`
+        <a class="btn btn-o" href="${SITE.bookingUrl}" target="_blank" rel="noopener" data-track="schedule_click">Choose a time online</a>`
     })
     + sec({
         body:`<div class="cgrid">
           <div>
-            <h2 style="margin-bottom:.35rem">Send us a training inquiry</h2>
-            <p class="fnote" style="margin-bottom:1.5rem">Fields marked <span class="req" aria-hidden="true">*</span> are required. Prefer to talk? Call <a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="form_intro">${SITE.phoneDisplay}</a>.</p>
+            <h2 style="margin-bottom:.35rem">Online inquiry form</h2>
+            <p class="fnote" style="margin-bottom:1.5rem">This form is not connected yet, so it cannot send your information. To reach us, call <a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="form_intro">${SITE.phoneDisplay}</a>, email us or schedule online.</p>
             ${leadForm()}
           </div>
           <aside aria-labelledby="napH">
             <div class="card">
-              <h2 id="napH" style="font-size:1.14rem">Contact details</h2>
+              <h2 id="napH" style="font-size:1.14rem">Reach us directly</h2>
               <ul class="nap">
                 <li>${I.phone}<span><b>Phone</b><br><a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="nap">${SITE.phoneDisplay}</a><br><span style="font-size:.86rem;color:var(--muted)">Mon&ndash;Fri, 6:00 AM &ndash; 6:00 PM CT</span></span></li>
                 <li>${I.mail}<span><b>Email</b><br><a href="mailto:${SITE.email}" data-track="click_to_email">${SITE.email}</a></span></li>
-                <li>${I.pin}<span><b>Location</b><br>${SITE.city}, ${SITE.state} ${SITE.zip}<br><span style="font-size:.86rem;color:var(--muted)">Serving the Coastal Bend. Exact address confirmed at booking.</span></span></li>
+                <li>${I.pin}<span><b>Location</b><br>${SITE.city}, ${SITE.state} ${SITE.zip}<br><span style="font-size:.86rem;color:var(--muted)">Serving the Coastal Bend. We’ll confirm the exact address when you book.</span></span></li>
                 <li>${I.clock}<span><b>Hours</b><ul class="hours">${hours}</ul></span></li>
               </ul>
               <div class="btnrow" style="margin-top:1.25rem">
@@ -1041,17 +1041,17 @@ PAGES['/contact'] = {
               </div>
             </div>
             <div class="card" style="margin-top:1.25rem">
-              <h2 style="font-size:1.14rem">What happens next</h2>
+              <h2 style="font-size:1.14rem">What to expect</h2>
               <ol style="margin:0;padding-left:1.2rem;font-size:.94rem">
-                <li>We confirm your inquiry, usually within one business day.</li>
-                <li>We schedule your free in-person meet and greet.</li>
-                <li>You get a written program recommendation and quote.</li>
-                <li>You decide. No deposit required to talk.</li>
+                <li>We’ll talk through your dog and what you’re looking for.</li>
+                <li>Choose a time for a free, in-person meet and greet.</li>
+                <li>Get a written program recommendation and quote.</li>
+                <li>Decide what feels right for you—there’s no pressure to book.</li>
               </ol>
             </div>
             <div class="card" style="margin-top:1.25rem">
               <h2 style="font-size:1.14rem">Working dogs and agencies</h2>
-              <p style="font-size:.94rem">Select <em>Agency or department program</em> or <em>Detection dog training</em> in the form and your inquiry is routed to the working dog division for a proposal.</p>
+              <p style="font-size:.94rem">Call or email us with your discipline, team size and goals. We’ll connect you with the right trainer to discuss a proposal.</p>
             </div>
           </aside>
         </div>`
@@ -1061,18 +1061,18 @@ PAGES['/contact'] = {
 };
 
 PAGES['/thank-you'] = {
-  title:'Contact Taurus K9 | Online Inquiry Unavailable',
-  desc:'The online inquiry form is not connected. Contact Taurus K9 by phone or email.',
+  title:'Contact Taurus K9 Directly',
+  desc:'The online inquiry form is not available yet. Call or email Taurus K9 to book your free meet and greet.',
   render(){
     return phero({
-      tag:'Online inquiry unavailable',
-      title:'Your inquiry was not sent.',
-      lede:'The online inquiry form is not connected. Please contact Taurus K9 directly by phone or email.',
+      tag:'Let’s connect',
+      title:'Your information wasn’t sent.',
+      lede:'This online form is not connected yet. Please call or email us directly, and we’ll be glad to help.',
       crumbs:[{label:'Home',href:'#/'},{label:'Contact'}],
       actions:`<a class="btn btn-p" href="tel:${SITE.phone}">Call ${SITE.phoneDisplay}</a>
-        <a class="btn btn-o" href="mailto:${SITE.email}">Email ${SITE.email}</a>`
+        <a class="btn btn-o" href="mailto:${SITE.email}">Email us</a>`
     })
-    + sec({h2:'Need to reach us?', body:`<p>Call <a href="tel:${SITE.phone}" style="color:var(--ink)">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}" style="color:var(--ink)">${SITE.email}</a> to arrange your free meet and greet.</p>`});
+    + sec({h2:'We’re ready when you are.', body:`<p>Call <a href="tel:${SITE.phone}" style="color:var(--ink)">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}" style="color:var(--ink)">${SITE.email}</a> to arrange a free meet and greet.</p>`});
   }
 };
 
@@ -1184,17 +1184,17 @@ PAGES['/terms'] = {
 
 PAGES['/404'] = {
   title:'Page Not Found | Taurus K9',
-  desc:'That page could not be found. Browse Taurus K9 dog training programs or contact us in Aransas Pass, Texas.',
+  desc:'We couldn’t find that page. Browse dog training programs or contact Taurus K9 in Aransas Pass, Texas.',
   render(){
     return phero({
       tag:'404 error',
-      title:'That page did not hold the command.',
-      lede:'We could not find what you were looking for. Here are the paths people usually want.'
+      title:'We can’t find that page.',
+      lede:'The link may have changed or the page may be gone. Here are a few helpful places to go next.'
     })
     + sec({body: grid([
-        card({icon:I.home, h3:'Pet Dog Training', body:'<p>Board and Train, private lessons, puppy foundations and day training.</p>', foot:'<a class="btn btn-g btn-sm" href="#/pet-training">Go to Pet Training</a>'}),
-        card({icon:I.shield, h3:'Working Dogs', body:'<p>Detection, police K9, sport, protection and decoy services.</p>', foot:'<a class="btn btn-g btn-sm" href="#/working-dogs">Go to Working Dogs</a>'}),
-        card({icon:I.chat, h3:'Contact Us', body:`<p>Book a free meet and greet or call ${SITE.phoneDisplay}.</p>`, foot:'<a class="btn btn-g btn-sm" href="#/contact">Go to Contact</a>'})
+        card({icon:I.home, h3:'Training for family dogs', body:'<p>Explore Board &amp; Train, private lessons, puppy training and more.</p>', foot:'<a class="btn btn-g btn-sm" href="#/pet-training">Explore pet training</a>'}),
+        card({icon:I.shield, h3:'Training for working dogs', body:'<p>Learn about detection, police K9, sport, protection and decoy services.</p>', foot:'<a class="btn btn-g btn-sm" href="#/working-dogs">Explore working dog programs</a>'}),
+        card({icon:I.chat, h3:'Talk with our team', body:`<p>Call ${SITE.phoneDisplay} or schedule a free meet and greet.</p>`, foot:'<a class="btn btn-g btn-sm" href="#/contact">Contact Taurus K9</a>'})
       ],'g3')});
   }
 };
