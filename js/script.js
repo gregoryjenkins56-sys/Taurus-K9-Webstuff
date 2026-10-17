@@ -34,7 +34,7 @@ const I = {
 
 /* ---------- shared building blocks ---------- */
 
-const CTAB = `<a class="btn btn-p" href="#/contact" data-track="cta_book">Book Free Meet &amp; Greet</a>`;
+const CTAB = `<a class="btn btn-p" href="#/contact" data-track="cta_book">Schedule a Free Meet &amp; Greet</a>`;
 const CTAC = `<a class="btn btn-o" href="tel:${SITE.phone}" data-track="click_to_call" data-loc="hero">Call ${SITE.phoneDisplay}</a>`;
 
 function crumbs(items){
@@ -117,20 +117,6 @@ function band(o){
 
 const faqBlock = items => `<div class="faq">${items.map(q => `<details class="q"><summary>${q.q}</summary><div class="qbody">${q.a}</div></details>`).join('')}</div>`;
 
-const revBlock = r => `<figure class="review">
-  <div class="stars" role="img" aria-label="${r.stars} out of 5 stars">${'\u2605'.repeat(r.stars)}</div>
-  <blockquote>${r.text}</blockquote>
-  <figcaption><b>${r.name}</b>${r.detail}</figcaption>
-</figure>`;
-
-/* PLACEHOLDER REVIEWS - replace with verified Google and Facebook reviews before launch */
-const REVIEWS = [
-  {stars:5,name:'Client name',detail:'Corpus Christi, TX &middot; Board &amp; Train, Basic Obedience',text:'Placeholder for a verified Google or Facebook review. Paste the real review text here, with the reviewer name and permission.'},
-  {stars:5,name:'Client name',detail:'Aransas Pass, TX &middot; Private Lessons',text:'Placeholder for a verified review. Keep it specific to the program named in the caption so future clients can match their situation.'},
-  {stars:5,name:'Client name',detail:'Rockport, TX &middot; Behavior Modification',text:'Placeholder for a verified review. Behavior modification reviews are the highest-intent social proof for this service line.'},
-  {stars:5,name:'Agency or handler',detail:'Detection &amp; Police K9',text:'Placeholder for a verified review from a working dog or agency client. These build credibility with departments evaluating contracts.'}
-];
-
 const FAQS = [
   {q:'What happens at a free meet and greet?',a:'<p>You meet the trainers, and we get to know you and your dog. We talk through your dog’s temperament, history, home life and your goals, then recommend a program and realistic timeline. It is in person, free and pressure-free—you will get a clear answer, not a sales pitch.</p>'},
   {q:'How do you train dogs?',a:'<p>We start by learning who your dog is, then build a plan around their temperament and your goals. Training uses motivation, positive reinforcement and clear, consistent communication to keep learning low-stress. We want skills to work in everyday situations—not just when a command is practiced.</p>'},
@@ -183,7 +169,7 @@ function leadForm(){
         </optgroup>
         <option value="unsure">I’m not sure yet—please help me choose</option>
       </select>
-      <span class="err" id="serviceErr" data-show="false">Please choose a service.</span>
+      <span class="err" id="serviceErr" data-show="false">Choose the service you’re interested in.</span>
     </div>
   </fieldset>
 
@@ -191,12 +177,12 @@ function leadForm(){
     <div class="field">
       <label for="owner">Name <span class="req" aria-hidden="true">*</span></label>
       <input id="owner" name="owner" type="text" autocomplete="name" required aria-describedby="ownerErr" />
-      <span class="err" id="ownerErr" data-show="false">Please enter your name.</span>
+      <span class="err" id="ownerErr" data-show="false">Enter your name.</span>
     </div>
     <div class="field">
       <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
       <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="emailErr" />
-      <span class="err" id="emailErr" data-show="false">Please enter a valid email address.</span>
+      <span class="err" id="emailErr" data-show="false">Enter a valid email address.</span>
     </div>
   </div>
 
@@ -204,8 +190,8 @@ function leadForm(){
     <div class="field">
       <label for="phone">Phone <span class="req" aria-hidden="true">*</span></label>
       <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="phoneErr phoneHint" />
-      <span class="hint" id="phoneHint">Used for your consultation. 10-digit US number.</span>
-      <span class="err" id="phoneErr" data-show="false">Please enter a 10-digit phone number.</span>
+      <span class="hint" id="phoneHint">We’ll use this to get in touch. Enter a 10-digit US number.</span>
+      <span class="err" id="phoneErr" data-show="false">Enter a 10-digit phone number.</span>
     </div>
     <div class="field">
       <label for="dogName">Dog name</label>
@@ -217,7 +203,7 @@ function leadForm(){
     <div class="field">
       <label for="city">City <span class="req" aria-hidden="true">*</span></label>
       <input id="city" name="city" type="text" autocomplete="address-level2" required aria-describedby="cityErr" />
-      <span class="err" id="cityErr" data-show="false">Please enter your city.</span>
+      <span class="err" id="cityErr" data-show="false">Enter your city.</span>
     </div>
     <div class="field">
       <label for="state">State</label>
@@ -252,8 +238,8 @@ function leadForm(){
       <option value="facebook">Facebook</option>
       <option value="instagram">Instagram</option>
       <option value="tiktok">TikTok</option>
-      <option value="referral">Referred by a client</option>
-      <option value="vet">Veterinarian or vet staff</option>
+      <option value="referral">A Taurus K9 client</option>
+      <option value="vet">My veterinarian or their team</option>
       <option value="agency">Another agency or department</option>
       <option value="event">Event or class</option>
       <option value="other">Other</option>
@@ -684,12 +670,12 @@ PAGES['/private-lessons'] = {
     })
     + sec({
         h2:'What private lessons cover', centerIntro:true,
-        lede:'Lessons are customized, not scripted. These are the most common goals clients bring us.',
+        lede:'Every lesson is shaped around your dog and your goals. Clients often ask us to help with:',
         body: grid([
-          card({icon:I.paw, h3:'Foundational obedience', body: chk(['Sit, down, stay, place','Loose-leash walking','Coming when called','Door and threshold manners'])}),
-          card({icon:I.bolt, h3:'Real-world reliability', body: chk(['Public manners and neutrality','Polite greetings with people and dogs','Off-leash reliability where appropriate','Working around distractions'])}),
-          card({icon:I.shield, h3:'Behavior problems', body: chk(['Jumping, nipping, counter-surfing','Leash reactivity and barking','Anxiety and settling difficulty','Aggression, assessed first and managed honestly'])}),
-          card({icon:I.chat, h3:'Owner handling skills', body: chk(['Marker timing and reward placement','Reading body language and stress signals','Consistent household rules','Crate and management strategy'])})
+          card({icon:I.paw, h3:'Everyday obedience', body: chk(['Sit, down, stay and place','Comfortable leash walking','Coming when called','Polite door and threshold manners'])}),
+          card({icon:I.bolt, h3:'Confidence in the real world', body: chk(['Calm, appropriate public behavior','Friendly greetings with people and dogs','Off-leash skills where appropriate','Staying focused around distractions'])}),
+          card({icon:I.shield, h3:'Behavior challenges', body: chk(['Jumping, mouthing and counter-surfing','Leash reactivity and barking','Anxiety and difficulty settling','Aggression, assessed carefully and discussed honestly'])}),
+          card({icon:I.chat, h3:'Skills for handlers', body: chk(['Timing cues and placing rewards','Recognizing body language and stress','Setting consistent household routines','Planning crate use and management'])})
         ],'g2')
       })
     + sec({
@@ -701,7 +687,7 @@ PAGES['/private-lessons'] = {
         ],'g3')
       })
     + sec({h2:'Private lesson questions', centerIntro:true, body: faqBlock(faqPick([1,2,8,9]))})
-    + sec({bg:'cream', body: band({h2:'Book a private lesson or start with the free meet and greet.', cta:'Book Free Meet and Greet'})});
+    + sec({bg:'cream', body: band({h2:'Ready to work on a goal together?', cta:'Schedule a Free Meet &amp; Greet'})});
   }
 };
 
@@ -724,7 +710,7 @@ PAGES['/puppy-foundations'] = {
         card({icon:I.chat, h3:'Guidance for you', body: chk(['Know what to expect at each stage','Build positive habits around food and toys','Support safe interactions with children','Take home a practical plan for the next six months'])})
       ],'g2')})
     + sec({bg:'cream', h2:'Puppy questions', centerIntro:true, body: faqBlock(faqPick([8,0,1]))})
-    + sec({body: band({h2:'Start your puppy on the right foundation.', cta:'Book Free Meet and Greet'})});
+    + sec({body: band({h2:'Give your puppy a confident start.', cta:'Schedule a Free Meet &amp; Greet'})});
   }
 };
 
@@ -918,7 +904,7 @@ PAGES['/about'] = {
           card({icon:I.bolt, h3:'Practice in real settings', body:'<p>We build skills across the situations your dog will encounter beyond training.</p>'})
         ],'g2')
       })
-    + sec({bg:'cream', body: band({cta:'Schedule Free Meet and Greet'})});
+    + sec({bg:'cream', body: band({cta:'Schedule a Free Meet &amp; Greet'})});
   }
 };
 
@@ -1002,7 +988,7 @@ PAGES['/faq'] = {
       actions: CTAB + CTAC
     })
     + sec({centerIntro:true, body: faqBlock(FAQS)})
-    + sec({bg:'cream', body: band({h2:'Still have a question? Call us.', cta:'Book Free Meet and Greet'})});
+    + sec({bg:'cream', body: band({h2:'Still have a question? We’re happy to help.', cta:'Schedule a Free Meet &amp; Greet'})});
   }
 };
 
@@ -1056,7 +1042,7 @@ PAGES['/contact'] = {
           </aside>
         </div>`
       })
-    + sec({bg:'cream', h2:'Before you book, these may help', centerIntro:true, body: faqBlock(FAQS.slice(0,4))});
+    + sec({bg:'cream', h2:'A few helpful answers before you book', centerIntro:true, body: faqBlock(FAQS.slice(0,4))});
   }
 };
 
