@@ -568,7 +568,7 @@ PAGES['/'] = {
 
 PAGES['/pet-training'] = {
   title:'Pet Dog Training: Board & Train, Private Lessons, Puppy Training | Taurus K9',
-  desc:'Pet dog training in Aransas Pass, Corpus Christi and the Coastal Bend. Board and Train, private lessons, puppy foundations, day training and behavior modification with certified trainers.',
+  desc:'Pet dog training in Aransas Pass, Corpus Christi and the Coastal Bend. Board and Train, private lessons, puppy foundations and behavior modification with certified trainers.',
   render(){
     return phero({
       tag:'Pet Dog Training',
@@ -587,9 +587,6 @@ PAGES['/pet-training'] = {
         card({icon:I.paw, h3:'Puppy Foundations',
           body:`<p>Start before problems start. Socialization, handling, household routines and a confident foundation from 8 weeks old.</p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/puppy-foundations">Puppy program</a>`}),
-        card({icon:I.clock, h3:'Day Training',
-          body:`<p>Trainer-led sessions during the day while you work, with transfer sessions so the handling transfers to you.</p>`,
-          foot:`<a class="btn btn-g btn-sm" href="#/day-training">Day training details</a>`}),
         card({icon:I.shield, acc:true, tag:'Advanced', h3:'Behavior Modification',
           body:`<p>A custom plan for aggression, anxiety or reactivity. Longer timeline, careful management, honest expectations set at the assessment.</p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/board-train">Behavior programs</a>`}),
@@ -606,7 +603,6 @@ PAGES['/pet-training'] = {
             <tr><th scope="row">Board &amp; Train</th><td>Busy schedules, fast behavior change</td><td>4&ndash;12 weeks</td><td>Handoff and transfer sessions</td></tr>
             <tr><th scope="row">Private Lessons</th><td>Building your own handling skills</td><td>Weekly, ongoing</td><td>Every session</td></tr>
             <tr><th scope="row">Puppy Foundations</th><td>Puppies 8 weeks to 6 months</td><td>4&ndash;8 weeks</td><td>Every session</td></tr>
-            <tr><th scope="row">Day Training</th><td>Owners away during the workday</td><td>4&ndash;8 weeks</td><td>Transfer sessions</td></tr>
             <tr><th scope="row">Behavior Modification</th><td>Aggression, anxiety, reactivity</td><td>8&ndash;12+ weeks</td><td>Essential: consistency required</td></tr>
           </tbody>
         </table>`
@@ -620,12 +616,12 @@ PAGES['/board-train'] = {
   desc:'Immersive board and train programs in Aransas Pass and Corpus Christi, TX. Basic Obedience (4-6 weeks), Advanced Obedience (6-8 weeks) and Behavior Modification (8-12 weeks) with daily updates and real-world proofing.',
   render(){
     const tiers = [
-      {h3:'Basic Obedience', meta:'4&ndash;6 weeks &middot; foundational life skills', flag:'',
-       items:['4&ndash;6 week foundational training','Daily updates while your dog stays with us','Advanced commands','Off-leash foundation training','House manners','Training tools available (optional)']},
-      {h3:'Advanced Obedience', meta:'6&ndash;8 weeks &middot; public reliability', flag:'Most chosen',
-       items:['Everything in Basic Obedience','6&ndash;8 week advanced training','Public reliability proofing','Off-leash training','Public manners in real environments','Training tools available (optional)']},
-      {h3:'Behavior Modification', meta:'8&ndash;12 weeks &middot; custom plan', flag:'',
-       items:['Everything in Advanced Obedience','8&ndash;12 week intensive program','Custom plan for aggression, anxiety or reactivity','Advanced commands','Off-leash training','Complete manners and household reliability']}
+      {h3:'Basic Obedience', meta:'4&ndash;6 weeks &middot; Basic manners and listening skills', flag:'',
+       items:['Teach sit, down, come, place, and leave it.','Build better leash walking and clear everyday listening skills.','Improve calm behavior inside the house and around guests.','Start off-leash foundation work with structure and control.','Practice commands around distractions in real daily settings.','Send daily updates so owners can track progress clearly.']},
+      {h3:'Advanced Obedience', meta:'6&ndash;8 weeks &middot; Public reliability', flag:'Most chosen',
+       items:['Build stronger obedience with clearer responses and better control.','Improve leash work, recall, and off-leash reliability outdoors.','Practice calm behavior in parks, stores, and public spaces.','Work through distractions with better focus and steadier responses.','Strengthen public manners around people, noise, and movement.','Send regular updates so owners can track progress clearly.']},
+      {h3:'Behavior Modification', meta:'8&ndash;12 weeks &middot; Custom plan', flag:'',
+       items:['Address reactivity, fear, aggression, and resource guarding.','Build obedience that supports control during stressful situations.','Improve calm behavior inside the house and out in public.','Work through triggers with structure, repetition, and clear handling.','Strengthen reliability with routines that hold up daily.','Send regular updates so owners can track progress clearly.']}
     ].map((t,i) => `<article class="tier${i === 1 ? ' tier-pop' : ''}">
         ${t.flag ? `<span class="tier__flag">${t.flag}</span>` : ''}
         <h3>${t.h3}</h3>
@@ -647,7 +643,7 @@ PAGES['/board-train'] = {
     })
     + sec({
         bg:'cream', h2:'Three ways to board and train', centerIntro:true,
-        lede:'Every program includes daily updates, multiple daily sessions across varied settings, and a handoff so the behavior transfers home. Pick the depth that matches your dog.',
+        lede:`Every program includes daily updates, several training sessions each day in different places, and a handoff session so you can keep new habits going at home. We help you choose the program that fits your dog's needs.`,
         body:`<div class="tiers">${tiers}</div>
           <p class="fnote" style="margin-top:1.25rem">Program lengths are the range we quote; final length depends on your dog starting point and your goals. Training tools refers to optional education and conditioning, never required.</p>`
       })
