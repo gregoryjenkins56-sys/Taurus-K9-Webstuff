@@ -599,7 +599,7 @@ PAGES['/pet-training'] = {
 
 PAGES['/board-train'] = {
   title:'Board & Train in Aransas Pass & the Coastal Bend | Taurus K9',
-  desc:'Focused Board & Train for everyday obedience, public reliability or behavior support. Programs run 4–12 weeks, with regular updates and a hands-on handoff.',
+  desc:'Focused Board & Train for everyday obedience, public reliability, or behavior support. Programs run 4–12 weeks with regular updates and a hands-on handoff.',
   render(){
     const tiers = [
       {h3:'Basic Obedience', meta:'4&ndash;6 weeks &middot; Everyday manners and listening', flag:'',
