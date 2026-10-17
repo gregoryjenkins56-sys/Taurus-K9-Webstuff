@@ -648,7 +648,7 @@ legend{padding:0 .4rem}
 .hours{list-style:none;padding:0;margin:.4rem 0 0;font-size:.9rem}
 .hours li{display:flex;justify-content:space-between;gap:1rem;margin:0;padding:.15rem 0;color:var(--muted)}
 .hours b{color:var(--ink)}
-.band{background:linear-gradient(135deg,var(--green),#1a3d30);border-radius:var(--rlg);padding:clamp(1.6rem,4vw,2.5rem);display:grid;gap:1.5rem;align-items:center;box-shadow:var(--sh3);color:#d5e5dd}
+.band{background:linear-gradient(135deg,#1a3d30,var(--green));border-radius:var(--rlg);padding:clamp(1.6rem,4vw,2.5rem);display:grid;gap:1.5rem;align-items:center;box-shadow:var(--sh3);color:#d5e5dd}
 @media(min-width:880px){.band{grid-template-columns:1.5fr 1fr}}
 .band h2{color:#242021;margin-bottom:.4rem}
 .band p{color:#c3ddd1;margin:0}

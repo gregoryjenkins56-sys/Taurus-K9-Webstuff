@@ -479,7 +479,7 @@ PAGES['/'] = {
   render(){
     const trows = [
       {href:'#/pet-training', ic:I.home, t:'Pet Dog Training', d:'Board &amp; Train, private lessons, puppy foundations and day training. Real-world obedience your family can live with.'},
-      {href:'#/working-dogs', ic:I.shield, t:'Specialty &amp; Working Dogs', d:'Sport, detection and police K9 training, with certified decoys delivering real-world scenarios.'}
+      {href:'#/working-dogs', ic:I.shield, t:'Sport &amp; Personal Protection Dogs', d:'Sport training and personal protection dog development, with experienced trainers and real-world scenarios.'}
     ].map(x => `<div class="trow">
         <span class="trow__ic" aria-hidden="true">${x.ic}</span>
         <div>
@@ -519,10 +519,10 @@ PAGES['/'] = {
             foot:`<a class="btn btn-g btn-sm" href="#/pet-training">Explore Pet Training</a>`
           }),
           card({
-            icon:'<img src="images/bia-police-badge.jpg" alt="">', acc:true, tag:'Handlers and agencies', h3:'Specialty &amp; Working Dog Training',
+            icon:'<img src="images/bia-police-badge.jpg" alt="">', acc:true, tag:'Sport and protection', h3:'Sport &amp; Personal Protection Dogs',
             body:`<p>This program is designed for handlers, departments, and owner-operators who require reliable working dogs and complete documentation in actual situations.</p>
               ${chk(['Sport protection and tracking','Contraband and narcotics detection','Police K9 and patrol support','Certified police decoy scenario work'])}`,
-            foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Working Dogs</a>`
+            foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Sport &amp; Personal Protection</a>`
           })
         ],'g2')
       })
@@ -750,15 +750,15 @@ PAGES['/day-training'] = {
 };
 
 PAGES['/working-dogs'] = {
-  title:'Police K9, Detection, Sport & Protection Dog Training in Texas | Taurus K9',
-  desc:'Specialty and working dog training in Texas: sport protection, tracking, contraband and narcotics detection, police K9, patrol support and certified police decoy scenario training. Agency programs nationwide.',
+  title:'Sport & Personal Protection Dogs in Texas | Taurus K9',
+  desc:'Sport dog and personal protection dog training in Texas. Taurus K9 also provides detection, police K9, patrol support and agency programs nationwide.',
   render(){
     return phero({
-      tag:'Specialty &amp; Working Dog Training',
-      title:'Working dogs trained for real scenarios, not demonstrations.',
-      lede:'Taurus K9 trains sport, detection and police K9 teams, with experienced certified police decoys providing real-world scenario work that prepares the dog for peak performance under pressure.',
+      tag:'Sport &amp; Personal Protection Dogs',
+      title:'Sport and protection dogs trained for real life.',
+      lede:'Taurus K9 develops sport dogs and personal protection dogs with a foundation in obedience, clear handling, and controlled real-world scenarios. Detection and police K9 programs are available through our agency services.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Combined%20Videos.mp4',
-      crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs'}],
+      crumbs:[{label:'Home',href:'#/'},{label:'Sport and Personal Protection Dogs'}],
       actions: CTAB + `<a class="btn btn-o" href="#/detection-agency">Agency programs</a>`
     })
     + sec({id:'sport', h2:'Disciplines we train', body: grid([
@@ -816,7 +816,7 @@ PAGES['/detection-agency'] = {
       title:'Programs for departments, units and private handlers.',
       lede:'Whether you are starting a dog, fixing a handling problem, or maintaining a certified team, we deliver training that is documented, repeatable and defensible in the field.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Greg%20Decoy.mp4',
-      crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs',href:'#/working-dogs'},{label:'Detection and Agency'}],
+      crumbs:[{label:'Home',href:'#/'},{label:'Sport and Personal Protection Dogs',href:'#/working-dogs'},{label:'Detection and Agency'}],
       actions:`<a class="btn btn-p" href="#/contact?service=agency">Request Agency Proposal</a>${CTAC}`
     })
     + sec({h2:'Agency and handler services', body: grid([
@@ -1194,7 +1194,7 @@ PAGES['/404'] = {
     })
     + sec({body: grid([
         card({icon:I.home, h3:'Pet Dog Training', body:'<p>Board and Train, private lessons, puppy foundations and day training.</p>', foot:'<a class="btn btn-g btn-sm" href="#/pet-training">Go to Pet Training</a>'}),
-        card({icon:I.shield, h3:'Working Dogs', body:'<p>Detection, police K9, sport, protection and decoy services.</p>', foot:'<a class="btn btn-g btn-sm" href="#/working-dogs">Go to Working Dogs</a>'}),
+        card({icon:I.shield, h3:'Sport &amp; Personal Protection Dogs', body:'<p>Sport and personal protection dog development, alongside detection and police K9 services.</p>', foot:'<a class="btn btn-g btn-sm" href="#/working-dogs">Go to Sport &amp; Personal Protection</a>'}),
         card({icon:I.chat, h3:'Contact Us', body:`<p>Book a free meet and greet or call ${SITE.phoneDisplay}.</p>`, foot:'<a class="btn btn-g btn-sm" href="#/contact">Go to Contact</a>'})
       ],'g3')});
   }
