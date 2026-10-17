@@ -612,16 +612,16 @@ PAGES['/pet-training'] = {
 };
 
 PAGES['/board-train'] = {
-  title:'Board & Train Dog Training in Corpus Christi & South Texas | Taurus K9',
-  desc:'Immersive board and train programs in Aransas Pass and Corpus Christi, TX. Basic Obedience (4-6 weeks), Advanced Obedience (6-8 weeks) and Behavior Modification (8-12 weeks) with daily updates and real-world proofing.',
+  title:'Board & Train in Aransas Pass & the Coastal Bend | Taurus K9',
+  desc:'Focused Board & Train for everyday obedience, public reliability or behavior support. Programs run 4–12 weeks, with regular updates and a hands-on handoff.',
   render(){
     const tiers = [
-      {h3:'Basic Obedience', meta:'4&ndash;6 weeks &middot; Basic manners and listening skills', flag:'',
-       items:['Teach sit, down, come, place, and leave it.','Build better leash walking and clear everyday listening skills.','Improve calm behavior inside the house and around guests.','Start off-leash foundation work with structure and control.','Practice commands around distractions in real daily settings.','Send daily updates so owners can track progress clearly.']},
-      {h3:'Advanced Obedience', meta:'6&ndash;8 weeks &middot; Public reliability', flag:'Most chosen',
-       items:['Build stronger obedience with clearer responses and better control.','Improve leash work, recall, and off-leash reliability outdoors.','Practice calm behavior in parks, stores, and public spaces.','Work through distractions with better focus and steadier responses.','Strengthen public manners around people, noise, and movement.','Send regular updates so owners can track progress clearly.']},
-      {h3:'Behavior Modification', meta:'8&ndash;12 weeks &middot; Custom plan', flag:'',
-       items:['Address reactivity, fear, aggression, and resource guarding.','Build obedience that supports control during stressful situations.','Improve calm behavior inside the house and out in public.','Work through triggers with structure, repetition, and clear handling.','Strengthen reliability with routines that hold up daily.','Send regular updates so owners can track progress clearly.']}
+      {h3:'Basic Obedience', meta:'4&ndash;6 weeks &middot; Everyday manners and listening', flag:'',
+       items:['Build reliable sit, down, come, place and leave-it skills.','Practice relaxed leash walking and everyday focus.','Help your dog settle at home and greet visitors calmly.','Lay the groundwork for off-leash skills.','Practice around real-life distractions at a manageable pace.','Get regular updates on your dog’s progress.']},
+      {h3:'Advanced Obedience', meta:'6&ndash;8 weeks &middot; Reliability in public', flag:'Most chosen',
+       items:['Strengthen obedience and dependable responses.','Build recall and off-leash reliability where appropriate.','Practice calm manners in parks and public spaces.','Work through distractions with steady focus.','Prepare for the people, sounds and movement of everyday outings.','Get regular updates on your dog’s progress.']},
+      {h3:'Behavior Modification', meta:'8&ndash;12 weeks &middot; Individual plan', flag:'',
+       items:['Address reactivity, fear, aggression or resource guarding.','Build practical skills to support safer handling.','Practice calm behavior at home and in appropriate public settings.','Work through triggers with a thoughtful, structured plan.','Set routines that support progress beyond the program.','Get regular updates on your dog’s progress.']}
     ].map((t,i) => `<article class="tier${i === 1 ? ' tier-pop' : ''}">
         ${t.flag ? `<span class="tier__flag">${t.flag}</span>` : ''}
         <h3>${t.h3}</h3>
@@ -635,34 +635,34 @@ PAGES['/board-train'] = {
 
     return phero({
       tag:'Board &amp; Train',
-      title:'While you go about your day, your dog learns new skills with us.',
-      lede:'Your dog stays with us and trains several times a day, both at home and out in the community.',
+      title:'Focused training for your dog. Clear guidance for you.',
+      lede:'Your dog stays with us for structured daily sessions at home and in the community. You stay informed with regular updates and learn how to carry each new skill into life at home.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Untitled%20-%20October%2005%2c%202026%20at%2018.40.38-3.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Board & Train'}],
       actions: CTAB + CTAC
     })
     + sec({
-        bg:'cream', h2:'Three ways to board and train', centerIntro:true,
-        lede:`Every program includes daily updates, several training sessions each day in different places, and a handoff session so you can keep new habits going at home. We help you choose the program that fits your dog's needs.`,
+        bg:'cream', h2:'Choose the right Board &amp; Train program', centerIntro:true,
+        lede:`Each program includes structured daily training, regular progress updates and a hands-on handoff. We’ll help you choose an approach and timeline that fit your dog’s needs.`,
         body:`<div class="tiers">${tiers}</div>
-          <p class="fnote" style="margin-top:1.25rem">Program lengths are the range we quote; final length depends on your dog starting point and your goals. Training tools refers to optional education and conditioning, never required.</p>`
+          <p class="fnote" style="margin-top:1.25rem">These are typical program ranges. We’ll recommend a timeline based on your dog’s starting point and your goals. Training tools and related education are optional.</p>`
       })
     + sec({
-        eyebrow:'Deep dive', h2:'How Board and Train actually works',
+        eyebrow:'A closer look', h2:'What your dog’s training looks like',
         body: grid([
-          card({icon:I.bolt, h3:'Accelerated learning', body:'<p>Multiple structured sessions every day, with rest and decompression built in. Consistent repetition across settings compresses months of intermittent training into weeks.</p>'}),
-          card({icon:I.home, h3:'Home environment', body:'<p>Training happens in real-home conditions, so your dog generalizes the behavior instead of only performing in a facility.</p>'}),
-          card({icon:I.shield, h3:'Certified trainers', body:'<p>Police K9 Master Trainer credentials and years of behavior work mean consistency and a plan, not improvisation.</p>'}),
-          card({icon:I.chat, h3:'Progress reporting', body:'<p>Real-time updates and progress reports throughout the stay, the single thing owners tell us they want most.</p>'})
+          card({icon:I.bolt, h3:'Structured practice and rest', body:'<p>Your dog gets several focused sessions throughout the day, balanced with rest and time to decompress.</p>'}),
+          card({icon:I.home, h3:'Practice beyond the facility', body:'<p>We work in home and community settings so your dog can use new skills where everyday life happens.</p>'}),
+          card({icon:I.shield, h3:'Experienced trainers', body:'<p>Certified working-dog trainers bring a consistent approach, careful assessment and a clear plan to every program.</p>'}),
+          card({icon:I.chat, h3:'Regular progress updates', body:'<p>You’ll hear how training is going throughout your dog’s stay, so you can follow along and ask questions.</p>'})
         ],'g2')
       })
     + sec({
-        bg:'dark', eyebrow:'What to expect', h2:'Your dog stay, start to finish', centerIntro:true,
+        bg:'dark', eyebrow:'What to expect', h2:'From first meeting to homecoming', centerIntro:true,
         body: steps([
-          {h3:'Meet and greet with assessment', p:'Free and in person. We evaluate temperament, existing skills and the specific behaviors you want changed.'},
-          {h3:'Plan, scope and quote', p:'You receive the program, the length, whether any training tools are recommended, and the cost, in writing.'},
-          {h3:'Training blocks with updates', p:'Daily sessions, varied environments, enrichment and rest. You get progress reports along the way.'},
-          {h3:'Handoff and transfer sessions', p:'We teach you the handling and the commands, then follow up so the behavior holds at your house.'}
+          {h3:'Meet and get to know your dog', p:'We talk through your goals and assess your dog’s temperament, current skills and needs—in person, at no charge.'},
+          {h3:'Review your written plan', p:'Before you decide, you’ll receive the program recommendation, timeline, any suggested tools and the full cost.'},
+          {h3:'Follow the progress', p:'Your dog trains in structured sessions, with practice in varied settings, time to rest and regular updates for you.'},
+          {h3:'Learn together at handoff', p:'We coach you through the handling and skills your dog has learned, then check in to help you keep the progress going.'}
         ])
       })
     + sec({h2:'Board and Train questions', centerIntro:true, body: faqBlock(faqPick([2,3,4,9,10]))})
@@ -693,11 +693,11 @@ PAGES['/private-lessons'] = {
         ],'g2')
       })
     + sec({
-        bg:'cream', eyebrow:'Format', h2:'Where and how lessons run', centerIntro:true,
+        bg:'cream',         eyebrow:'Flexible coaching', h2:'Learn where the skills matter most', centerIntro:true,
         body: grid([
-          card({h3:'In your home', body:'<p>Sessions where the behavior actually happens. Especially valuable for door manners, crate work and household structure.</p>'}),
-          card({h3:'In your neighborhood', body:'<p>We train on your streets, parks and parking lots so the dog generalizes instead of performing only at home.</p>'}),
-          card({h3:'Single sessions or packages', body:'<p>Start with one session to see if we are the right fit, or commit to a package for a defined goal and timeline.</p>'})
+          card({h3:'At home', body:'<p>Work on the routines that matter where they happen—from door manners to crate comfort and settling in.</p>'}),
+          card({h3:'Around your neighborhood', body:'<p>Practice on your streets, in parks and in other everyday settings so skills travel with you.</p>'}),
+          card({h3:'One session or a package', body:'<p>Start with a single lesson or choose a package for a specific goal and a more sustained plan.</p>'})
         ],'g3')
       })
     + sec({h2:'Private lesson questions', centerIntro:true, body: faqBlock(faqPick([1,2,8,9]))})
@@ -706,22 +706,22 @@ PAGES['/private-lessons'] = {
 };
 
 PAGES['/puppy-foundations'] = {
-  title:'Puppy Training in Aransas Pass & Corpus Christi, TX | Taurus K9',
-  desc:'Puppy training from 8 weeks in the Texas Coastal Bend. Socialization, handling, crate and potty routines, and a confident foundation that prevents behavior problems later.',
+  title:'Puppy Training from 8 Weeks | Taurus K9, Coastal Bend',
+  desc:'Help your puppy build confidence, healthy routines and everyday skills from 8 weeks old. Puppy Foundations is available in Aransas Pass, Corpus Christi and the Coastal Bend.',
   render(){
     return phero({
       tag:'Puppy Foundations',
-      title:'The behavior you build at 10 weeks lasts a lifetime.',
-      lede:'The easiest dog to train is a puppy who has not learned the wrong habits yet. We build socialization, handling tolerance and household routines while your puppy is still in the highest-learning window.',
+      title:'Give your puppy a confident start.',
+      lede:'Those early weeks are a valuable time to build good habits. We help your puppy get comfortable with new experiences, handling and home routines—at a pace that feels safe.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/804886010.785997_7951783193232.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Puppy Foundations'}],
       actions: CTAB + CTAC
     })
-    + sec({h2:'What we build in puppies', body: grid([
-        card({icon:I.paw, h3:'Socialization done properly', body: chk(['Confident exposure to people, surfaces and sounds','Reading your puppy stress signals','Exposure without overwhelming','Building neutrality rather than over-excitement'])}),
-        card({icon:I.home, h3:'Household routines', body: chk(['Crate introduction and comfort','Potty schedule and management','Bite inhibition and appropriate chewing','Settling and calm behavior indoors'])}),
-        card({icon:I.check, h3:'Foundation commands', body: chk(['Name recognition and focus','Sit, down, come, place','Leash introduction without pulling','Building the habit of learning'])}),
-        card({icon:I.chat, h3:'Owner education', body: chk(['What to do at each developmental stage','Preventing resource guarding','Managing children and puppy interactions','A clear plan for the next 6 months'])})
+    + sec({h2:'Skills for a strong start', body: grid([
+        card({icon:I.paw, h3:'Positive early experiences', body: chk(['Meet people and explore new surfaces and sounds','Notice your puppy’s comfort and stress signals','Introduce new experiences without overwhelming them','Build calm confidence around everyday activity'])}),
+        card({icon:I.home, h3:'Comfortable home routines', body: chk(['Build positive crate experiences','Create a manageable potty routine','Guide mouthing toward appropriate toys','Practice settling and calm indoor behavior'])}),
+        card({icon:I.check, h3:'Everyday foundations', body: chk(['Responding to their name and finding focus','Sit, down, come and place','A comfortable introduction to the leash','Learning how to learn'])}),
+        card({icon:I.chat, h3:'Guidance for you', body: chk(['Know what to expect at each stage','Build positive habits around food and toys','Support safe interactions with children','Take home a practical plan for the next six months'])})
       ],'g2')})
     + sec({bg:'cream', h2:'Puppy questions', centerIntro:true, body: faqBlock(faqPick([8,0,1]))})
     + sec({body: band({h2:'Start your puppy on the right foundation.', cta:'Book Free Meet and Greet'})});
@@ -734,15 +734,15 @@ PAGES['/day-training'] = {
   render(){
     return phero({
       tag:'Day Training',
-      title:'Your dog trains during the day. You get the skills at handoff.',
-      lede:'Day training fits training into the hours you are already working. A certified trainer runs structured sessions with your dog, then teaches you the handling so the results transfer home.',
+      title:'Daytime training that fits your schedule—and brings you into the process.',
+      lede:'A trainer works with your dog during the day, then coaches you at handoff so you know how to use those skills at home.',
       crumbs:[{label:'Home',href:'#/'},{label:'Pet Dog Training',href:'#/pet-training'},{label:'Day Training'}],
       actions: CTAB + CTAC
     })
-    + sec({h2:'Who day training suits', body: grid([
-        card({icon:I.clock, h3:'Working owners', body:'<p>If your schedule is the only thing standing between your dog and consistent training, day training removes that obstacle.</p>'}),
-        card({icon:I.bolt, h3:'Dogs needing repetition', body:'<p>Some dogs need far more repetition than a weekly lesson provides. Daily or multi-weekly sessions accelerate progress substantially.</p>'}),
-        card({icon:I.chat, h3:'Owners who want to stay involved', body:'<p>Unlike Board and Train, your dog comes home each day. Transfer sessions keep you part of the process.</p>'})
+    + sec({h2:'Could day training be a fit?', body: grid([
+        card({icon:I.clock, h3:'Your weekdays are full', body:'<p>Get consistent practice for your dog while you take care of your workday and other commitments.</p>'}),
+        card({icon:I.bolt, h3:'Your dog benefits from practice', body:'<p>Frequent, focused sessions can help build skills between your own training lessons.</p>'}),
+        card({icon:I.chat, h3:'You want to stay hands-on', body:'<p>Your dog comes home each day, and transfer sessions help you stay connected to the training.</p>'})
       ],'g3')})
     + sec({bg:'cream', h2:'Day training questions', body: faqBlock(faqPick([0,9,1]))})
     + sec({body: band({cta:'Ask About Day Training'})});
