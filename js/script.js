@@ -750,57 +750,57 @@ PAGES['/day-training'] = {
 };
 
 PAGES['/working-dogs'] = {
-  title:'Police K9, Detection, Sport & Protection Dog Training in Texas | Taurus K9',
-  desc:'Specialty and working dog training in Texas: sport protection, tracking, contraband and narcotics detection, police K9, patrol support and certified police decoy scenario training. Agency programs nationwide.',
+  title:'Working Dog, Police K9 & Detection Training | Taurus K9',
+  desc:'Practical training for sport, detection, police K9 and protection teams, with certified decoy support. Agency programs and travel available nationwide.',
   render(){
     return phero({
       tag:'Specialty &amp; Working Dog Training',
-      title:'Working dogs trained for real scenarios, not demonstrations.',
-      lede:'Taurus K9 trains sport, detection and police K9 teams, with experienced certified police decoys providing real-world scenario work that prepares the dog for peak performance under pressure.',
+      title:'Prepare working dogs for the work they need to do.',
+      lede:'We train sport, detection and police K9 teams through structured practice built around real demands. Certified police decoys support safe, realistic scenario work.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Combined%20Videos.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs'}],
       actions: CTAB + `<a class="btn btn-o" href="#/detection-agency">Agency programs</a>`
     })
     + sec({id:'sport', h2:'Disciplines we train', body: grid([
         card({icon:I.shield, tag:'Sport', h3:'Sport training',
-          body:`<p>Structured development for sport handlers: obedience under drive, protection phases, tracking and precision, built progressively with clear benchmarks.</p>
+          body:`<p>Progressive training for sport teams, with clear benchmarks for obedience, protection work, tracking and precision.</p>
             ${chk(['Obedience under high drive','Protection phase development','Tracking and scent discrimination','Trial preparation and problem-solving'])}`}),
-        card({icon:I.nose, acc:true, tag:'Detection', h3:'Detection dogs',
-          body:`<p>Odor imprinting and search pattern development for narcotics, contraband and other target odors, including vehicle, building and area searches.</p>
+        card({icon:I.nose, acc:true, tag:'Detection', h3:'Detection training',
+          body:`<p>Develop odor recognition and search patterns for narcotics, contraband and other target odors in vehicles, buildings and open areas.</p>
             ${chk(['Odor imprinting and indication','Vehicle, building and area search','Indirect reward and variable reinforcement','Handler education and certification prep'])}`,
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Detection programs</a>`}),
         card({icon:I.chat, tag:'Police K9', h3:'Police K9 training',
-          body:`<p>Patrol and dual-purpose development, handler education and sustainment training for departments already working a dog.</p>
+          body:`<p>Patrol and dual-purpose development, handler education and ongoing training for departments working with a K9 team.</p>
             ${chk(['Patrol and dual-purpose development','Handler and unit training days','Sustainment and re-certification support','Scenario-based team evaluation'])}`}),
         card({icon:I.bolt, acc:true, id:'protection', tag:'Civilian', h3:'Personal protection',
-          body:`<p>For owners who want a trained family dog with reliable protective capability. Every dog and family is assessed individually; this is not the right fit for everyone, and we will say so.</p>
+          body:`<p>For owners seeking a family dog with protective skills. We assess each dog and household carefully; if this is not the right fit, we will tell you.</p>
             ${chk(['Obedience first, always','Controlled protective response','Family-safe handling protocols','Clear legal and liability guidance'])}`}),
         card({icon:I.paw, tag:'Support', h3:'Certified police decoy services',
-          body:`<p>Scenario work delivered by Demanet Academy Police Decoy Level 1 certified decoys: realistic pressure that builds a working dog instead of confusing it.</p>
+          body:`<p>Scenario training led by Demanet Academy Police Decoy Level 1 certified decoys, with realistic pressure and a safe, progressive approach.</p>
             ${chk(['Real-world scenario pressure','Correct decoy mechanics','Safe, controlled progression','Unit-level training support'])}`}),
         card({icon:I.check, tag:'Selection', h3:'Dog evaluation and selection',
-          body:`<p>Temperament, drive, nerve and suitability assessment before you invest in a working dog or a long program.</p>
+          body:`<p>Understand a candidate dog’s temperament, drive and suitability before investing in a working dog or a long training program.</p>
             ${chk(['Temperament and nerve evaluation','Drive and hunt assessment','Suitability for discipline','Honest pass or fail reporting'])}`})
       ],'g2')})
     + sec({
-        bg:'dark', eyebrow:'Our credentials', h2:'Certifications behind the working dog division', centerIntro:true,
-        lede:'These are the qualifications we can document. Verify them before you hire any working dog trainer.',
+        bg:'dark', eyebrow:'Our credentials', h2:'Experience you can verify', centerIntro:true,
+        lede:'We believe in being clear about our training and credentials. Here is the experience behind our working dog programs.',
         body: grid([
           card({h3:'Tarheel Canine Inc.', body:'<p><strong>Police K9 Master Trainer</strong> certification held by both Greg and Rebecca.</p>'}),
-          card({h3:'NEPOPO Silver School', body:'<p>Silver School graduates, covering detection and working dog development methodology.</p>'}),
+          card({h3:'NEPOPO Silver School', body:'<p>Greg and Rebecca are Silver School graduates, with education in detection and working dog development.</p>'}),
           card({h3:'Demanet Academy', body:'<p><strong>Police Decoy Level 1</strong> certification for realistic, safe scenario work.</p>'}),
-          card({h3:'21 years U.S. Army', body:'<p>Greg brings two decades of military discipline and operational experience to the training field.</p>'})
+          card({h3:'21 years in the U.S. Army', body:'<p>Greg brings two decades of military service and experience to his work with dogs and handlers.</p>'})
         ],'g2')
       })
     + sec({
-        eyebrow:'Training philosophy', h2:'Understanding the dog before writing the plan', centerIntro:true,
+        eyebrow:'How we work', h2:'Understand the dog. Build the plan around them.', centerIntro:true,
         body:`<div class="measure training-philosophy">
-          <p>Our approach centers on comprehending the unique temperament of each dog and devising a training strategy rooted in scientific principles to achieve the ultimate training objective effectively.</p>
-          <p>We employ motivational techniques to ensure the dog learns with minimal stress, going well beyond mere command teaching to instill a broader understanding of how to perform in various situations. Our guiding principle is to create an environment where the dog is primed for success.</p>
-          <p>For detection work specifically, that means building reinforcement schedules the right way: indirect reward on a variable schedule, so the dog works because the behavior itself has become the win, not because a treat is visible in the handler hand. Behavior reinforced on a variable schedule is the most resistant to extinction, which is exactly what you want in the field.</p>
+          <p>Every dog brings a different temperament, history and set of strengths. We take time to understand those differences and build a plan around the work ahead.</p>
+          <p>Motivation, clear communication and thoughtful progression help dogs learn with less stress. We teach more than commands: we help dogs use their skills in the situations they will face.</p>
+          <p>In detection training, we develop reliable search behavior through carefully planned reinforcement and practice. The aim is for the dog to work with focus and confidence, even when the reward is not immediately visible.</p>
         </div>
         <h3 style="margin-top:2.5rem" id="decoy">Decoy services</h3>
-        <div class="measure decoy-summary"><p>Scenario work is only as good as the decoy delivering it. Our decoy support is certified, safety-managed, and matched to your dog current level, building the dog up rather than overwhelming it.</p></div>`
+        <div class="measure decoy-summary"><p>Good scenario work depends on the decoy as much as the dog. Our certified decoy support is safety-managed and matched to your dog’s current level, building skills without overwhelming the team.</p></div>`
       })
     + sec({bg:'cream', h2:'Working dog questions', centerIntro:true, body: faqBlock(faqPick([5,6,4,11]))})
     + sec({body: band({h2:'Working dog or agency program? Request a proposal.', cta:'Request a Proposal'})});
@@ -808,40 +808,40 @@ PAGES['/working-dogs'] = {
 };
 
 PAGES['/detection-agency'] = {
-  title:'Detection Dog Training & K9 Programs for Agencies | Taurus K9, Texas',
-  desc:'Contraband and narcotics detection dog training, handler education and department K9 programs. Training days, decoy support and sustainment for police and private teams. Nationwide travel for agency contracts.',
+  title:'Detection & Agency K9 Programs | Taurus K9',
+  desc:'Detection development, handler education, decoy support and ongoing training for law enforcement agencies and private working dog teams. Nationwide agency travel available.',
   render(){
     return phero({
       tag:'Detection &amp; Agency Programs',
-      title:'Programs for departments, units and private handlers.',
-      lede:'Whether you are starting a dog, fixing a handling problem, or maintaining a certified team, we deliver training that is documented, repeatable and defensible in the field.',
+      title:'Practical K9 training for agencies and handlers.',
+      lede:'Whether you are developing a new dog, working through a team challenge or maintaining a certified team, we build a clear training plan with documented, repeatable field practice.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Greg%20Decoy.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Specialty and Working Dogs',href:'#/working-dogs'},{label:'Detection and Agency'}],
       actions:`<a class="btn btn-p" href="#/contact?service=agency">Request Agency Proposal</a>${CTAC}`
     })
     + sec({h2:'Agency and handler services', body: grid([
-        card({icon:I.nose, h3:'Detection development', body:'<p>Odor imprinting, search pattern mechanics, indication finalization, and proofing across vehicles, buildings, open area and luggage.</p>'}),
-        card({icon:I.chat, h3:'Handler training days', body:'<p>Unit-level training built around your dogs, your handlers and the problems you are actually facing, not a generic curriculum.</p>'}),
-        card({icon:I.paw, h3:'Certified decoy support', body:'<p>Scenario pressure delivered to standard, with correct mechanics and safe progression for patrol and protection work.</p>'}),
-        card({icon:I.chart, h3:'Sustainment programs', body:'<p>Recurring maintenance to keep certified teams sharp between annual certifications, with documented progress.</p>'}),
-        card({icon:I.check, h3:'Selection and procurement', body:'<p>Independent evaluation of candidate dogs so departments invest in the right dog instead of inheriting a problem.</p>'}),
-        card({icon:I.shield, h3:'Private handler support', body:'<p>Owner-operators in security, recovery and specialized fields: training and maintenance for working teams outside law enforcement.</p>'})
+        card({icon:I.nose, h3:'Detection development', body:'<p>Odor imprinting, search patterns and indications, with practice across vehicles, buildings, open areas and luggage.</p>'}),
+        card({icon:I.chat, h3:'Handler training days', body:'<p>Focused unit training shaped around your teams, your handlers and the challenges you need to address.</p>'}),
+        card({icon:I.paw, h3:'Certified decoy support', body:'<p>Realistic scenario work for patrol and protection teams, delivered with sound mechanics and a safe progression.</p>'}),
+        card({icon:I.chart, h3:'Ongoing team development', body:'<p>Regular practice helps certified teams stay prepared between annual certifications. Progress is documented.</p>'}),
+        card({icon:I.check, h3:'Dog evaluation and selection', body:'<p>Independent evaluation helps departments assess candidate dogs before investing in a team.</p>'}),
+        card({icon:I.shield, h3:'Private handler support', body:'<p>Training and ongoing support for working teams in security, recovery and other specialized fields.</p>'})
       ],'g2')})
     + sec({
-        bg:'cream', eyebrow:'Scope', h2:'How a contract typically runs', centerIntro:true,
+        bg:'cream', eyebrow:'Working together', h2:'A straightforward process for your team', centerIntro:true,
         body: steps([
-          {h3:'Needs assessment', p:'A call or visit to define the discipline, the number of teams, current certification status and the outcomes your unit needs.'},
-          {h3:'Written proposal', p:'Scope, duration, travel, deliverables and cost. Clear enough to submit internally for approval.'},
-          {h3:'Delivery on site', p:'We come to you. Training days, decoy support and handler education delivered against the agreed plan.'},
-          {h3:'Documentation and sustainment', p:'Progress records, a maintenance schedule and re-certification support so the capability survives after we leave.'}
-        ]) + `<p class="fnote" style="margin-top:1.5rem">We travel for agency contracts and quote in all 50 states. Certificate of insurance available on request.</p>`
+          {h3:'Talk through your needs', p:'We clarify the discipline, number of teams, certification status and the outcomes your unit is working toward.'},
+          {h3:'Review a written proposal', p:'Your scope, schedule, travel, deliverables and cost are set out clearly for planning and approval.'},
+          {h3:'Train on site', p:'We come to your team and deliver training, decoy support and handler education to the agreed plan.'},
+          {h3:'Keep the work moving', p:'You receive progress records, a maintenance schedule and re-certification support for the road ahead.'}
+        ]) + `<p class="fnote" style="margin-top:1.5rem">We travel for agency contracts and prepare proposals nationwide. Certificates of insurance are available on request.</p>`
       })
     + sec({
-        eyebrow:'Real-world example', h2:'Contraband detection in a sober living community', centerIntro:true,
+        eyebrow:'A real-world application', h2:'Detection work in a recovery community', centerIntro:true,
         body:`<div class="measure training-philosophy">
-          <p>A recent placement: a contraband (narcotics) detection dog with rock-solid obedience, working periodic sweeps to protect the sanctuary of a residential recovery home. Every sweep adds a layer of accountability, safety and peace of mind for residents.</p>
-          <p>What that work looks like: precision narcotics detection on real odors, flawless obedience around real-world distractions, and reward delivered through an indirect reward system on a variable reinforcement schedule. The dog never knows exactly when the reward is coming, because the work itself has become the win.</p>
-          <p>If your facility, venue or organization needs detection capability, we build the dog and train the handler.</p>
+          <p>We placed a contraband detection dog with a residential recovery community, where periodic sweeps support the facility’s safety and accountability practices.</p>
+          <p>The work calls for accurate detection around everyday distractions, steady obedience and a carefully developed reward system. Training helps the dog stay focused on the search, even when the reward is not visible.</p>
+          <p>If your facility or organization is exploring detection support, we can talk through your needs and train the handler alongside the dog.</p>
         </div>`
       })
     + sec({bg:'cream', h2:'Agency questions', centerIntro:true, body: faqBlock(faqPick([6,5,11,7]))})
@@ -850,38 +850,38 @@ PAGES['/detection-agency'] = {
 };
 
 PAGES['/about'] = {
-  title:'About Taurus K9 | Certified Dog Trainers in Aransas Pass, Texas',
-  desc:'Meet the Taurus K9 team: Greg and Rebecca, Police K9 Master Trainers (Tarheel Canine Inc.), NEPOPO Silver School graduates and Demanet Academy certified police decoys. Our story and training philosophy.',
+  title:'Meet Greg & Rebecca | About Taurus K9',
+  desc:'Get to know Greg and Rebecca, the trainers behind Taurus K9 in Aransas Pass. Learn about their experience, credentials and thoughtful approach to dog training.',
   render(){
     return phero({
       tag:'About Us',
-      title:'Get to know us, then let us meet.',
-      lede:'Taurus K9 was founded with a mission to provide exceptional dog training services that transform both dogs and their owners. See the difference our passion and expertise can make for your dog.',
+      title:'Meet the people who will work with your dog.',
+      lede:'We’re Greg and Rebecca. We bring professional experience, a thoughtful approach and a genuine commitment to helping dogs and the people who care for them.',
       crumbs:[{label:'Home',href:'#/'},{label:'About Us'}],
       actions: CTAB + CTAC
     })
     + sec({
-        bg:'cream', eyebrow:'Our story', h2:'Built to serve both ends of the leash', centerIntro:true,
+        bg:'cream',         eyebrow:'Our story', h2:'Good training supports the whole team.', centerIntro:true,
         body:`<div class="measure training-philosophy">
-          <p>Taurus K9 was founded with a mission to provide exceptional dog training services that transform both dogs and their owners. Our team of certified trainers brings years of experience in obedience, behavior modification, and specialized working dog techniques.</p>
-          <p>We believe in positive reinforcement methods combined with clear communication to create lasting results. Whether you have a new puppy or an adult dog with behavioral challenges, we have the expertise to help.</p>
-          <p style="font-weight:700;color:var(--ink)">Our philosophy is simple: every dog deserves training that enhances their life and strengthens their bond with their family.</p>
-          <p>That philosophy is why we train pet dogs and working dogs under one roof. A family dog learning to settle on a mat and a police K9 holding an indication in a parking lot are doing the same thing: making choices under pressure. The standard does not change; only the environment does.</p>
+          <p>We founded Taurus K9 to help dogs and their people make progress that matters in daily life. Our work spans obedience, behavior support and specialized working dog training.</p>
+          <p>We pair motivation and positive reinforcement with clear communication. Whether you’re starting with a puppy or working through a challenge with an adult dog, we’ll take time to understand what your team needs.</p>
+          <p style="font-weight:700;color:var(--ink)">Our goal is simple: help dogs build useful skills and help their people feel confident using them.</p>
+          <p>That commitment carries across our family and working dog programs. A family dog learning to settle at home and a police K9 practicing an indication both need thoughtful teaching and steady handling. The setting changes; our care and standards do not.</p>
         </div>`
       })
     + sec({
-        eyebrow:'Meet the team', h2:'Certified professionals dedicated to your dog success',
+        eyebrow:'Meet the team', h2:'Experienced trainers. A personal approach.',
         body: grid([
           `<article class="card"><div class="person">
             <span class="av" aria-hidden="true">G</span>
             <div>
               <h3>Greg</h3>
               <p class="person__r">Trainer &middot; Working Dog Division</p>
-              <p>A 21-year Army veteran, Greg brings military discipline and unwavering dedication to his dog training, which leads to proven results.</p>
+              <p>After 21 years in the U.S. Army, Greg brings focus, consistency and a thoughtful approach to working with dogs and handlers.</p>
               <ul class="cred">
                 <li>Tarheel Canine Inc. &mdash; Police K9 Master Trainer</li>
                 <li>NEPOPO Silver School</li>
-                <li>Demanet Academy &mdash; Police Decoy LVL 1</li>
+                <li>Demanet Academy &mdash; Police Decoy Level 1</li>
               </ul>
             </div>
           </div></article>`,
@@ -890,7 +890,7 @@ PAGES['/about'] = {
             <div>
               <h3>Rebecca</h3>
               <p class="person__r">Trainer &middot; Pet and Behavior</p>
-              <p>Rebecca training approach is second to none, combining unparalleled expertise with a personalized touch that delivers exceptional results for every dog.</p>
+              <p>Rebecca takes time to understand each dog and family, then shapes training around their needs, routines and goals.</p>
               <ul class="cred">
                 <li>Tarheel Canine Inc. &mdash; Police K9 Master Trainer</li>
                 <li>NEPOPO Silver School</li>
@@ -901,21 +901,21 @@ PAGES['/about'] = {
       })
     + sec({
         bg:'dark', eyebrow:'Certifications', centerIntro:true,
-        h2:'We maintain the highest standards in training education and methodology',
+        h2:'Credentials that support our work',
         body: grid([
-          card({h3:'Tarheel Canine Inc.', body:'<p>Police K9 Master Trainer certification, a recognized credential in the working dog community.</p>'}),
-          card({h3:'NEPOPO Silver School', body:'<p>Completion of the Silver School curriculum in working dog development.</p>'}),
-          card({h3:'Demanet Academy', body:'<p>Police Decoy Level 1 certification for safe, realistic scenario work.</p>'}),
-          card({h3:'Ongoing education', body:'<p>We continue developing methodology rather than repeating what we learned years ago.</p>'})
+          card({h3:'Tarheel Canine Inc.', body:'<p>Police K9 Master Trainer certification, recognized in the working dog community.</p>'}),
+          card({h3:'NEPOPO Silver School', body:'<p>Silver School graduates with training in working dog development.</p>'}),
+          card({h3:'Demanet Academy', body:'<p>Police Decoy Level 1 certification for realistic, safety-conscious scenarios.</p>'}),
+          card({h3:'Ongoing learning', body:'<p>We keep building our knowledge and refining how we work with dogs and handlers.</p>'})
         ],'g2')
       })
     + sec({
-        eyebrow:'How we train', h2:'Set the dog up for success',
+        eyebrow:'How we train', h2:'A thoughtful start. Skills that travel.',
         body: grid([
-          card({icon:I.chart, h3:'Assess the individual', body:'<p>Every plan starts with the dog temperament, drives and history, not a script.</p>'}),
-          card({icon:I.paw, h3:'Motivational methods', body:'<p>Low-stress learning and clear reinforcement produce faster, more durable results than pressure.</p>'}),
-          card({icon:I.chat, h3:'Clear communication', body:'<p>Consistency and timing from the handler matter as much as anything we do with the dog.</p>'}),
-          card({icon:I.bolt, h3:'Beyond commands', body:'<p>We teach the dog how to perform in varied situations, so behavior survives the real world.</p>'})
+          card({icon:I.chart, h3:'Understand the dog', body:'<p>We begin with your dog’s temperament, history and strengths, then build a plan to match.</p>'}),
+          card({icon:I.paw, h3:'Keep learning positive', body:'<p>Motivation, careful pacing and clear reinforcement help dogs stay engaged as they learn.</p>'}),
+          card({icon:I.chat, h3:'Work as a team', body:'<p>We coach your timing and handling, because your everyday consistency matters.</p>'}),
+          card({icon:I.bolt, h3:'Practice in real settings', body:'<p>We build skills across the situations your dog will encounter beyond training.</p>'})
         ],'g2')
       })
     + sec({bg:'cream', body: band({cta:'Schedule Free Meet and Greet'})});
@@ -923,35 +923,34 @@ PAGES['/about'] = {
 };
 
 PAGES['/reviews'] = {
-  title:'Reviews & Transformations | Taurus K9 Dog Training, Coastal Bend TX',
-  desc:'Client reviews for Taurus K9 dog training in Aransas Pass, Corpus Christi and the Texas Coastal Bend, including Board and Train, private lessons, behavior modification and agency K9 programs.',
+  title:'Client Feedback | Taurus K9',
+  desc:'Learn how to share feedback about training with Taurus K9 in Aransas Pass and the Texas Coastal Bend.',
   render(){
     return phero({
-      tag:'Reviews &amp; Transformations',
-      title:'Real clients, real transformations.',
-      lede:'The proof of a training program is what happens thirty days after handoff. These are the outcomes clients report.',
+      tag:'Client Feedback',
+      title:'Good training is a team effort.',
+      lede:'We’re collecting verified feedback from the people and teams we’ve worked with. Have a question about a program? We’re happy to talk.',
       crumbs:[{label:'Home',href:'#/'},{label:'Reviews'}],
       actions: CTAB
     })
     + sec({
-        body:`<p class="disc" style="margin-bottom:1.75rem"><strong>Template content, replace before launch.</strong> Do not publish invented testimonials. Pull your real Google and Facebook reviews, keep the wording verbatim, and only add Review structured data for reviews you can verify.</p>
-          ${grid(REVIEWS.map(revBlock),'g2')}
+        body:`<p class="disc" style="margin-bottom:1.75rem">We only share feedback with permission and keep client reviews in their own words. If you have trained with us, we’d love to hear about your experience.</p>
           <div class="btnrow" style="margin-top:1.75rem">
             <a class="btn btn-o" href="https://www.facebook.com/TaurusK9LLC" target="_blank" rel="noopener" data-track="social_click" data-loc="facebook">Reviews on Facebook</a>
-            <a class="btn btn-o" href="#/contact?service=board-train">Start my dog program</a>
+            <a class="btn btn-o" href="#/contact">Talk with a trainer</a>
           </div>`
       })
     + sec({
-        bg:'cream', h2:'Results by program',
+        bg:'cream', h2:'What training can focus on',
         body:`<table class="data">
-          <caption>What clients typically report after each program</caption>
-          <thead><tr><th scope="col">Program</th><th scope="col">Typical reported outcome</th><th scope="col">Timeframe</th></tr></thead>
+          <caption>Examples of goals and typical program ranges</caption>
+          <thead><tr><th scope="col">Program</th><th scope="col">Common training goals</th><th scope="col">Typical timeframe</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Board &amp; Train, Basic</th><td>House manners, reliable commands, off-leash foundation</td><td>4&ndash;6 weeks</td></tr>
-            <tr><th scope="row">Board &amp; Train, Advanced</th><td>Off-leash reliability and public manners</td><td>6&ndash;8 weeks</td></tr>
-            <tr><th scope="row">Behavior Modification</th><td>Managed reactivity, reduced anxiety, household safety</td><td>8&ndash;12+ weeks</td></tr>
-            <tr><th scope="row">Private Lessons</th><td>Owner handling confidence plus measurable obedience gains</td><td>Weekly</td></tr>
-            <tr><th scope="row">Agency and Detection</th><td>Certification readiness and sustained field performance</td><td>Per contract</td></tr>
+            <tr><th scope="row">Board &amp; Train, Basic</th><td>Home manners, everyday cues and off-leash foundations</td><td>4&ndash;6 weeks</td></tr>
+            <tr><th scope="row">Board &amp; Train, Advanced</th><td>Reliable skills and calm manners in public</td><td>6&ndash;8 weeks</td></tr>
+            <tr><th scope="row">Behavior Modification</th><td>Thoughtful support for reactivity, anxiety or aggression</td><td>8&ndash;12+ weeks</td></tr>
+            <tr><th scope="row">Private Lessons</th><td>Practical obedience and confident handling</td><td>Weekly</td></tr>
+            <tr><th scope="row">Agency and Detection</th><td>Team development and field readiness</td><td>Per contract</td></tr>
           </tbody>
         </table>`
       })
