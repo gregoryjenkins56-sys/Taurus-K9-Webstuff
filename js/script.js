@@ -465,7 +465,7 @@ PAGES['/'] = {
   render(){
     const trows = [
       {href:'#/pet-training', ic:I.home, t:'Pet Dog Training', d:'Board &amp; Train, private lessons, puppy foundations and day training for the life you share.'},
-      {href:'#/working-dogs', ic:I.shield, t:'Specialty &amp; Working Dogs', d:'Sport, detection and police K9 training, supported by certified decoys and realistic scenarios.'}
+      {href:'#/working-dogs', ic:I.shield, t:'Specialty &amp; Working Dogs', d:'Sport, Personal Protection training, supported by certified decoys and realistic scenarios.'}
     ].map(x => `<div class="trow">
         <span class="trow__ic" aria-hidden="true">${x.ic}</span>
         <div>
