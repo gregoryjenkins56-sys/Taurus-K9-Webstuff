@@ -737,7 +737,7 @@ PAGES['/day-training'] = {
 
 PAGES['/working-dog-training'] = {
   title:'Working Dog Training Programs | Taurus K9, Texas',
-  desc:'Explore sport dog, personal protection, detection and police K9 training programs from Taurus K9. Working dog and agency services available nationwide.',
+  desc:'Explore sport dog, personal protection, detection and police K9 training programs from Taurus K9. Working dog and agency services available.',
   render(){
     return phero({
       tag:'Working Dog Training',
@@ -757,7 +757,7 @@ PAGES['/working-dog-training'] = {
           body:`<p>Odor imprinting, search development and handler education for contraband and narcotics detection teams.</p><p><strong>Vehicle, building and area search work.</strong></p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Detection Programs</a>`}),
         card({icon:I.chat, acc:true, tag:'Law Enforcement', h3:'Police K9 Programs',
-          body:`<p>Patrol and dual-purpose development, handler training, scenario work and sustainment support for departments.</p><p><strong>Team training and nationwide agency support.</strong></p>`,
+          body:`<p>Patrol and dual-purpose development, handler training, scenario work and sustainment support for departments.</p><p><strong>Team training and agency support.</strong></p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Police K9 Programs</a>`}),
         card({icon:I.paw, tag:'Scenario Support', h3:'Certified Police Decoy Services',
           body:`<p>Realistic, safety-managed scenario work delivered by Demanet Academy Police Decoy Level 1 certified decoys.</p><p><strong>Available for working dog teams and agencies.</strong></p>`,
@@ -793,7 +793,7 @@ PAGES['/working-dog-training'] = {
 
 PAGES['/working-dogs'] = {
   title:'Sport & Personal Protection Dogs in Texas | Taurus K9',
-  desc:'Sport dog and personal protection dog training in Texas. Taurus K9 also provides detection, police K9, patrol support and agency programs nationwide.',
+  desc:'Sport dog and personal protection dog training in Texas. Taurus K9 also provides detection, police K9, patrol support and agency programs.',
   render(){
     return phero({
       tag:'Sport &amp; Personal Protection Dogs',
@@ -851,7 +851,7 @@ PAGES['/working-dogs'] = {
 
 PAGES['/detection-agency'] = {
   title:'Police K9 Programs & Detection Dog Training | Taurus K9, Texas',
-  desc:'Police K9 programs, contraband and narcotics detection dog training, handler education and department K9 services. Training days, decoy support and sustainment for police and private teams. Nationwide travel for agency contracts.',
+  desc:'Police K9 programs, contraband and narcotics detection dog training, handler education and department K9 services. Training days, decoy support and sustainment for police and private teams.',
   render(){
     return phero({
       tag:'Police K9 Programs',
@@ -876,7 +876,7 @@ PAGES['/detection-agency'] = {
           {h3:'Review a written proposal', p:'Your scope, schedule, travel, deliverables and cost are set out clearly for planning and approval.'},
           {h3:'Train on site', p:'We come to your team and deliver training, decoy support and handler education to the agreed plan.'},
           {h3:'Keep the work moving', p:'You receive progress records, a maintenance schedule and re-certification support for the road ahead.'}
-        ]) + `<p class="fnote" style="margin-top:1.5rem">We travel for agency contracts and prepare proposals nationwide. Certificates of insurance are available on request.</p>`
+        ]) + `<p class="fnote" style="margin-top:1.5rem">We travel for agency contracts and prepare proposals. Certificates of insurance are available on request.</p>`
       })
     + sec({
         eyebrow:'A real-world application', h2:'Detection work in a recovery community', centerIntro:true,
@@ -966,14 +966,14 @@ PAGES['/about'] = {
 
 PAGES['/service-area'] = {
   title:'Where We Train | Taurus K9, Texas Coastal Bend',
-  desc:'Taurus K9 serves Aransas Pass, Corpus Christi and communities throughout the Coastal Bend. We travel nationwide for working dog and agency programs.',
+  desc:'Taurus K9 serves Aransas Pass, Corpus Christi and communities throughout the Coastal Bend. We travel for working dog and agency programs.',
   render(){
     const cityList = SITE.cities.map(c => `<li>${c}</li>`).join('');
     const countyList = SITE.counties.map(c => `<li>${c} County</li>`).join('');
     return phero({
       tag:'Service Area',
       title:'Based in the Coastal Bend. Ready to travel for working teams.',
-      lede:'We work with family dogs across the Texas Coastal Bend, including Aransas Pass and Corpus Christi. For working dog and agency programs, we travel nationwide.',
+      lede:'We work with family dogs across the Texas Coastal Bend, including Aransas Pass and Corpus Christi. For working dog and agency programs, we travel.',
       crumbs:[{label:'Home',href:'#/'},{label:'Service Area'}],
       actions: CTAB + CTAC
     })
@@ -983,11 +983,11 @@ PAGES['/service-area'] = {
         body:`<ul class="areas">${cityList}</ul><h3 style="margin-top:2.25rem">Counties</h3><ul class="areas">${countyList}</ul>`
       })
     + sec({
-        bg:'cream', eyebrow:'Nationwide programs', h2:'Support for agencies and working dog teams',
+        bg:'cream', eyebrow:'programs', h2:'Support for agencies and working dog teams',
         centerIntro:true,
         body: grid([
           card({icon:I.shield, h3:'On-site agency training', body:'<p>We travel to your department or facility for team training, decoy support, handler education and ongoing development. Each proposal accounts for your scope and travel needs.</p>'}),
-          card({icon:I.nose, h3:'Detection programs nationwide', body:'<p>Detection development, odor imprinting and certification preparation for departments and private handlers across the country.</p>'}),
+          card({icon:I.nose, h3:'Detection programs', body:'<p>Detection development, odor imprinting and certification preparation for departments and private handlers across the country.</p>'}),
           card({icon:I.chat, h3:'Remote consultations', body:'<p>Outside our local area? We can discuss dog selection, program design and training challenges before planning a visit.</p>'})
         ],'g3')
       })
