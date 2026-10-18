@@ -862,12 +862,12 @@ PAGES['/detection-agency'] = {
       actions:`<a class="btn btn-p" href="#/contact?service=agency">Request Police K9 Proposal</a>${CTAC}`
     })
     + sec({h2:'Police K9 and handler services', body: grid([
-        card({icon:I.nose, h3:'Detection development', body:'<p>Odor imprinting, search pattern mechanics, indication finalization, and proofing across vehicles, buildings, open area and luggage.</p>'}),
-        card({icon:I.chat, h3:'Handler training days', body:'<p>Unit-level training built around your dogs, your handlers and the problems you are actually facing, not a generic curriculum.</p>'}),
-        card({icon:I.paw, h3:'Certified decoy support', body:'<p>Scenario pressure delivered to standard, with correct mechanics and safe progression for patrol and protection work.</p>'}),
-        card({icon:I.chart, h3:'Sustainment programs', body:'<p>Recurring maintenance to keep certified teams sharp between annual certifications, with documented progress.</p>'}),
-        card({icon:I.check, h3:'Selection and procurement', body:'<p>Independent evaluation of candidate dogs so departments invest in the right dog instead of inheriting a problem.</p>'}),
-        card({icon:I.shield, h3:'Private handler support', body:'<p>Owner-operators in security, recovery and specialized fields: training and maintenance for working teams outside law enforcement.</p>'})
+        card({icon:I.nose, h3:'Detection development', body:'<p>Build reliable detection performance through odor imprinting, systematic search patterns, clear final responses, and proofing in vehicles, buildings, open areas, and luggage.</p>'}),
+        card({icon:I.chat, h3:'Handler training days', body:'<p>Practical, unit-level training tailored to your dogs, handlers, operational goals, and real-world challenges—not a generic curriculum.</p>'}),
+        card({icon:I.paw, h3:'Certified decoy support', body:'<p>Professional scenario pressure delivered to recognized standards, with correct mechanics and safe, progressive training for patrol and protection teams.</p>'}),
+        card({icon:I.chart, h3:'Sustainment programs', body:'<p>Recurring maintenance training that keeps certified teams sharp between annual certifications, supported by documented progress and performance tracking.</p>'}),
+        card({icon:I.check, h3:'Selection and procurement', body:'<p>Independent evaluations of prospective dogs help departments invest in the right candidate—and avoid inheriting costly performance or behavioral problems.</p>'}),
+        card({icon:I.shield, h3:'Private handler support', body:'<p>Specialized training and ongoing maintenance for owner-operators working in security, recovery, detection, and other professional fields outside law enforcement.</p>'})
       ],'g2')})
     + sec({
         bg:'cream', eyebrow:'Working together', h2:'A straightforward process for your team', centerIntro:true,
