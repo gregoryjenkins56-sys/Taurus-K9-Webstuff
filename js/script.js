@@ -855,8 +855,8 @@ PAGES['/detection-agency'] = {
   render(){
     return phero({
       tag:'Police K9 Programs',
-      title:'Programs for departments, units and private handlers.',
-      lede:'Whether you are starting a dog, fixing a handling problem, or maintaining a certified team, we deliver training that is documented, repeatable and defensible in the field.',
+      title:'Training programs for departments, units, and private handlers.',
+      lede:'Whether you are starting a dog, correcting a handling issue, or maintaining a certified team, we provide documented, repeatable training that delivers dependable, defensible results in the field.',
       video:'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Videos/Greg%20Decoy.mp4',
       crumbs:[{label:'Home',href:'#/'},{label:'Working Dog Training',href:'#/working-dog-training'},{label:'Police K9 Programs'}],
       actions:`<a class="btn btn-p" href="#/contact?service=agency">Request Police K9 Proposal</a>${CTAC}`
