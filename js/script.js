@@ -888,7 +888,7 @@ PAGES['/detection-agency'] = {
          </div>`
       })
     + sec({bg:'cream', h2:'Agency questions', centerIntro:true, body: faqBlock(faqPick([6,5,11,7]))})
-    + sec({body: band({h2:'Talk to our Police K9 team.', p:'Tell us your discipline, your team size and your timeline. We will tell you what is realistic and send a written proposal.', cta:'Request a Proposal'})});
+    + sec({body: band({h2:'Request a Police K9 Training Proposal', p:'Tell us your discipline, team size, location, and desired timeline. We’ll review your operational needs and provide a written training proposal with a realistic recommended approach.', cta:'Request an Agency Proposal'})});
   }
 };
 
