@@ -813,7 +813,7 @@ PAGES['/working-dogs'] = {
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Detection programs</a>`}),
         card({icon:I.chat, tag:'Protection Sports', h3:'Protection Sports Training',
           body:`<p>Structured training for dogs and handlers pursuing sport work such as IGP, PSA, and other controlled protection disciplines.</p>
-            ${chk(['Foundation obedience and engagement,Drive development and clear control,Sport-style obedience, tracking, and protection skills,Decoy, handler, and trial-preparation coaching'])}`}),
+            ${chk(['Foundation obedience and engagement.','Drive development and clear control.','Sport-style obedience,tracking, and protection skills.','Decoy, handler, and trial-preparation coaching.'])}`}),
         card({icon:I.bolt, acc:true, id:'protection', tag:'Civilian', h3:'Personal protection',
           body:`<p>For owners seeking a family dog with protective skills. We assess each dog and household carefully; if this is not the right fit, we will tell you.</p>
             ${chk(['Obedience first, always','Controlled protective response','Family-safe handling protocols','Clear legal and liability guidance'])}`}),
