@@ -808,7 +808,7 @@ PAGES['/working-dogs'] = {
           body:`<p>Progressive training for sport teams, with clear benchmarks for obedience, protection work, tracking and precision.</p>
             ${chk(['Obedience under high drive','Protection phase development','Tracking and scent discrimination','Trial preparation and problem-solving'])}`}),
         card({icon:I.nose, acc:true, tag:'Detection', h3:'Detection training',
-          body:`<p>Develop odor recognition and search patterns for narcotics, contraband and other target odors in vehicles, buildings and open areas.</p>
+          body:`<p>Develop odor recognition skills and systematic search patterns for target odors in vehicles, buildings, and open areas, consistent with the applicable discipline.</p>
             ${chk(['Odor imprinting and indication','Vehicle, building and area search','Indirect reward and variable reinforcement','Handler education and certification prep'])}`,
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Detection programs</a>`}),
         card({icon:I.chat, tag:'Protection Sports', h3:'Protection Sports Training',
@@ -817,9 +817,9 @@ PAGES['/working-dogs'] = {
         card({icon:I.bolt, acc:true, id:'protection', tag:'Civilian', h3:'Personal protection',
           body:`<p>For owners seeking a family dog with protective skills. We assess each dog and household carefully; if this is not the right fit, we will tell you.</p>
             ${chk(['Obedience first, always','Controlled protective response','Family-safe handling protocols','Clear legal and liability guidance'])}`}),
-        card({icon:I.paw, tag:'Support', h3:'Certified police decoy services',
+        card({icon:I.paw, tag:'Support', h3:'Training decoy services',
           body:`<p>Scenario training led by Tarheel Canine inc., and Demanet Academy Police Decoy Level 1 certified decoys, with realistic pressure and a safe, progressive approach.</p>
-            ${chk(['Real-world scenario pressure','Correct decoy mechanics','Safe, controlled progression','Unit-level training support'])}`}),
+            ${chk(['Real-world scenario pressure','Correct decoy mechanics','Safe, controlled progression','Consistent training support'])}`}),
         card({icon:I.check, tag:'Selection', h3:'Dog evaluation and selection',
           body:`<p>Understand a candidate dog’s temperament, drive and suitability before investing in a working dog or a long training program.</p>
             ${chk(['Temperament and nerve evaluation','Drive and hunt assessment','Suitability for discipline','Honest pass or fail reporting'])}`})
