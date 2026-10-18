@@ -828,9 +828,9 @@ PAGES['/working-dogs'] = {
         bg:'dark', eyebrow:'Our credentials', h2:'Experience you can verify', centerIntro:true,
         lede:'We believe in being clear about our training and credentials. Here is the experience behind our working dog programs.',
         body: grid([
-          card({h3:'Tarheel Canine Inc.', body:'<p><strong>Police K9 Master Trainer</strong>certification held by both Greg and Rebecca.</p>'}),
+          card({h3:'Tarheel Canine Inc.', body:'<p><strong>Police K9 Master Trainer</strong> certification held by both Greg and Rebecca.</p>'}),
           card({h3:'NEPOPO Silver School', body:'<p>Greg and Rebecca are NePoPo® Silver School graduates with training in modern dog-training principles, detection work, and working-dog development.</p>'}),
-          card({h3:'Demanet Academy', body:'<p><strong>Police Decoy Level 1</strong>training in realistic, safe scenario work.</p>'}),
+          card({h3:'Demanet Academy', body:'<p><strong>Police Decoy Level 1</strong> training in realistic, safe scenario work.</p>'}),
           card({h3:'21 years in the U.S. Army', body:'<p>With two decades of military service, Greg brings discipline, leadership, and experience to his work with dogs and handlers.</p>'})
         ],'g2')
       })
