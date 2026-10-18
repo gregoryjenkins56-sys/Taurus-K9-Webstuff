@@ -593,7 +593,7 @@ PAGES['/pet-training'] = {
           </tbody>
         </table></div>`
       })
-    + sec({body: band({h2:'If you’re not sure where to start, we’re here to help. Come talk with our trainers, discuss your goals, and get some clear advice. Our in-person meeting is free, and there’s no obligation to sign up.', cta:'Schedule a Free Meet &amp; Greet'})});
+    + sec({body: band({h2:'Feeling unsure about your first step? Book a complimentary meet-and-greet with us.', cta:'Schedule a Free Meet &amp; Greet'})});
   }
 };
 
