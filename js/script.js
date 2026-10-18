@@ -828,24 +828,24 @@ PAGES['/working-dogs'] = {
         bg:'dark', eyebrow:'Our credentials', h2:'Experience you can verify', centerIntro:true,
         lede:'We believe in being clear about our training and credentials. Here is the experience behind our working dog programs.',
         body: grid([
-          card({h3:'Tarheel Canine Inc.', body:'<p><strong>Police K9 Master Trainer</strong> certification held by both Greg and Rebecca.</p>'}),
-          card({h3:'NEPOPO Silver School', body:'<p>Greg and Rebecca are Silver School graduates, with education in detection and working dog development.</p>'}),
-          card({h3:'Demanet Academy', body:'<p><strong>Police Decoy Level 1</strong> certification for realistic, safe scenario work.</p>'}),
-          card({h3:'21 years in the U.S. Army', body:'<p>Greg brings two decades of military service and experience to his work with dogs and handlers.</p>'})
+          card({h3:'Tarheel Canine Inc.', body:'<p><strong>Police K9 Master Trainer</strong>certification held by both Greg and Rebecca.</p>'}),
+          card({h3:'NEPOPO Silver School', body:'<p>Greg and Rebecca are NePoPo® Silver School graduates with training in modern dog-training principles, detection work, and working-dog development.</p>'}),
+          card({h3:'Demanet Academy', body:'<p><strong>Police Decoy Level 1</strong>training in realistic, safe scenario work.</p>'}),
+          card({h3:'21 years in the U.S. Army', body:'<p>With two decades of military service, Greg brings discipline, leadership, and experience to his work with dogs and handlers.</p>'})
         ],'g2')
       })
     + sec({
         eyebrow:'How we work', h2:'Understand the dog. Build the plan around them.', centerIntro:true,
         body:`<div class="measure training-philosophy">
-          <p>Every dog brings a different temperament, history and set of strengths. We take time to understand those differences and build a plan around the work ahead.</p>
-          <p>Motivation, clear communication and thoughtful progression help dogs learn with less stress. We teach more than commands: we help dogs use their skills in the situations they will face.</p>
-          <p>In detection training, we develop reliable search behavior through carefully planned reinforcement and practice. The aim is for the dog to work with focus and confidence, even when the reward is not immediately visible.</p>
+          <p>Every dog is different. We start by watching how your dog acts, talking with you about your goals, and trying a few simple exercises together. This first meeting takes about an hour to an hour and a half. You will leave with a clear idea of what we recommend and what comes next.</p>
+          <p>We use simple steps and clear cues to help your dog learn without stress. We work on skills you need every day, like recall, sit and stay, loose-leash walking, calm behavior around distractions, and focused scent work.</p>
+          <p>In detection training, we teach your dog to search and indicate finds in a way you can trust. You will practice giving cues, rewarding your dog, and guiding them through each step. We work together so both you and your dog build skill and confidence, even when rewards are delayed.</p>
         </div>
         <h3 style="margin-top:2.5rem" id="decoy">Decoy services</h3>
-        <div class="measure decoy-summary"><p>Good scenario work depends on the decoy as much as the dog. Our certified decoy support is safety-managed and matched to your dog’s current level, building skills without overwhelming the team.</p></div>`
+        <div class="measure decoy-summary"><p>Good scenario training needs a skilled decoy. Our decoy handlers have real experience and use the right safety gear in every session. We train in safe, controlled spaces and follow clear safety steps. Each session matches your dog’s current level, so your team can build skills steadily.</p></div>`
       })
     + sec({bg:'cream', h2:'Working dog questions', centerIntro:true, body: faqBlock(faqPick([5,6,4,11]))})
-    + sec({body: band({h2:'Working dog or agency program? Request a proposal.', cta:'Request a Proposal'})});
+    + sec({body: band({h2:'Working dog or Sport dog? Request an assesment.', cta:'Request assesment'})});
   }
 };
 
