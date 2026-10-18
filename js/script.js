@@ -538,10 +538,10 @@ PAGES['/'] = {
         body:`${grid([
             `<article class="card"><h3>Police K9 Master Trainer</h3>
               <p><strong>Tarheel Canine Inc.</strong></p>
-              <p>Advanced education in patrol, detection and handler development for working dog teams.</p></article>`,
+              <p>Advanced education in controlled aggression, patrol, detection, and handler development for working dog teams.</p></article>`,
             `<article class="card"><h3>NEPOPO Silver School</h3>
               <p><strong>Graduate</strong></p>
-              <p>Education in the NEPOPO® system, with a focus on motivation, clear communication and reliable behavior.</p></article>`,
+              <p>Education in the NEPOPO® system, with a focus on motivation, clear communication, and reliable behavior.</p></article>`,
             `<article class="card"><h3>Police Decoy Level 1</h3>
               <p><strong>Demanet Academy</strong></p>
               <p>Certified decoy work that gives dogs realistic scenarios in a controlled setting.</p></article>`
