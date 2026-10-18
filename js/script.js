@@ -898,29 +898,29 @@ PAGES['/about'] = {
   render(){
     return phero({
       tag:'About Us',
-      title:'Meet the people who will work with your dog.',
-      lede:'We’re Greg and Rebecca. We bring professional experience, a thoughtful approach and a genuine commitment to helping dogs and the people who care for them.',
+      title:'Meet the people who will care for and work with your dog.',
+      lede:'We’re Greg and Rebecca. We combine professional experience with a thoughtful, personalized approach and a genuine commitment to helping dogs and the people who love them.',
       crumbs:[{label:'Home',href:'#/'},{label:'About Us'}],
       actions: CTAB + CTAC
     })
     + sec({
         bg:'cream',         eyebrow:'Our story', h2:'Good training supports the whole team.', centerIntro:true,
         body:`<div class="measure training-philosophy">
-          <p>We founded Taurus K9 to help dogs and their people make progress that matters in daily life. Our work spans obedience, behavior support and specialized working dog training.</p>
-          <p>We pair motivation and positive reinforcement with clear communication. Whether you’re starting with a puppy or working through a challenge with an adult dog, we’ll take time to understand what your team needs.</p>
+          <p>Taurus K9 was founded from personal experience, loss, and a commitment to do better for dogs and the people who love them. After a harmful experience with an uneducated trainer created an overwhelming emotional toll and ultimately contributed to the behavioral euthanasia of a dog we loved, we knew there had to be a more responsible, compassionate path forward.</p>
+          <p>Our lives changed again when a rescue Cane Corso with severe behavioral challenges came into our world. Working through those challenges brought us together, sparked a shared passion for rehabilitation and training, and eventually led us to fall in love and get married.</p>
           <p style="font-weight:700;color:var(--ink)">Our goal is simple: help dogs build useful skills and help their people feel confident using them.</p>
-          <p>That commitment carries across our family and working dog programs. A family dog learning to settle at home and a police K9 practicing an indication both need thoughtful teaching and steady handling. The setting changes; our care and standards do not.</p>
+          <p>Our work includes obedience, behavior support, and specialized working-dog training, always grounded in motivation, positive reinforcement, clear communication, and a genuine understanding of each dog’s individual needs. Whether you are raising a puppy or navigating serious challenges with an adult dog, we take the time to understand your team and build a path forward with care, knowledge, and purpose.</p>
         </div>`
       })
     + sec({
-        eyebrow:'Meet the team', h2:'Experienced trainers. A personal approach.',
+        eyebrow:'Meet the team', h2:'Experienced trainers. Personalized training.',
         body: grid([
           `<article class="card"><div class="person">
             <span class="av" aria-hidden="true">G</span>
             <div>
               <h3>Greg</h3>
-              <p class="person__r">Trainer &middot; Working Dog Division</p>
-              <p>After 21 years in the U.S. Army, Greg brings focus, consistency and a thoughtful approach to working with dogs and handlers.</p>
+              <p class="person__r">Trainer</p>
+              <p>Drawing on 21 years of service in the U.S. Army, Greg brings focus, consistency, and a thoughtful approach to training dogs and their handlers.</p>
               <ul class="cred">
                 <li>Tarheel Canine Inc. &mdash; Police K9 Master Trainer</li>
                 <li>NEPOPO Silver School</li>
@@ -932,8 +932,8 @@ PAGES['/about'] = {
             <span class="av av-b" aria-hidden="true">R</span>
             <div>
               <h3>Rebecca</h3>
-              <p class="person__r">Trainer &middot; Pet and Behavior</p>
-              <p>Rebecca takes time to understand each dog and family, then shapes training around their needs, routines and goals.</p>
+              <p class="person__r">Trainer</p>
+              <p>Rebecca takes the time to understand each dog and family, creating a personalized training plan that fits their needs, routines, and goals.</p>
               <ul class="cred">
                 <li>Tarheel Canine Inc. &mdash; Police K9 Master Trainer</li>
                 <li>NEPOPO Silver School</li>
@@ -944,21 +944,21 @@ PAGES['/about'] = {
       })
     + sec({
         bg:'dark', eyebrow:'Certifications', centerIntro:true,
-        h2:'Credentials that support our work',
+        h2:'Credentials that support our expertise',
         body: grid([
           card({h3:'Tarheel Canine Inc.', body:'<p>Police K9 Master Trainer certification, recognized in the working dog community.</p>'}),
-          card({h3:'NEPOPO Silver School', body:'<p>Silver School graduates with training in working dog development.</p>'}),
-          card({h3:'Demanet Academy', body:'<p>Police Decoy Level 1 certification for realistic, safety-conscious scenarios.</p>'}),
-          card({h3:'Ongoing learning', body:'<p>We keep building our knowledge and refining how we work with dogs and handlers.</p>'})
+          card({h3:'NEPOPO Silver School', body:'<p>Advanced education in modern training methods and dog development.</p>'}),
+          card({h3:'Demanet Academy', body:'<p>Police Decoy Level 1 focus on realistic, controlled, and safety-conscious training scenarios.</p>'}),
+          card({h3:'Ongoing learning', body:'<p>We continually expand our knowledge and refine how we support dogs and their handlers.</p>'})
         ],'g2')
       })
     + sec({
-        eyebrow:'How we train', h2:'A thoughtful start. Skills that travel.',
+        eyebrow:'How we train', h2:'A thoughtful start. Skills that last.',
         body: grid([
-          card({icon:I.chart, h3:'Understand the dog', body:'<p>We begin with your dog’s temperament, history and strengths, then build a plan to match.</p>'}),
-          card({icon:I.paw, h3:'Keep learning positive', body:'<p>Motivation, careful pacing and clear reinforcement help dogs stay engaged as they learn.</p>'}),
-          card({icon:I.chat, h3:'Work as a team', body:'<p>We coach your timing and handling, because your everyday consistency matters.</p>'}),
-          card({icon:I.bolt, h3:'Practice in real settings', body:'<p>We build skills across the situations your dog will encounter beyond training.</p>'})
+          card({icon:I.chart, h3:'Understand your dog', body:'<p>We begin by understanding your dog’s temperament, history, and strengths, then create a training plan tailored to their needs.</p>'}),
+          card({icon:I.paw, h3:'Keep learning positive', body:'<p>Motivation, thoughtful pacing, and clear reinforcement keep dogs confident and engaged throughout the learning process.</p>'}),
+          card({icon:I.chat, h3:'Work as a team', body:'<p>We strengthen your timing and handling skills because consistent practice at home makes training last.</p>'}),
+          card({icon:I.bolt, h3:'Practice in real settings', body:'<p>We develop reliable skills in the everyday situations your dog will encounter beyond training.</p>'})
         ],'g2')
       })
     + sec({bg:'cream', body: band({cta:'Schedule a Free Meet &amp; Greet'})});
