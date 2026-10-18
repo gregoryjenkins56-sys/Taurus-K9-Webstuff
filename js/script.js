@@ -992,7 +992,7 @@ PAGES['/service-area'] = {
           card({icon:I.chat, h3:'Remote consultations', body:'<p>Located outside our service area? We offer remote consultations to discuss dog selection, program development, and training challenges before scheduling an on-site visit.</p>'})
         ],'g3')
       })
-    + sec({h2:'Coverage questions', centerIntro:true, body: faqBlock(faqPick([7,6,0]))})
+    + sec({h2:'Coverage questions', centerIntro:true, body: faqBlock(faqPick([7,6,1]))})
     + sec({bg:'cream', body: band({h2:'Wondering if we serve your area? Let’s find out.', cta:'Ask About My Area'})});
   }
 };
