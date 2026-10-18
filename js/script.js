@@ -870,13 +870,13 @@ PAGES['/detection-agency'] = {
         card({icon:I.shield, h3:'Private handler support', body:'<p>Specialized training and ongoing maintenance for owner-operators working in security, recovery, detection, and other professional fields outside law enforcement.</p>'})
       ],'g2')})
     + sec({
-        bg:'cream', eyebrow:'Working together', h2:'A straightforward process for your team', centerIntro:true,
+        bg:'cream', eyebrow:'Working together', h2:'A clear, straightforward process for your team', centerIntro:true,
         body: steps([
-          {h3:'Talk through your needs', p:'We clarify the discipline, number of teams, certification status and the outcomes your unit is working toward.'},
-          {h3:'Review a written proposal', p:'Your scope, schedule, travel, deliverables and cost are set out clearly for planning and approval.'},
-          {h3:'Train on site', p:'We come to your team and deliver training, decoy support and handler education to the agreed plan.'},
-          {h3:'Keep the work moving', p:'You receive progress records, a maintenance schedule and re-certification support for the road ahead.'}
-        ]) + `<p class="fnote" style="margin-top:1.5rem">We travel for agency contracts and prepare proposals. Certificates of insurance are available on request.</p>`
+          {h3:'Discuss your needs', p:'We identify the discipline, number of teams, certification requirements, and outcomes your unit wants to achieve.'},
+          {h3:'Review your proposal', p:'You receive a detailed proposal outlining the scope, schedule, travel, deliverables, and costs for planning and approval.'},
+          {h3:'Train on site', p:'We come to your location to provide hands-on training, decoy support, and handler education based on the agreed plan.'},
+          {h3:'Maintain progress', p:'You receive progress records, a maintenance schedule, and ongoing recertification support to help your teams perform reliably.'}
+        ]) + `<p class="fnote" style="margin-top:1.5rem">We travel for agency contracts and provide customized proposals.</p>`
       })
     + sec({
         eyebrow:'A real-world application', h2:'Detection Support for a Recovery Community', centerIntro:true,
