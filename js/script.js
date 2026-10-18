@@ -754,7 +754,7 @@ PAGES['/working-dog-training'] = {
           body:`<p>Individual assessment and structured development for owners seeking a capable family dog with controlled protective skills.</p><p><strong>Suitability and safe handling come first.</strong></p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Personal Protection</a>`}),
         card({icon:I.nose, tag:'Detection', h3:'Detection Dog Programs',
-          body:`<p>Odor imprinting, search development and handler education for contraband and narcotics detection teams.</p><p><strong>Vehicle, building and area search work.</strong></p>`,
+          body:`<p>Odor imprinting, search development and handler education for sport nosework competitors.</p><p><strong>Vehicle, building and area search work.</strong></p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Detection Programs</a>`}),
         card({icon:I.chat, acc:true, tag:'Law Enforcement', h3:'Police K9 Programs',
           body:`<p>Patrol and dual-purpose development, handler training, scenario work and sustainment support for departments.</p><p><strong>Team training and agency support.</strong></p>`,
