@@ -879,12 +879,13 @@ PAGES['/detection-agency'] = {
         ]) + `<p class="fnote" style="margin-top:1.5rem">We travel for agency contracts and prepare proposals. Certificates of insurance are available on request.</p>`
       })
     + sec({
-        eyebrow:'A real-world application', h2:'Detection work in a recovery community', centerIntro:true,
+        eyebrow:'A real-world application', h2:'Detection Support for a Recovery Community', centerIntro:true,
         body:`<div class="measure training-philosophy">
-          <p>We placed a contraband detection dog with a residential recovery community, where periodic sweeps support the facility’s safety and accountability practices.</p>
-          <p>The work calls for accurate detection around everyday distractions, steady obedience and a carefully developed reward system. Training helps the dog stay focused on the search, even when the reward is not visible.</p>
-          <p>If your facility or organization is exploring detection support, we can talk through your needs and train the handler alongside the dog.</p>
-        </div>`
+          <p>We placed a trained contraband detection dog with a residential recovery community to strengthen its safety, accountability, and substance-free environment.</p>
+          <p>Working in an active residential setting requires precise detection, reliable obedience and the ability to remain focused around everyday distractions. Through a carefully developed reward system, the dog learned to search methodically and perform consistently, even when the reward was not visible.</p>
+          <p>We also trained the handler alongside the dog, helping the team build the skills and confidence needed for effective, dependable searches.</p>
+          <p>If your facility or organization is considering detection support, we can develop a training and placement plan around your environment, policies and operational needs</p>
+         </div>`
       })
     + sec({bg:'cream', h2:'Agency questions', centerIntro:true, body: faqBlock(faqPick([6,5,11,7]))})
     + sec({body: band({h2:'Talk to our Police K9 team.', p:'Tell us your discipline, your team size and your timeline. We will tell you what is realistic and send a written proposal.', cta:'Request a Proposal'})});
