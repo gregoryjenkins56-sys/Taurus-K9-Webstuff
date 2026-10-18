@@ -754,13 +754,13 @@ PAGES['/working-dog-training'] = {
           body:`<p>Individual assessment and structured development for owners seeking a capable family dog with controlled protective skills.</p><p><strong>Suitability and safe handling come first.</strong></p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/working-dogs">Explore Personal Protection</a>`}),
         card({icon:I.nose, tag:'Detection', h3:'Detection Dog Programs',
-          body:`<p>Odor imprinting, search development and handler education for sport nosework competitors.</p><p><strong>Vehicle, building and area search work.</strong></p>`,
+          body:`<p>Odor imprinting, search development and handler education for Scent Work competitors.</p><p><strong>Vehicle, building and area search work.</strong></p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Detection Programs</a>`}),
         card({icon:I.chat, acc:true, tag:'Law Enforcement', h3:'Police K9 Programs',
           body:`<p>Patrol and dual-purpose development, handler training, scenario work and sustainment support for departments.</p><p><strong>Team training and agency support.</strong></p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Police K9 Programs</a>`}),
         card({icon:I.paw, tag:'Scenario Support', h3:'Certified Police Decoy Services',
-          body:`<p>Realistic, safety-managed scenario work delivered by Demanet Academy Police Decoy Level 1 certified decoys.</p><p><strong>Available for working dog teams and agencies.</strong></p>`,
+          body:`<p>Realistic, safety-managed scenario work delivered by Tarheel Canine Inc. , and Demanet Academy Police Decoy Level 1 certified decoys.</p><p><strong>Available for working dog teams and agencies.</strong></p>`,
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Explore Decoy Support</a>`}),
         card({icon:I.check, tag:'Selection', h3:'Working Dog Evaluation',
           body:`<p>Temperament, drive, nerve and suitability assessment to help handlers and departments choose the right dog.</p><p><strong>Clear findings before you invest.</strong></p>`,
@@ -811,14 +811,14 @@ PAGES['/working-dogs'] = {
           body:`<p>Develop odor recognition and search patterns for narcotics, contraband and other target odors in vehicles, buildings and open areas.</p>
             ${chk(['Odor imprinting and indication','Vehicle, building and area search','Indirect reward and variable reinforcement','Handler education and certification prep'])}`,
           foot:`<a class="btn btn-g btn-sm" href="#/detection-agency">Detection programs</a>`}),
-        card({icon:I.chat, tag:'Police K9', h3:'Police K9 training',
-          body:`<p>Patrol and dual-purpose development, handler education and ongoing training for departments working with a K9 team.</p>
-            ${chk(['Patrol and dual-purpose development','Handler and unit training days','Sustainment and re-certification support','Scenario-based team evaluation'])}`}),
+        card({icon:I.chat, tag:'Protection Sports', h3:'Protection Sports Training',
+          body:`<p>Structured training for dogs and handlers pursuing sport work such as IGP, PSA, and other controlled protection disciplines.</p>
+            ${chk(['Foundation obedience and engagement,Drive development and clear control,Sport-style obedience, tracking, and protection skills,Decoy, handler, and trial-preparation coaching'])}`}),
         card({icon:I.bolt, acc:true, id:'protection', tag:'Civilian', h3:'Personal protection',
           body:`<p>For owners seeking a family dog with protective skills. We assess each dog and household carefully; if this is not the right fit, we will tell you.</p>
             ${chk(['Obedience first, always','Controlled protective response','Family-safe handling protocols','Clear legal and liability guidance'])}`}),
         card({icon:I.paw, tag:'Support', h3:'Certified police decoy services',
-          body:`<p>Scenario training led by Demanet Academy Police Decoy Level 1 certified decoys, with realistic pressure and a safe, progressive approach.</p>
+          body:`<p>Scenario training led by Tarheel Canine inc., and Demanet Academy Police Decoy Level 1 certified decoys, with realistic pressure and a safe, progressive approach.</p>
             ${chk(['Real-world scenario pressure','Correct decoy mechanics','Safe, controlled progression','Unit-level training support'])}`}),
         card({icon:I.check, tag:'Selection', h3:'Dog evaluation and selection',
           body:`<p>Understand a candidate dog’s temperament, drive and suitability before investing in a working dog or a long training program.</p>
