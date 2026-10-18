@@ -974,22 +974,22 @@ PAGES['/service-area'] = {
     return phero({
       tag:'Service Area',
       title:'Based in the Coastal Bend. Ready to travel for working teams.',
-      lede:'We work with family dogs across the Texas Coastal Bend, including Aransas Pass and Corpus Christi. For working dog and agency programs, we travel.',
+      lede:'We serve family dogs throughout the Texas Coastal Bend, including Aransas Pass and Corpus Christi. For working-dog teams and agency programs, we travel to you.',
       crumbs:[{label:'Home',href:'#/'},{label:'Service Area'}],
       actions: CTAB + CTAC
     })
     + sec({
-        eyebrow:'Our local service area', h2:'Serving families across the Coastal Bend', centerLede:true,
-        lede:'Not sure if you’re in range? Get in touch and we’ll confirm availability. Board &amp; Train clients can also travel to us.',
+        eyebrow:'Our local service area', h2:'Proudly serving families throughout the Texas Coastal Bend.', centerLede:true,
+        lede:'Not sure if you’re within our service area? Contact us to confirm availability. For Board & Train programs, clients are welcome to travel to us.',
         body:`<ul class="areas">${cityList}</ul><h3 style="margin-top:2.25rem">Counties</h3><ul class="areas">${countyList}</ul>`
       })
     + sec({
         bg:'cream', eyebrow:'programs', h2:'Support for agencies and working dog teams',
         centerIntro:true,
         body: grid([
-          card({icon:I.shield, h3:'On-site agency training', body:'<p>We travel to your department or facility for team training, decoy support, handler education and ongoing development. Each proposal accounts for your scope and travel needs.</p>'}),
-          card({icon:I.nose, h3:'Detection programs', body:'<p>Detection development, odor imprinting and certification preparation for departments and private handlers across the country.</p>'}),
-          card({icon:I.chat, h3:'Remote consultations', body:'<p>Outside our local area? We can discuss dog selection, program design and training challenges before planning a visit.</p>'})
+          card({icon:I.shield, h3:'On-site agency training', body:'<p>We travel to your department or facility to provide customized team training, decoy support, handler education, and ongoing development. Each proposal is tailored to your agency’s goals, operational needs, and location.</p>'}),
+          card({icon:I.nose, h3:'Detection programs', body:'<p>We provide detection development, odor imprinting, and certification preparation for law enforcement agencies and private handlers.</p>'}),
+          card({icon:I.chat, h3:'Remote consultations', body:'<p>Located outside our service area? We offer remote consultations to discuss dog selection, program development, and training challenges before scheduling an on-site visit.</p>'})
         ],'g3')
       })
     + sec({h2:'Coverage questions', centerIntro:true, body: faqBlock(faqPick([7,6,0]))})
