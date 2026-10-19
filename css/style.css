@@ -50,6 +50,7 @@ li{margin-bottom:.35em}
 .section.center-intro>.wrap>.eyebrow{display:flex;width:fit-content;margin-inline:auto}
 .section.center-intro>.wrap>h2,.section.center-intro>.wrap>.lede{text-align:center}
 .section.center-intro>.wrap>.lede{margin-inline:auto}
+.section.center-intro table.data caption{text-align:center}
 .section.center-lede>.wrap>.lede{text-align:center;margin-inline:auto}
 .section.center-intro .faq{margin-inline:auto}
 .section.center-intro .training-philosophy{text-align:center;margin-inline:auto}
