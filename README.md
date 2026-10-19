@@ -197,7 +197,9 @@ separately. No private files belong in this public static repository.
 - PASS: module syntax check and 14 offline Node tests for missing required data,
   ambiguous selection/signer choice, conflicting intake/deal values, exact enums,
   dates/timezones, unknown units, currency/precision, independent deposit/payment
-  meaning, approval/template gating and deep snapshot immutability.
+  meaning, approval/template gating and deep snapshot immutability. All 14 also
+  pass with host `TZ=Pacific/Honolulu` and `TZ=Asia/Tokyo`. Manual currency and
+  invalid-issuance CLI smoke checks, whitespace checks and secret scanning passed.
 - FAIL (pre-existing, unchanged): `node --check js/script.js` reports
   `SyntaxError: Unexpected token '{'` at line 132. FAQ entries at lines 131–141
   lack separating commas before the next entry. No unrelated public-script rewrite
@@ -206,6 +208,10 @@ separately. No private files belong in this public static repository.
   log lookup reported no failed jobs (three jobs total). Pages success does not
   validate browser JavaScript syntax. No workflow was triggered or deployment made
   by this task.
+- REVIEW LIMITATIONS: the automated review tool could not load its configured
+  model; a separate read-only code-review agent found no significant issues.
+  CodeQL reported no supported-language changes detected and performed no analysis.
+  This is not a clean CodeQL scan or proof of production security.
 - UNTESTED: actual browser flows (existing script parse blocker), live CRM schema/API
   behavior, signer identity/authorization, Adobe templates/signing, payment evidence,
   webhook security/idempotency, persistence, Google Drive permissions/artifact retrieval.
