@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "taurus-k9-portal",
+  "name": "taurus-k9-webstuff",
   "main": "server/worker/index.ts",
   "compatibility_date": "2026-10-19",
   "workers_dev": false,
