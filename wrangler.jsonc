@@ -6,7 +6,7 @@
   "workers_dev": false,
   "preview_urls": false,
   "assets": {
-    "directory": "dist/.",
+    "directory": "./dist",
     "binding": "ASSETS",
     "run_worker_first": true
   },
@@ -26,26 +26,26 @@
   ],
   "env": {
     "preview": {
-      "name": "taurus-k9-portal-preview",
+      "name": "taurus-k9-webstuff-preview",
       "workers_dev": true,
       "preview_urls": false,
       "vars": {
         "APP_ENV": "preview",
-        "APP_ORIGIN": "https://taurus-k9-portal-preview.REPLACE_WITH_WORKERS_SUBDOMAIN.workers.dev",
+        "APP_ORIGIN": "https://taurus-k9-webstuff-preview.REPLACE_WITH_WORKERS_SUBDOMAIN.workers.dev",
         "AUTH_ISSUER": "https://REPLACE_WITH_PREVIEW_AUTH0_DOMAIN/",
         "AUTH_CLIENT_ID": "REPLACE_WITH_PREVIEW_AUTH0_CLIENT_ID"
       },
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "taurus-k9-portal-preview",
+          "database_name": "taurus-k9-webstuff-preview",
           "database_id": "REPLACE_WITH_PREVIEW_D1_DATABASE_UUID",
           "migrations_dir": "migrations"
         }
       ]
     },
     "production": {
-      "name": "taurus-k9-portal-production",
+      "name": "taurus-k9-webstuff-production",
       "workers_dev": false,
       "preview_urls": false,
       "vars": {
@@ -57,7 +57,7 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "taurus-k9-portal-production",
+          "database_name": "taurus-k9-webstuff-production",
           "database_id": "REPLACE_WITH_PRODUCTION_D1_DATABASE_UUID",
           "migrations_dir": "migrations"
         }
