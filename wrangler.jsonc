@@ -1,0 +1,67 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "taurus-k9-portal",
+  "main": "server/worker/index.ts",
+  "compatibility_date": "2026-10-19",
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "vars": {
+    "APP_ENV": "development",
+    "APP_ORIGIN": "http://localhost:8787",
+    "AUTH_ISSUER": "",
+    "AUTH_CLIENT_ID": ""
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "portal-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "env": {
+    "preview": {
+      "name": "taurus-k9-portal-preview",
+      "workers_dev": true,
+      "preview_urls": false,
+      "vars": {
+        "APP_ENV": "preview",
+        "APP_ORIGIN": "https://taurus-k9-portal-preview.REPLACE_WITH_WORKERS_SUBDOMAIN.workers.dev",
+        "AUTH_ISSUER": "https://REPLACE_WITH_PREVIEW_AUTH0_DOMAIN/",
+        "AUTH_CLIENT_ID": "REPLACE_WITH_PREVIEW_AUTH0_CLIENT_ID"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "taurus-k9-portal-preview",
+          "database_id": "REPLACE_WITH_PREVIEW_D1_DATABASE_UUID",
+          "migrations_dir": "migrations"
+        }
+      ]
+    },
+    "production": {
+      "name": "taurus-k9-portal-production",
+      "workers_dev": false,
+      "preview_urls": false,
+      "vars": {
+        "APP_ENV": "production",
+        "APP_ORIGIN": "https://REPLACE_WITH_PRODUCTION_PORTAL_HOSTNAME",
+        "AUTH_ISSUER": "https://REPLACE_WITH_PRODUCTION_AUTH0_DOMAIN/",
+        "AUTH_CLIENT_ID": "REPLACE_WITH_PRODUCTION_AUTH0_CLIENT_ID"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "taurus-k9-portal-production",
+          "database_id": "REPLACE_WITH_PRODUCTION_D1_DATABASE_UUID",
+          "migrations_dir": "migrations"
+        }
+      ]
+    }
+  }
+}
