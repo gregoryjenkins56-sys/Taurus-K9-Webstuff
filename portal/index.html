@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0ABAB0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'">
+  <title>Client Portal | Taurus K9</title>
+  <link rel="stylesheet" href="css/portal.css">
+  <script type="module" src="js/client.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to portal content</a>
+  <header class="portal-header">
+    <a class="brand" href="../index.html#/" aria-label="Taurus K9 public website">
+      <span class="brand-mark" aria-hidden="true">TK9</span>
+      <span><strong>Taurus K9 LLC</strong><span>Client portal</span></span>
+    </a>
+    <div><a href="../index.html#/">Back to website</a> <button id="logout" type="button" hidden>Sign out</button></div>
+  </header>
+  <aside class="service-banner" aria-label="Service availability">
+    <strong>Client portal</strong> Account and dog information are saved to your household.
+    Veterinary uploads, payments and signing are not available yet.
+  </aside>
+  <div class="portal-layout">
+    <aside class="sidebar">
+      <nav id="portal-nav" aria-label="Client portal"></nav>
+      <details class="staff-preview" hidden>
+        <summary>Staff tools</summary>
+        <nav id="staff-nav" aria-label="Staff tools"></nav>
+      </details>
+      <label for="household" hidden>Household</label>
+      <select id="household" aria-label="Household" hidden></select>
+    </aside>
+    <main id="content" tabindex="-1" aria-busy="true">
+      <h1>Loading your portal</h1>
+      <p>If this message remains, check that JavaScript is enabled and access the portal through the configured Worker.</p>
+    </main>
+  </div>
+  <p id="route-status" class="sr-only" role="status" aria-live="polite"></p>
+  <footer class="portal-footer">
+    Taurus K9 LLC &middot; Aransas Pass, Texas
+    <a href="../index.html#/contact">Contact Taurus K9</a>
+  </footer>
+  <noscript><p class="service-banner">JavaScript is required for the portal. Contact Taurus K9 for assistance.</p></noscript>
+</body>
+</html>

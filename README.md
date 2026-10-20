@@ -10,6 +10,10 @@ Single-page site for Taurus K9 LLC (Aransas Pass, TX): dog training, board and t
 ## Run locally
 Open `index.html` in a browser, or run `python3 -m http.server` in this folder.
 
+To debug the website in VS Code, select **Website: Chrome** in Run and Debug,
+then press F5. This opens the local page using VS Code's built-in JavaScript
+debugger and requires Google Chrome to be installed.
+
 ## Publish
 GitHub Pages: Settings > Pages > Deploy from branch `main` / root.
 
