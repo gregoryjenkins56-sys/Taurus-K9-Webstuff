@@ -11,10 +11,10 @@
     "run_worker_first": true
   },
   "vars": {
-    "APP_ENV": "development",
-    "APP_ORIGIN": "http://localhost:8787",
-    "AUTH_ISSUER": "",
-    "AUTH_CLIENT_ID": ""
+    "APP_ENV": "production",
+    "APP_ORIGIN": "https://taurus-k9-webstuff.taurusk9tx.workers.dev",
+    "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com/",
+    "AUTH_CLIENT_ID": "u1mhjXUkU3tUcBwXd4K9mnM5suq6G1MI"
   },
   "d1_databases": [
     {
