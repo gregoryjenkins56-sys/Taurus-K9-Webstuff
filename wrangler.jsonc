@@ -32,7 +32,7 @@
       "vars": {
         "APP_ENV": "preview",
         "APP_ORIGIN": "https://taurus-k9-webstuff-preview.REPLACE_WITH_WORKERS_SUBDOMAIN.workers.dev",
-        "AUTH_ISSUER": "https://REPLACE_WITH_PREVIEW_AUTH0_DOMAIN/",
+        "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com",
         "AUTH_CLIENT_ID": "REPLACE_WITH_PREVIEW_AUTH0_CLIENT_ID"
       },
       "d1_databases": [
