@@ -49,7 +49,7 @@ Phase 2 local D1 state uses Wrangler's default ignored `.wrangler/state/` direct
 For independent review, use a fresh external directory consistently:
 ```sh
 npm run db:migrate:local -- --persist-to /absolute/private/phase2-review-state
-npx wrangler d1 execute portal-db --local \
+npx wrangler d1 execute DB --local \
   --persist-to /absolute/private/phase2-review-state \
   --file /absolute/private/path/development-account.sql
 npm run dev -- --persist-to /absolute/private/phase2-review-state
@@ -112,7 +112,7 @@ INSERT INTO memberships(user_id, household_id) VALUES ('local-client', 'local-ho
 Apply to the **local** database only:
 
 ```sh
-npx wrangler d1 execute portal-db --local --file /absolute/private/path/development-account.sql
+npx wrangler d1 execute DB --local --file /absolute/private/path/development-account.sql
 ```
 
 For a verified staff identity, provision a separate `users` record, then explicitly
@@ -147,28 +147,75 @@ client data belongs in this repository.
 | `DB` | D1 binding defined in `wrangler.jsonc` |
 | `ASSETS` | Build output binding defined in `wrangler.jsonc` |
 
-The all-zero D1 ID is explicitly a **local-only configuration placeholder**.
-Wrangler local D1 works without provisioning a remote database. Replacing it
-with an approved real database ID and configuring environments/secrets is a
-separate, authorized deployment task. Do not run remote migrations or deploy now.
+### D1 environment mapping and remote migration runbook
+
+| Wrangler selection | D1 database name | Database ID |
+| --- | --- | --- |
+| No `--env` (legacy/default) | `taurus-k9-webstuff` | Existing `1a11389d-19cd-4777-9ed7-f397aa6ceb86`, retained for compatibility |
+| `--env preview` | `taurus-k9-webstuff-preview` | `REPLACE_WITH_PREVIEW_D1_DATABASE_ID` until verified |
+| `--env production` | `taurus-k9-webstuff-production` | `REPLACE_WITH_PRODUCTION_D1_DATABASE_ID` until verified |
+
+The default is **not** an alias for either named environment. Use it only with
+`--local` for local work (`.dev.vars` supplies development settings); the checked-in
+default runtime vars are production settings. Never deploy or migrate remotely
+without an explicit `--env`. Local D1 state is separate from remote D1.
+The named environments deliberately contain non-UUID placeholders: remote use
+must fail until an operator supplies verified IDs, rather than silently reusing
+the legacy database. Database names alone do not isolate databases; IDs must be
+distinct across all three mappings. Do not copy the legacy ID into either block.
+
+Before remote operations, obtain deployment/migration approval and confirm the
+Cloudflare account with `npx wrangler whoami`. Run `npx wrangler d1 list` to inspect
+existing databases and verify their names and UUIDs. If the intended databases
+do not exist, create them in the approved account:
+
+```sh
+npx wrangler d1 create taurus-k9-webstuff-preview
+npx wrangler d1 create taurus-k9-webstuff-production
+```
+
+Replace only the corresponding `env.preview.d1_databases[0].database_id` and
+`env.production.d1_databases[0].database_id` in `wrangler.jsonc` with the returned
+or verified UUIDs. If an existing database has a different name, update its
+`database_name` too. Stop if the IDs are shared or the account/ownership is unclear.
+Provisioning a new database does not transfer existing users or other data;
+plan any required data migration separately. Review backups/restore and pending
+SQL before applying migrations, especially in production.
+
+From the repository root, use binding `DB` with the explicit environment so
+Wrangler selects the same mapping for migrations and the deployed Worker:
+
+```sh
+# Preview: review, apply, then verify.
+npx wrangler d1 migrations list DB --env preview --remote
+npx wrangler d1 migrations apply DB --env preview --remote
+npx wrangler d1 execute DB --env preview --remote --command "SELECT name FROM sqlite_master WHERE type='table' AND name='rate_limits';"
+
+# Production: repeat only after preview verification and production approval.
+npx wrangler d1 migrations list DB --env production --remote
+npx wrangler d1 migrations apply DB --env production --remote
+npx wrangler d1 execute DB --env production --remote --command "SELECT name FROM sqlite_master WHERE type='table' AND name='rate_limits';"
+```
+
+Each verification must return one row named `rate_limits`, created by
+`migrations/0001_foundation.sql`. An empty result means the table is still absent:
+stop and recheck the account, environment, UUID and migration history. Do not
+delete migration history or blindly replay SQL against a populated database.
+If the table exists but preview still reports `no such table`, verify that the
+deployed Worker's `DB` binding uses that same UUID, and redeploy the reviewed
+configuration with `npx wrangler deploy --env preview` (or `--env production`
+for the approved production deployment) after `npm run check` passes.
+Cloudflare build/deploy settings must likewise select the intended named
+environment; a deployment tagged "preview" alone does not prove D1 isolation.
+
 Remote restore, backup, retention, regional requirements, and production Auth0
-entitlements/MFA remain launch blockers.
-Named `preview` and `production` configurations are local preparation only.
-Their D1 UUIDs, origins, and Auth0 settings are explicit placeholders, not usable
-deployment configuration. The default environment remains local development.
+entitlements/MFA remain launch blockers. Verify origins, Auth0 settings and
+environment-specific secrets separately before deployment.
 Preview enables a stable workers.dev address; version URLs remain disabled because
 the application requires one exact origin and version URLs do not isolate D1 state.
 Production has no route and both workers.dev and version URLs are disabled.
-No remote database, secret, deployment, or domain has been created by these blocks.
-
-After separate approval, create only the preview database with
-`npx wrangler d1 create taurus-k9-portal-preview`, then replace only
-`env.preview.d1_databases[0].database_id` with the returned UUID.
-Confirm this branch contains only migration 0001 and inspect pending migrations
-using `npx wrangler d1 migrations list taurus-k9-portal-preview --env preview --remote`.
-After approval to apply that migration, use
-`npx wrangler d1 migrations apply taurus-k9-portal-preview --env preview --remote`.
-Do not run production commands or deploy an unnamed environment.
+These configuration edits do not create any remote database, secret, deployment,
+or domain, and do not apply remote migrations.
 
 The migration also defines relational training-program/enrollment tables for the
 portal model; no pricing management, assignment UI, or payment behavior is enabled.

@@ -29,6 +29,8 @@
     "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com/",
     "AUTH_CLIENT_ID": "u1mhjXUkU3tUcBwXd4K9mnM5suq6G1MI"
   },
+  // Retained legacy/default mapping for compatibility, not a preview/production alias.
+  // Local commands must use --local; remote operations must select an explicit --env.
   "d1_databases": [
     {
       "binding": "DB",
@@ -52,7 +54,8 @@
         {
           "binding": "DB",
           "database_name": "taurus-k9-webstuff-preview",
-          "database_id": "1a11389d-19cd-4777-9ed7-f397aa6ceb86",
+          // Replace with the verified preview UUID before remote use. See docs/phase2-setup.md.
+          "database_id": "REPLACE_WITH_PREVIEW_D1_DATABASE_ID",
           "migrations_dir": "migrations"
         }
       ]
@@ -71,7 +74,8 @@
         {
           "binding": "DB",
           "database_name": "taurus-k9-webstuff-production",
-          "database_id": "1a11389d-19cd-4777-9ed7-f397aa6ceb86",
+          // Replace with a distinct, verified production UUID before remote use.
+          "database_id": "REPLACE_WITH_PRODUCTION_D1_DATABASE_ID",
           "migrations_dir": "migrations"
         }
       ]
