@@ -7,7 +7,8 @@ Auth0/OIDC authorization-code sign-in with PKCE, state, browser binding, nonce a
 ID-token signature validation through maintained `oauth4webapi`; hashed random
 session tokens in D1; eight-hour absolute expiry; logout revocation; CSRF and
 Origin checks; database-backed rate limits; household authorization; protected
-staff roles; contact updates; dog creation/listing; and audit records.
+staff roles; self-service client account provisioning at first sign-in; contact
+updates; dog creation/listing; and audit records.
 
 The portal has no demo adapter or synthetic fallback. An unconfigured provider
 fails explicitly. Unauthenticated requests to the portal (including its assets)
@@ -18,7 +19,7 @@ access. Staff roles and user activation are checked against D1 on every request.
 Not implemented:
 Veterinary uploads/review, private storage, malware scanning, HubSpot, Adobe,
 payments, contract completion, photo uploads, dog editing/deletion,
-staff role-management UI, self-registration, automated invitations, password reset
+staff role-management UI, automated invitations, password reset
 UI, deployment, or production readiness certification. Staff directory/audit
 lists are capped at 100 entries; pagination is future work. Readiness is unavailable.
 The unavailable record-review route is protected for reviewers/admins.
@@ -71,12 +72,46 @@ The old demo modules/tests are removed from both source and packaged assets.
 3. Register exactly `http://localhost:8787/api/auth/callback` as an allowed callback.
 4. Populate `.dev.vars` using the actual issuer (HTTPS, trailing slash, no path),
    client ID and client secret. No real secrets belong in Git or chat.
-5. Create the intended user in the identity provider and securely obtain its
-   stable subject (`sub` / Auth0 user ID). Do not use email as the authorization key.
-6. Provision the matching local D1 identity/household/membership below.
+5. To let clients create their own accounts, enable sign-up on the Auth0
+   connection(s) the application uses (Authentication → Database → your
+   connection → *Disable Sign Ups* off, and/or enable a social connection such as
+   Google for this application). To stop public sign-ups, turn sign-up off there.
+6. Use Auth0's **New Universal Login** so `/api/auth/signup` (which sends
+   `screen_hint=signup`) opens the sign-up screen; `/api/auth/login` shows the
+   login screen, which links to sign-up when it is enabled.
 
-No public registration grants a household or staff role. Unknown provider
-identities receive a 403 explaining that provisioning is required.
+## Client sign-up and account provisioning
+
+There are two separate steps:
+
+1. **Auth0 identity sign-up** (Auth0-managed): the person creates an Auth0
+   identity (email/password or social login). Password, email verification and
+   MFA policy are configured in Auth0, not in this application.
+2. **Application provisioning** (this Worker, `/api/auth/callback`): after the
+   authorization code, PKCE, state, browser binding, nonce and ID-token signature
+   are validated, the Worker looks up `users` by the configured issuer and the
+   validated `sub` claim only.
+   - **New identity:** in one atomic D1 batch it creates an active client `users`
+     row (random UUID, display name from the validated `name` claim with control
+     characters removed, max 120 characters, otherwise `Taurus K9 client`), a new
+     household for that client, the membership linking them, and
+     `account.self_registered`/`household.created` audit events. No
+     `staff_roles` row is ever created. Email, role, household or any other
+     client-supplied value is never used to link accounts or grant access.
+   - **Existing active identity:** signs in unchanged; existing memberships,
+     roles and display name are kept and no household is added.
+   - **Existing inactive identity** (`active = 0`): receives a 403 "account is
+     disabled" response; it is never re-created or reactivated.
+   - Concurrent first callbacks are safe: `UNIQUE(issuer, subject)` decides the
+     single winner and every dependent insert is conditional on that attempt's
+     user row, so a losing attempt writes nothing and signs in as the winner.
+
+After first sign-in, the client finishes onboarding in the portal: the dashboard
+prompts them to add phone/city under **Owner information** and to add dogs. These
+are the existing household-scoped, CSRF-protected endpoints; no staff action is
+needed. Users created manually before this change keep whatever memberships they
+had; a user with no membership sees "No household is assigned" until an operator
+adds one (see below).
 The callback URL is always derived from `APP_ORIGIN`, not browser input.
 Provider access/ID tokens are validated then discarded; none are exposed to the
 browser or stored. Provider logout/password/MFA policies remain Auth0-managed.
@@ -91,13 +126,14 @@ Workers.dev and preview URLs are disabled by default; deployment is not performe
 The runtime must supply a trusted connecting IP (Cloudflare's platform header);
 do not put an untrusted proxy in front of it that lets clients forge this header.
 
-## Local provisioning (trusted operator only)
+## Operator provisioning (staff roles and exceptions only)
 
-The only role/membership assignment process in Phase 2 is direct D1 operator
-provisioning, protected by local machine access or Cloudflare IAM. There is no
-public role assignment endpoint or client-editable role field.
+Clients no longer need manual SQL. Staff roles, deactivation and repairs to
+manually created accounts remain direct D1 operator actions, protected by local
+machine access or Cloudflare IAM. There is no public role assignment endpoint or
+client-editable role field.
 
-Create a private SQL file **outside this repository**; use synthetic development
+To pre-create an account manually (optional), create a private SQL file **outside this repository**; use synthetic development
 identity data only. Replace the example issuer/subject below with the exact
 development identity provider values. Never commit the completed file.
 
@@ -115,8 +151,10 @@ Apply to the **local** database only:
 npx wrangler d1 execute DB --local --file /absolute/private/path/development-account.sql
 ```
 
-For a verified staff identity, provision a separate `users` record, then explicitly
-insert its approved role in a private operator SQL file:
+For a verified staff identity, provision a separate `users` record (or let the
+staff member sign in once, which creates an ordinary client account and household,
+and look up its `users.id` by issuer and subject), then explicitly insert its
+approved role in a private operator SQL file:
 
 ```sql
 INSERT INTO staff_roles(user_id, role) VALUES ('VERIFIED_STAFF_USER_ID', 'reviewer');
@@ -283,7 +321,9 @@ git diff --check
 
 Tests cover signed OIDC login, PKCE, browser-bound single-use state, nonce/signature
 rejection, session expiry/revocation, CSRF, household isolation, staff-role changes,
-invalid/oversized input, rate limits and unconfigured features. The provider is
+invalid/oversized input, rate limits and unconfigured features, plus self-service
+provisioning: new client sign-up, idempotent repeat sign-in, inactive denial, no
+staff-role grant, atomic rollback on failure, and concurrent/racing callbacks. The provider is
 mocked only in the test process; application routes use the real OIDC library.
 No integration test is proof that your actual tenant configuration works.
 
