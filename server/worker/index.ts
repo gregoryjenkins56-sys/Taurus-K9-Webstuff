@@ -58,10 +58,10 @@ async function household(env: Env, identity: Identity, id: string) {
 }
 
 async function api(request: Request, env: Env, path: string) {
-  if (path === '/api/auth/login' && request.method === 'GET') {
+  if ((path === '/api/auth/login' || path === '/api/auth/signup') && request.method === 'GET') {
     try {
       await rateLimit(request, env, 'login', 10);
-      return startLogin(env);
+      return startLogin(env, path === '/api/auth/signup');
     } catch (error) {
       if (error instanceof HttpError) {
         const message = error.message;

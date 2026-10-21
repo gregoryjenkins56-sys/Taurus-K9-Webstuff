@@ -73,6 +73,9 @@ const routes = {
     const data = household ? await api(`/api/households/${household.id}/dogs`) : { dogs: [] };
     return [el('p', {}, `Welcome, ${account.user.name}.`),
       household ? notice(`Household: ${household.contact_name}`) : notice('No household is assigned. Contact Taurus K9 to arrange access.'),
+      household && !household.phone && !household.city
+        ? notice('Welcome to Taurus K9! Finish setting up your account: add your contact details under Owner information, then add your dogs.')
+        : null,
       el('div', { class: 'grid' },
         card('My Dogs', el('p', {}, `${data.dogs.length} dogs in the selected household.`), link('/dogs', 'Manage dogs')),
         card('Owner information', link('/profile', 'Manage contact information')),
@@ -108,8 +111,8 @@ const routes = {
   '/documents': { title: 'Completed Documents', view: unavailable },
   '/admin/clients': { title: 'Client directory', role: 'admin', async view() {
     const { clients } = await api('/api/admin/clients');
-    return [notice('Showing up to 100 households. Account provisioning is restricted to the database operator.'),
-      clients.length ? table('Client households', ['Contact name', 'Phone', 'City'], clients.map(row => [row.contact_name, row.phone, row.city])) : notice('No households provisioned.')];
+    return [notice('Showing up to 100 households. Clients create their own account and household when they first sign in; staff roles are assigned only by the database operator.'),
+      clients.length ? table('Client households', ['Contact name', 'Phone', 'City'], clients.map(row => [row.contact_name, row.phone, row.city])) : notice('No client households yet.')];
   } },
   '/admin/reviews': { title: 'Record reviews', role: 'reviewer', view: unavailable },
   '/admin/audit': { title: 'Audit history', role: 'admin', async view() {
@@ -169,7 +172,8 @@ async function render() {
       document.getElementById('staff-nav').replaceChildren();
       document.querySelector('.staff-preview').hidden = true;
       document.getElementById('logout').hidden = true;
-      main.append(el('a', { href: '/api/auth/login', class: 'button' }, 'Sign in'));
+      main.append(el('a', { href: '/api/auth/login', class: 'button' }, 'Sign in'), ' ',
+        el('a', { href: '/api/auth/signup', class: 'button' }, 'Create a client account'));
     }
   } finally {
     if (current === sequence) {

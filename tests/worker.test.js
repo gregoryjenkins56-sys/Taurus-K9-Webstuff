@@ -263,10 +263,10 @@ test('production session cookies require HTTPS and no configuration can enable a
   assert.equal((await request('/api/me', null, {}, { ...env, APP_ENV: 'preview' })).status, 503);
 });
 
-async function provider({ badSignature = false, subject = 'subject-client-a', nonceOverride, claimsOverride = {} } = {}) {
+async function provider({ badSignature = false, subject = 'subject-client-a', nonceOverride, claimsOverride = {}, count = 1 } = {}) {
   const pair = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify']);
   const jwk = { ...await crypto.subtle.exportKey('jwk', pair.publicKey), kid: crypto.randomUUID(), alg: 'RS256', use: 'sig' };
-  let login;
+  const logins = [];
   globalThis.fetch = async (url, options) => {
     const target = new URL(url instanceof Request ? url.url : url);
     if (target.hostname !== 'identity.example.invalid') throw new Error('Unexpected external test request');
@@ -278,7 +278,9 @@ async function provider({ badSignature = false, subject = 'subject-client-a', no
     if (target.pathname === '/jwks') return Response.json({ keys: [jwk] });
     if (target.pathname === '/token') {
       const params = new URLSearchParams(options.body);
-      assert.equal(await oauth.calculatePKCECodeChallenge(params.get('code_verifier')), login.searchParams.get('code_challenge'));
+      const challenge = await oauth.calculatePKCECodeChallenge(params.get('code_verifier'));
+      const login = logins.find(candidate => candidate.searchParams.get('code_challenge') === challenge);
+      assert.ok(login);
       assert.equal(params.get('client_secret'), 'test-only-secret');
       const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url');
       const payload = `${encode({ alg: 'RS256', kid: jwk.kid })}.${encode({
@@ -292,11 +294,28 @@ async function provider({ badSignature = false, subject = 'subject-client-a', no
     }
     throw new Error('Unexpected provider endpoint');
   };
-  const response = await request('/api/auth/login');
-  assert.equal(response.status, 302);
-  login = new URL(response.headers.get('location'));
-  const browserCookie = response.headers.get('set-cookie').split(';')[0];
-  return { login, browserCookie, callback: `/api/auth/callback?code=test-code&state=${login.searchParams.get('state')}` };
+  const flows = [];
+  for (let i = 0; i < count; i++) {
+    const response = await request('/api/auth/login');
+    assert.equal(response.status, 302);
+    const login = new URL(response.headers.get('location'));
+    logins.push(login);
+    const browserCookie = response.headers.get('set-cookie').split(';')[0];
+    flows.push({ login, browserCookie, callback: `/api/auth/callback?code=test-code&state=${login.searchParams.get('state')}` });
+  }
+  return { ...flows[0], flows };
+}
+async function complete(flow, bindings = env) {
+  return request(flow.callback, null, { headers: { cookie: flow.browserCookie } }, bindings);
+}
+function sessionFrom(response) {
+  return response.headers.getSetCookie().find(value => value.startsWith('tk9_session=')).split(';')[0];
+}
+async function counts() {
+  const row = await db.prepare(`SELECT (SELECT count(*) FROM users) AS users, (SELECT count(*) FROM households) AS households,
+    (SELECT count(*) FROM memberships) AS memberships, (SELECT count(*) FROM staff_roles) AS roles,
+    (SELECT count(*) FROM sessions) AS sessions`).first();
+  return { ...row };
 }
 test('real OIDC flow uses PKCE/state/nonce/signature, then creates a hashed, revocable session', async () => {
   const flow = await provider();
@@ -327,11 +346,149 @@ test('OIDC bad signatures and wrong nonce fail closed without creating a session
     assert.doesNotMatch(await response.text(), /access.token|secret|nonce|signature/i);
   }
 });
-test('provider identity must be provisioned; matching email or self-assigned roles never grants access', async () => {
-  const flow = await provider({ subject: 'not-provisioned', claimsOverride: { email: 'client-a@example.invalid', role: 'admin' } });
-  const response = await request(flow.callback, null, { headers: { cookie: flow.browserCookie } });
+test('signup route requests the Auth0 sign-up screen with the same PKCE/state/nonce protections', async () => {
+  await provider();
+  const response = await request('/api/auth/signup');
+  assert.equal(response.status, 302);
+  const target = new URL(response.headers.get('location'));
+  assert.equal(target.searchParams.get('screen_hint'), 'signup');
+  for (const name of ['state', 'nonce', 'code_challenge']) assert.ok(target.searchParams.get(name));
+  assert.equal(target.searchParams.get('code_challenge_method'), 'S256');
+  assert.match(response.headers.get('set-cookie'), /^tk9_login=/);
+  assert.equal((await request('/api/auth/login')).headers.get('location').includes('screen_hint'), false);
+});
+test('new identity self-provisions a least-privileged client with its own household; email and role claims are ignored', async () => {
+  const before = await counts();
+  const flow = await provider({ subject: 'google-oauth2|synthetic-new-client', claimsOverride: {
+    name: ' New\u202e Client\n ', email: 'client-a@example.invalid', role: 'admin', household_id: 'house-a' } });
+  const response = await complete(flow);
+  assert.equal(response.status, 302);
+  assert.equal(response.headers.get('location'), `${origin}/portal/`);
+  const cookieHeader = { headers: { cookie: sessionFrom(response) } };
+  const me = await (await request('/api/me', null, cookieHeader)).json();
+  assert.ok(!['client-a', 'client-b', 'reviewer', 'admin'].includes(me.user.id));
+  assert.equal(me.user.role, null);
+  assert.equal(me.user.name, 'New Client');
+  assert.equal(me.households.length, 1);
+  const house = me.households[0];
+  assert.ok(!['house-a', 'house-b'].includes(house.id));
+  assert.deepEqual({ ...house, id: undefined }, { id: undefined, contact_name: 'New Client', phone: '', city: '' });
+  const user = await db.prepare('SELECT issuer, subject, active FROM users WHERE id=?').bind(me.user.id).first();
+  assert.deepEqual({ ...user }, { issuer, subject: 'google-oauth2|synthetic-new-client', active: 1 });
+  assert.equal(await db.prepare('SELECT role FROM staff_roles WHERE user_id=?').bind(me.user.id).first(), null);
+  assert.deepEqual(await counts(), { ...before, users: before.users + 1, households: before.households + 1,
+    memberships: before.memberships + 1, sessions: before.sessions + 1 });
+  const { results } = await db.prepare('SELECT action, resource_id FROM audit_logs WHERE actor_id=? ORDER BY action').bind(me.user.id).all();
+  assert.deepEqual(results.map(row => [row.action, row.resource_id]), [
+    ['account.self_registered', me.user.id], ['household.created', house.id], ['session.created', me.user.id]]);
+  // The new client is isolated from other households and staff areas.
+  assert.equal((await request('/api/households/house-a/dogs', null, cookieHeader)).status, 404);
+  assert.equal((await request('/api/dogs/dog-a', null, cookieHeader)).status, 404);
+  assert.equal((await request('/api/admin/clients', null, cookieHeader)).status, 403);
+  assert.equal((await request('/api/admin/audit', null, cookieHeader)).status, 403);
+  assert.equal((await request('/admin/reviews', null, cookieHeader)).status, 403);
+  // Onboarding: the client completes their own household details and adds a dog without staff help.
+  const write = (path, body, method = 'POST') => request(path, null, { method, body: JSON.stringify(body),
+    headers: { ...cookieHeader.headers, origin, 'x-csrf-token': me.csrfToken } });
+  assert.equal((await write(`/api/households/${house.id}`, { contactName: 'New Client', phone: '555-0100', city: 'Rockport' }, 'PATCH')).status, 200);
+  assert.equal((await write(`/api/households/${house.id}/dogs`, { name: 'Scout', breed: '', birthDate: '', approximateAge: '1 year' })).status, 201);
+  assert.equal((await write(`/api/households/${house.id}`, { contactName: 'x', phone: '', city: '', householdId: 'house-a' }, 'PATCH')).status, 400);
+  assert.equal((await request('/api/households/house-a/dogs', 'client-a').then(r => r.json())).dogs.length, 1);
+  assert.equal((await db.prepare("SELECT contact_name FROM households WHERE id='house-a'").first()).contact_name, 'Test household a');
+});
+test('display name falls back safely when the validated profile has no usable name', async () => {
+  for (const [index, name] of [undefined, 42, '   ', '\u0000\u0007'].entries()) {
+    const flow = await provider({ subject: `synthetic-fallback-${index}`, claimsOverride: name === undefined ? {} : { name } });
+    const me = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(flow)) } })).json();
+    assert.equal(me.user.name, 'Taurus K9 client');
+    assert.equal(me.households[0].contact_name, 'Taurus K9 client');
+  }
+  const flow = await provider({ subject: 'synthetic-long-name', claimsOverride: { name: '\u{1F415}'.repeat(200) } });
+  const me = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(flow)) } })).json();
+  assert.ok(me.user.name.length <= 120 && me.user.name.length > 0);
+});
+test('repeated sign-in for a self-provisioned or existing client is idempotent and keeps memberships', async () => {
+  const subject = 'synthetic-repeat-client';
+  const first = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(await provider({ subject }))) } })).json();
+  const before = await counts();
+  const second = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(await provider({ subject, claimsOverride: { name: 'Renamed' } }))) } })).json();
+  assert.equal(second.user.id, first.user.id);
+  assert.equal(second.user.name, first.user.name);
+  assert.deepEqual(second.households, first.households);
+  assert.deepEqual(await counts(), { ...before, sessions: before.sessions + 1 });
+  for (const user of ['client-a', 'admin']) {
+    const existing = await counts();
+    const me = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(await provider({ subject: `subject-${user}` }))) } })).json();
+    assert.equal(me.user.id, user);
+    assert.deepEqual(me.households.map(house => house.id), user === 'client-a' ? ['house-a'] : []);
+    assert.equal(me.user.role, user === 'admin' ? 'admin' : null);
+    assert.deepEqual(await counts(), { ...existing, sessions: existing.sessions + 1 });
+  }
+});
+test('inactive identities stay blocked and are never re-created or reactivated', async () => {
+  await db.prepare("UPDATE users SET active = 0 WHERE id = 'client-b'").run();
+  const before = await counts();
+  const response = await complete(await provider({ subject: 'subject-client-b' }));
   assert.equal(response.status, 403);
-  assert.equal((await db.prepare('SELECT count(*) AS count FROM sessions').first()).count, 4);
+  assert.match((await response.json()).error, /disabled/);
+  assert.equal(response.headers.getSetCookie().some(value => value.startsWith('tk9_session=') && !/Max-Age=0/.test(value)), false);
+  assert.deepEqual(await counts(), before);
+  assert.equal((await db.prepare("SELECT active FROM users WHERE id='client-b'").first()).active, 0);
+});
+test('provisioning failure is atomic: no partial user, household or membership is left behind', async () => {
+  const before = await counts();
+  await db.prepare("CREATE TRIGGER test_membership_failure BEFORE INSERT ON memberships BEGIN SELECT RAISE(ABORT,'test-only membership failure'); END").run();
+  try {
+    const response = await complete(await provider({ subject: 'synthetic-atomic-client' }));
+    assert.equal(response.status, 503);
+    assert.doesNotMatch(await response.text(), /test-only|SQL|D1/);
+    assert.deepEqual(await counts(), before);
+  } finally {
+    await db.prepare('DROP TRIGGER test_membership_failure').run();
+  }
+  assert.equal((await complete(await provider({ subject: 'synthetic-atomic-client' }))).status, 302);
+  assert.deepEqual(await counts(), { ...before, users: before.users + 1, households: before.households + 1,
+    memberships: before.memberships + 1, sessions: before.sessions + 1 });
+});
+test('concurrent first sign-ins for one identity create exactly one user and household', async () => {
+  const subject = 'synthetic-concurrent-client';
+  const before = await counts();
+  const { flows } = await provider({ subject, count: 3 });
+  const responses = await Promise.all(flows.map(flow => complete(flow)));
+  assert.deepEqual(responses.map(response => response.status), [302, 302, 302]);
+  const ids = await Promise.all(responses.map(async response =>
+    (await (await request('/api/me', null, { headers: { cookie: sessionFrom(response) } })).json()).user.id));
+  assert.equal(new Set(ids).size, 1);
+  assert.deepEqual(await counts(), { ...before, users: before.users + 1, households: before.households + 1,
+    memberships: before.memberships + 1, sessions: before.sessions + 3 });
+});
+test('a callback that loses the provisioning race writes no orphan household and joins the winner', async () => {
+  const subject = 'synthetic-race-client';
+  const flow = await provider({ subject });
+  let raced = false;
+  const racingDb = {
+    prepare: sql => db.prepare(sql),
+    async batch(statements) {
+      if (!raced && statements.length === 5) {
+        raced = true;
+        // Simulates another callback committing between this callback's lookup and its batch.
+        await db.prepare('INSERT INTO users(id, issuer, subject, display_name) VALUES (?, ?, ?, ?)').bind('race-winner', issuer, subject, 'Winner').run();
+        await db.prepare("INSERT INTO households(id, contact_name) VALUES ('race-house', 'Winner')").run();
+        await db.prepare("INSERT INTO memberships(user_id, household_id) VALUES ('race-winner', 'race-house')").run();
+      }
+      return db.batch(statements);
+    }
+  };
+  const before = await counts();
+  const response = await complete(flow, { ...env, DB: racingDb });
+  assert.equal(raced, true);
+  assert.equal(response.status, 302);
+  const me = await (await request('/api/me', null, { headers: { cookie: sessionFrom(response) } })).json();
+  assert.equal(me.user.id, 'race-winner');
+  assert.deepEqual(me.households.map(house => house.id), ['race-house']);
+  assert.deepEqual(await counts(), { ...before, users: before.users + 1, households: before.households + 1,
+    memberships: before.memberships + 1, sessions: before.sessions + 1 });
+  assert.equal((await db.prepare("SELECT count(*) AS count FROM audit_logs WHERE action IN ('account.self_registered', 'household.created')").first()).count, 0);
 });
 test('signed tokens with wrong audience, issuer, or expired lifetime fail closed', async () => {
   for (const claimsOverride of [{ aud: 'another-client' }, { iss: 'https://other.example.invalid/' }, { exp: now() - 300 }]) {

@@ -25,7 +25,10 @@ documents in chat, fixtures, or GitHub.
 - [x] Implement Auth0 OIDC using maintained oauth4webapi with database-backed sessions.
 - [ ] Configure and verify actual Auth0 account, subscription, MFA and callback settings.
 - [ ] Configure issuer, client, callback/logout URLs, and allowed environments.
-- [x] Use operator-provisioned identities/memberships; no self-registration access.
+- [x] New validated identities self-provision a least-privileged client user and
+  their own household at first sign-in; staff roles stay operator-provisioned.
+- [ ] Decide which Auth0 connections allow public sign-up (and email verification)
+  for each environment.
 - [x] Define protected operator provisioning, reviewer/admin permissions, revocation,
   cookie sessions, CSRF protection, and rate limits.
 - [ ] Enforce and validate staff MFA in the actual identity-provider account.
