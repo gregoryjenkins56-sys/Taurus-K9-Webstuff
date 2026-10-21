@@ -1,4 +1,5 @@
 import * as oauth from 'oauth4webapi';
+import { enqueueHubspot } from './hubspot.ts';
 
 export interface Env {
   DB: D1Database | D1DatabaseSession;
@@ -8,6 +9,8 @@ export interface Env {
   AUTH_ISSUER: string;
   AUTH_CLIENT_ID: string;
   AUTH_CLIENT_SECRET?: string;
+  HUBSPOT_SYNC_ENABLED?: string;
+  HUBSPOT_ACCESS_TOKEN?: string;
 }
 
 export class HttpError extends Error {
@@ -197,7 +200,8 @@ async function findOrProvisionClient(env: Env, issuer: string, subject: string, 
       env.DB.prepare(`INSERT INTO audit_logs(id, actor_id, action, resource_id) SELECT ?, ?, ?, ? WHERE ${created}`)
         .bind(crypto.randomUUID(), userId, 'account.self_registered', userId, userId, issuer, subject),
       env.DB.prepare(`INSERT INTO audit_logs(id, actor_id, action, resource_id) SELECT ?, ?, ?, ? WHERE ${created}`)
-        .bind(crypto.randomUUID(), userId, 'household.created', householdId, userId, issuer, subject)
+        .bind(crypto.randomUUID(), userId, 'household.created', householdId, userId, issuer, subject),
+      ...enqueueHubspot(env, householdId)
     ]);
     user = await lookup();
     if (!user) throw new HttpError(503, 'Your portal account could not be created. Please try again.');

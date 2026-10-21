@@ -7,6 +7,7 @@ import ts from 'typescript';
 import worker from '../server/worker/index.ts';
 import { cookie, hash } from '../server/worker/auth.ts';
 import { validateD1 } from '../scripts/validate-d1.mjs';
+import { enqueueHubspot, hubspotEnabled, processHubspot } from '../server/worker/hubspot.ts';
 
 const origin = 'http://localhost:8787';
 const issuer = 'https://identity.example.invalid/';
@@ -94,7 +95,7 @@ before(async () => {
     d1Databases: ['DB']
   }));
   db = await mf.getD1Database('DB');
-  for (const file of ['0001_foundation.sql']) {
+  for (const file of ['0001_foundation.sql', '0002_hubspot_sync.sql']) {
     const schema = await readFile(new URL(`../migrations/${file}`, import.meta.url), 'utf8');
     for (const sql of schema.split(';').map(sql => sql.trim()).filter(Boolean)) await db.prepare(sql).run();
   }
@@ -108,7 +109,7 @@ before(async () => {
 after(async () => { globalThis.fetch = realFetch; await mf?.dispose(); });
 beforeEach(async () => {
   globalThis.fetch = realFetch;
-  for (const table of ['audit_logs', 'sessions', 'auth_transactions', 'rate_limits', 'enrollments', 'training_programs', 'dogs', 'staff_roles', 'memberships', 'households', 'users']) {
+  for (const table of ['hubspot_sync_jobs', 'audit_logs', 'sessions', 'auth_transactions', 'rate_limits', 'enrollments', 'training_programs', 'dogs', 'staff_roles', 'memberships', 'households', 'users']) {
     await db.prepare(`DELETE FROM ${table}`).run();
   }
   sessions = {};
@@ -327,7 +328,7 @@ test('production session cookies require HTTPS and no configuration can enable a
   assert.equal((await request('/api/me', null, {}, { ...env, APP_ENV: 'preview' })).status, 503);
 });
 
-async function provider({ badSignature = false, subject = 'subject-client-a', nonceOverride, claimsOverride = {}, count = 1 } = {}) {
+async function provider({ badSignature = false, subject = 'subject-client-a', nonceOverride, claimsOverride = {}, count = 1, bindings = env } = {}) {
   const pair = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify']);
   const jwk = { ...await crypto.subtle.exportKey('jwk', pair.publicKey), kid: crypto.randomUUID(), alg: 'RS256', use: 'sig' };
   const logins = [];
@@ -360,7 +361,9 @@ async function provider({ badSignature = false, subject = 'subject-client-a', no
   };
   const flows = [];
   for (let i = 0; i < count; i++) {
-    const response = await request('/api/auth/login');
+    const response = await worker.fetch(new Request(`${bindings.APP_ORIGIN}/api/auth/login`, {
+      headers: { 'CF-Connecting-IP': '192.0.2.1' }
+    }), bindings);
     assert.equal(response.status, 302);
     const login = new URL(response.headers.get('location'));
     logins.push(login);
@@ -381,6 +384,236 @@ async function counts() {
     (SELECT count(*) FROM sessions) AS sessions`).first();
   return { ...row };
 }
+
+const hubspotPath = '/api/admin/integrations/hubspot';
+function previewBindings(overrides = {}) {
+  return { ...env, APP_ENV: 'preview', APP_ORIGIN: 'https://preview.example.invalid',
+    HUBSPOT_SYNC_ENABLED: 'true', HUBSPOT_ACCESS_TOKEN: 'synthetic-test-value', ...overrides };
+}
+function previewRequest(path, user, options = {}, bindings = previewBindings()) {
+  const headers = new Headers(options.headers);
+  headers.set('CF-Connecting-IP', '192.0.2.1');
+  if (user) headers.set('cookie', `__Host-tk9_session=${sessions[user].token}`);
+  if (options.method === 'POST' || options.method === 'PATCH') {
+    headers.set('origin', bindings.APP_ORIGIN);
+    headers.set('content-type', 'application/json');
+    if (user && !headers.has('x-csrf-token')) headers.set('x-csrf-token', sessions[user].csrf);
+  }
+  return worker.fetch(new Request(`${bindings.APP_ORIGIN}${path}`, { ...options, headers }), bindings);
+}
+function previewUpdate(body = { contactName: 'Preview Client', phone: '555-0100', city: 'Rockport' }, bindings) {
+  return previewRequest('/api/households/house-a', 'client-a', { method: 'PATCH', body: JSON.stringify(body) }, bindings);
+}
+async function syncJob() {
+  return db.prepare("SELECT * FROM hubspot_sync_jobs WHERE household_id = 'house-a'").first();
+}
+function successfulHubspot() {
+  return Response.json({ status: 'COMPLETE', results: [{ id: '12345' }] });
+}
+
+test('HubSpot preview signup enqueues atomically and repeat issuer+subject login does not duplicate jobs', async () => {
+  const bindings = previewBindings();
+  const { flows } = await provider({ subject: 'synthetic-hubspot-signup', count: 2, bindings,
+    claimsOverride: { name: 'Preview Signup', email: 'mutable@example.invalid' } });
+  for (const flow of flows) {
+    const response = await previewRequest(flow.callback, null, { headers: { cookie: flow.browserCookie } }, bindings);
+    assert.equal(response.status, 302);
+  }
+  const { results } = await db.prepare('SELECT * FROM hubspot_sync_jobs').all();
+  assert.equal(results.length, 1);
+  assert.equal(results[0].status, 'pending');
+  assert.deepEqual(JSON.parse(results[0].payload), { firstname: 'Preview Signup', phone: '', city: '' });
+  assert.doesNotMatch(results[0].payload, /email|subject|issuer/);
+});
+
+test('HubSpot profile enqueue coalesces identical changes, updates latest payload and rolls back with source', async () => {
+  assert.equal((await previewUpdate()).status, 200);
+  const first = await syncJob();
+  for (let i = 0; i < 3; i++) assert.equal((await previewUpdate()).status, 200);
+  assert.equal((await syncJob()).idempotency_key, first.idempotency_key);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM hubspot_sync_jobs').first()).n, 1);
+  assert.equal((await previewUpdate({ contactName: 'Changed', phone: '', city: '' })).status, 200);
+  assert.notEqual((await syncJob()).idempotency_key, first.idempotency_key);
+  assert.equal(JSON.parse((await syncJob()).payload).firstname, 'Changed');
+  await assert.rejects(db.batch([
+    db.prepare("UPDATE households SET city = 'rollback' WHERE id = 'house-a'"),
+    ...enqueueHubspot(previewBindings(), 'house-a'),
+    db.prepare("INSERT INTO households(id, contact_name) VALUES ('house-a', 'duplicate')")
+  ]));
+  assert.equal(JSON.parse((await syncJob()).payload).city, '');
+  assert.equal((await db.prepare("SELECT city FROM households WHERE id = 'house-a'").first()).city, '');
+});
+
+test('HubSpot sync stays off in production/development even with a flag and secret; missing config fails closed', async () => {
+  for (const overrides of [
+    { APP_ENV: 'production' }, { APP_ENV: 'development' }, { APP_ENV: 'preview ' },
+    { HUBSPOT_SYNC_ENABLED: 'false' }, { HUBSPOT_SYNC_ENABLED: undefined }, { HUBSPOT_ACCESS_TOKEN: '' }
+  ]) {
+    const bindings = previewBindings(overrides);
+    assert.equal(hubspotEnabled(bindings), false);
+    assert.deepEqual(enqueueHubspot(bindings, 'house-a'), []);
+    assert.deepEqual(await processHubspot(bindings), { enabled: false, processed: 0 });
+    await worker.scheduled({}, bindings);
+  }
+  const bindings = previewBindings({ APP_ENV: 'production' });
+  assert.equal((await previewUpdate(undefined, bindings)).status, 200);
+  assert.equal(await syncJob(), null);
+  assert.deepEqual(await (await previewRequest(hubspotPath, 'admin', {}, bindings)).json(), { enabled: false });
+  assert.equal((await previewRequest(`${hubspotPath}/process`, 'admin', { method: 'POST' }, bindings)).status, 503);
+  const flow = await provider({ subject: 'synthetic-disabled-signup' });
+  assert.equal((await complete(flow)).status, 302);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM hubspot_sync_jobs').first()).n, 0);
+});
+
+test('HubSpot processing uses unique household upsert, persists success, and replays without duplicate contacts', async () => {
+  await previewUpdate();
+  const bodies = [];
+  globalThis.fetch = async (url, options) => {
+    assert.equal(url, 'https://api.hubapi.com/crm/v3/objects/contacts/batch/upsert');
+    assert.equal(options.method, 'POST');
+    assert.equal(options.redirect, 'error');
+    assert.equal(options.headers.authorization, ['Bearer', previewBindings().HUBSPOT_ACCESS_TOKEN].join(' '));
+    bodies.push(JSON.parse(options.body));
+    return successfulHubspot();
+  };
+  const response = await previewRequest(`${hubspotPath}/process`, 'admin', { method: 'POST' });
+  assert.deepEqual(await response.json(), { enabled: true, processed: 1 });
+  const job = await syncJob();
+  assert.equal(job.status, 'succeeded');
+  assert.equal(job.hubspot_contact_id, '12345');
+  assert.ok(job.last_success_at);
+  assert.equal(job.last_error, null);
+  await previewUpdate();
+  await processHubspot(previewBindings());
+  assert.equal(bodies.length, 1);
+  await previewUpdate({ contactName: 'Updated Name', phone: '', city: '' });
+  await worker.scheduled({}, previewBindings());
+  assert.equal(bodies.length, 2);
+  assert.equal(bodies[0].inputs[0].id, bodies[1].inputs[0].id);
+  assert.deepEqual(bodies[0].inputs[0], {
+    id: 'preview:house-a', idProperty: 'tk9_preview_household_id',
+    properties: { firstname: 'Preview Client', phone: '555-0100', city: 'Rockport', tk9_preview_household_id: 'preview:house-a' }
+  });
+  const health = await (await previewRequest(hubspotPath, 'admin')).json();
+  assert.equal(health.summary.succeeded, 1);
+  assert.equal(health.successes[0].last_success_at, (await syncJob()).last_success_at);
+});
+
+test('HubSpot retries use exponential backoff, sanitize failures, and stop after six attempts', async () => {
+  await previewUpdate();
+  globalThis.fetch = async () => new Response('sensitive provider body: synthetic-test-value private@example.invalid', { status: 429 });
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    const started = now();
+    assert.equal((await processHubspot(previewBindings())).processed, 1);
+    const job = await syncJob();
+    assert.equal(job.attempt_count, attempt);
+    assert.equal(job.status, attempt === 6 ? 'failed' : 'pending');
+    assert.equal(job.last_error, 'hubspot_http_429');
+    assert.ok(job.next_attempt_at >= started + 60 * 2 ** (attempt - 1));
+    assert.equal((await processHubspot(previewBindings())).processed, 0);
+    if (attempt < 6) await db.prepare('UPDATE hubspot_sync_jobs SET next_attempt_at = 0').run();
+  }
+  const diagnostics = await previewRequest(hubspotPath, 'admin');
+  assert.equal(diagnostics.headers.get('cache-control'), 'no-store');
+  const health = await diagnostics.json();
+  assert.equal(health.summary.failed, 1);
+  assert.equal(health.failures[0].attempt_count, 6);
+  assert.equal(health.failures[0].last_error, 'hubspot_http_429');
+  assert.doesNotMatch(JSON.stringify(health), /private@|synthetic-test-value|Preview Client|Rockport|555-0100|payload|house-a/);
+  // A genuinely changed profile starts a new revision; identical failed triggers do not reset attempts.
+  await previewUpdate();
+  assert.equal((await syncJob()).status, 'failed');
+  await previewUpdate({ contactName: 'Corrected', phone: '', city: '' });
+  assert.equal((await syncJob()).attempt_count, 0);
+  globalThis.fetch = async () => successfulHubspot();
+  await processHubspot(previewBindings());
+  assert.equal((await syncJob()).status, 'succeeded');
+});
+
+test('HubSpot network and malformed/partial responses remain retryable without leaking error text', async () => {
+  await previewUpdate();
+  for (const response of [
+    () => { throw new Error('synthetic-test-value private@example.invalid'); },
+    () => Response.json({ status: 'PENDING', results: [{ id: '12345' }] }),
+    () => Response.json({ status: 'COMPLETE', numErrors: 1, results: [] }),
+    () => new Response('not JSON')
+  ]) {
+    globalThis.fetch = async () => response();
+    await processHubspot(previewBindings());
+    const job = await syncJob();
+    assert.equal(job.status, 'pending');
+    assert.match(job.last_error, /^hubspot_(network_or_response_error|invalid_response)$/);
+    await db.prepare('UPDATE hubspot_sync_jobs SET next_attempt_at = 0').run();
+  }
+});
+
+test('HubSpot leases prevent overlapping sends and preserve updates arriving during an in-flight sync', async () => {
+  await previewUpdate();
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls++;
+    assert.equal((await processHubspot(previewBindings())).processed, 0);
+    assert.equal((await previewUpdate({ contactName: 'Newest', phone: '', city: '' })).status, 200);
+    assert.equal((await processHubspot(previewBindings())).processed, 0);
+    return successfulHubspot();
+  };
+  await processHubspot(previewBindings());
+  assert.equal(calls, 1);
+  const job = await syncJob();
+  assert.equal(job.status, 'pending');
+  assert.equal(job.attempt_count, 0);
+  assert.equal(job.lease_token, null);
+  assert.equal(job.last_success_at, null);
+  globalThis.fetch = async (_url, options) => {
+    assert.equal(JSON.parse(options.body).inputs[0].properties.firstname, 'Newest');
+    return successfulHubspot();
+  };
+  await processHubspot(previewBindings());
+  assert.equal((await syncJob()).status, 'succeeded');
+});
+
+test('HubSpot recovers expired leases and terminates crashed final attempts', async () => {
+  await previewUpdate();
+  await db.prepare("UPDATE hubspot_sync_jobs SET status = 'processing', lease_token = 'abandoned', lease_until = 0, attempt_count = 1").run();
+  globalThis.fetch = async () => successfulHubspot();
+  await processHubspot(previewBindings());
+  assert.equal((await syncJob()).attempt_count, 2);
+  assert.equal((await syncJob()).status, 'succeeded');
+  await db.prepare("UPDATE hubspot_sync_jobs SET status = 'processing', lease_until = 0, attempt_count = 6").run();
+  assert.equal((await processHubspot(previewBindings())).processed, 0);
+  assert.equal((await syncJob()).status, 'failed');
+  assert.equal((await syncJob()).last_error, 'hubspot_attempts_exhausted');
+});
+
+test('HubSpot processing batches are bounded to five households', async () => {
+  const bindings = previewBindings();
+  for (let i = 0; i < 7; i++) {
+    const id = `batch-${i}`;
+    await db.batch([
+      db.prepare('INSERT INTO households(id, contact_name) VALUES (?, ?)').bind(id, 'Synthetic'),
+      ...enqueueHubspot(bindings, id)
+    ]);
+  }
+  globalThis.fetch = async () => successfulHubspot();
+  assert.equal((await processHubspot(bindings)).processed, 5);
+  assert.equal((await processHubspot(bindings)).processed, 2);
+});
+
+test('HubSpot diagnostics and processing require admin and processing retains CSRF protections', async () => {
+  for (const user of [null, 'client-a', 'reviewer']) {
+    const expected = user ? 403 : 401;
+    assert.equal((await previewRequest(hubspotPath, user)).status, expected);
+    assert.equal((await previewRequest(`${hubspotPath}/process`, user, { method: 'POST' })).status, expected);
+  }
+  assert.equal((await previewRequest(`${hubspotPath}/process`, 'admin', {
+    method: 'POST', headers: { 'x-csrf-token': 'incorrect' }
+  })).status, 403);
+  const health = await (await previewRequest(hubspotPath, 'admin')).json();
+  assert.equal(health.summary.total, 0);
+  assert.equal(health.summary.pending, 0);
+  assert.equal(health.summary.last_success_at, null);
+  assert.deepEqual(health.failures, []);
+});
 test('real OIDC flow uses PKCE/state/nonce/signature, then creates a hashed, revocable session', async () => {
   const flow = await provider();
   assert.equal(flow.login.searchParams.get('scope'), 'openid profile');

@@ -1,5 +1,6 @@
 import { appConfig, finishLogin, HttpError, logout, rateLimit, requireCsrf, requireIdentity, requireStaff, startLogin } from './auth.ts';
 import type { Env, Identity } from './auth.ts';
+import { enqueueHubspot, hubspotDiagnostics, hubspotEnabled, processHubspot } from './hubspot.ts';
 
 function json(value: unknown, status = 200) {
   return new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json; charset=utf-8' } });
@@ -125,7 +126,8 @@ async function api(request: Request, env: Env, path: string) {
     await env.DB.batch([
       env.DB.prepare('UPDATE households SET contact_name = ?, phone = ?, city = ? WHERE id = ?')
         .bind(name, phone, city, id),
-      audit(env, identity.id, 'household.updated', id)
+      audit(env, identity.id, 'household.updated', id),
+      ...enqueueHubspot(env, id)
     ]);
     return json({ updated: true });
   }
@@ -170,6 +172,15 @@ async function api(request: Request, env: Env, path: string) {
     if (!dog) throw new HttpError(404, 'Dog not found.');
     return json({ dog });
   }
+  if (path === '/api/admin/integrations/hubspot' && request.method === 'GET') {
+    requireStaff(identity, true);
+    return json(await hubspotDiagnostics(env));
+  }
+  if (path === '/api/admin/integrations/hubspot/process' && request.method === 'POST') {
+    requireStaff(identity, true);
+    if (!hubspotEnabled(env)) throw new HttpError(503, 'HubSpot preview sync is disabled.');
+    return json(await processHubspot(env));
+  }
   if (path === '/api/admin/clients' && request.method === 'GET') {
     requireStaff(identity, true);
     const { results } = await env.DB.prepare(
@@ -204,6 +215,11 @@ function secure(response: Response, portal: boolean) {
 }
 
 export default {
+  async scheduled(_event: ScheduledController, bindings: Env): Promise<void> {
+    if (!hubspotEnabled(bindings)) return;
+    const env = { ...bindings, DB: 'withSession' in bindings.DB ? bindings.DB.withSession('first-primary') : bindings.DB };
+    await processHubspot(env);
+  },
   async fetch(request: Request, bindings: Env): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
