@@ -197,7 +197,7 @@ function secure(response: Response, portal: boolean) {
   if (portal) {
     headers.set('cache-control', 'no-store');
     headers.set('x-frame-options', 'DENY');
-    headers.set('content-security-policy', "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'; frame-ancestors 'none'");
+    headers.set('content-security-policy', "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Logo/Taurus%20K9%20NBG.png; connect-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'; frame-ancestors 'none'");
     headers.set('permissions-policy', 'camera=(), microphone=(), geolocation=()');
   }
   return new Response(response.body, { status: response.status, headers });
