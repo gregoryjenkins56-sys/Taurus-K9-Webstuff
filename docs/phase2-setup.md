@@ -147,6 +147,12 @@ client data belongs in this repository.
 | `DB` | D1 binding defined in `wrangler.jsonc` |
 | `ASSETS` | Build output binding defined in `wrangler.jsonc` |
 
+Cloudflare build-command variables are not Worker runtime bindings. The Worker
+reads the `AUTH_*` names above; configure `AUTH_CLIENT_SECRET` as a Worker secret
+for each environment, not as a build variable or in source control. Build/deploy
+commands must select the intended environment explicitly (`--env preview` or
+`--env production`).
+
 ### D1 environment mapping and remote migration runbook
 
 | Wrangler selection | D1 database name | Database ID |
