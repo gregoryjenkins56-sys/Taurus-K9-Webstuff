@@ -111,7 +111,7 @@ export function requireCsrf(request: Request, env: Env, identity: Identity) {
   }
 }
 
-export async function startLogin(env: Env) {
+export async function startLogin(env: Env, signup = false) {
   const config = providerConfig(env);
   const server = await oauth.processDiscoveryResponse(config.issuer,
     await oauth.discoveryRequest(config.issuer, { signal: AbortSignal.timeout(10000) }));
@@ -137,9 +137,54 @@ export async function startLogin(env: Env) {
     redirect_uri: `${config.origin}/api/auth/callback`,
     state, nonce,
     code_challenge: await oauth.calculatePKCECodeChallenge(verifier),
-    code_challenge_method: 'S256'
+    code_challenge_method: 'S256',
+    // Auth0 Universal Login opens its sign-up screen; the account is still provisioned only at the callback.
+    ...(signup ? { screen_hint: 'signup' } : {})
   }).toString();
   return new Response(null, { status: 302, headers: { location: target.href, 'set-cookie': cookie(env, 'login', browser, 600) } });
+}
+
+const CLIENT_FALLBACK_NAME = 'Taurus K9 client';
+
+function safeDisplayName(value: unknown) {
+  if (typeof value !== 'string') return CLIENT_FALLBACK_NAME;
+  const chars = Array.from(value.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, ' ').replace(/\s+/g, ' ').trim());
+  while (chars.join('').length > 120) chars.pop();
+  return chars.join('').trim() || CLIENT_FALLBACK_NAME;
+}
+
+// Returns the active user for a validated issuer + subject. A genuinely new identity is
+// provisioned as a least-privileged client (user + own household + membership) in one
+// atomic batch; staff roles are never created here. Existing identities are never
+// modified, re-created or reactivated.
+async function findOrProvisionClient(env: Env, issuer: string, subject: string, name: unknown) {
+  const lookup = () => env.DB.prepare('SELECT id, active FROM users WHERE issuer = ? AND subject = ?')
+    .bind(issuer, subject).first<{ id: string; active: number }>();
+  let user = await lookup();
+  if (!user) {
+    const userId = crypto.randomUUID();
+    const householdId = crypto.randomUUID();
+    const displayName = safeDisplayName(name);
+    // Every dependent insert is conditional on this attempt's user row existing, so a
+    // concurrent callback that loses the UNIQUE(issuer, subject) race writes nothing.
+    const created = 'EXISTS (SELECT 1 FROM users WHERE id = ? AND issuer = ? AND subject = ?)';
+    await env.DB.batch([
+      env.DB.prepare(`INSERT INTO users(id, issuer, subject, display_name, active) VALUES (?, ?, ?, ?, 1)
+        ON CONFLICT(issuer, subject) DO NOTHING`).bind(userId, issuer, subject, displayName),
+      env.DB.prepare(`INSERT INTO households(id, contact_name) SELECT ?, ? WHERE ${created}`)
+        .bind(householdId, displayName, userId, issuer, subject),
+      env.DB.prepare(`INSERT INTO memberships(user_id, household_id) SELECT ?, ? WHERE ${created}`)
+        .bind(userId, householdId, userId, issuer, subject),
+      env.DB.prepare(`INSERT INTO audit_logs(id, actor_id, action, resource_id) SELECT ?, ?, ?, ? WHERE ${created}`)
+        .bind(crypto.randomUUID(), userId, 'account.self_registered', userId, userId, issuer, subject),
+      env.DB.prepare(`INSERT INTO audit_logs(id, actor_id, action, resource_id) SELECT ?, ?, ?, ? WHERE ${created}`)
+        .bind(crypto.randomUUID(), userId, 'household.created', householdId, userId, issuer, subject)
+    ]);
+    user = await lookup();
+    if (!user) throw new HttpError(503, 'Your portal account could not be created. Please try again.');
+  }
+  if (user.active !== 1) throw new HttpError(403, 'Your portal account is disabled. Contact Taurus K9.');
+  return { id: user.id };
 }
 
 export async function finishLogin(request: Request, env: Env) {
@@ -167,10 +212,8 @@ export async function finishLogin(request: Request, env: Env) {
   await oauth.validateApplicationLevelSignature(server, response, { signal: AbortSignal.timeout(10000) });
   const claims = oauth.getValidatedIdTokenClaims(tokens);
   if (!claims?.sub) throw new HttpError(400, 'Sign-in verification failed.');
-  // Identity is matched to an operator-provisioned record, never an email or provider role claim.
-  const user = await env.DB.prepare('SELECT id FROM users WHERE issuer = ? AND subject = ? AND active = 1')
-    .bind(config.issuer.href, claims.sub).first<{ id: string }>();
-  if (!user) throw new HttpError(403, 'Your portal account has not been provisioned. Contact Taurus K9.');
+  // Identity is matched only by validated issuer + subject, never an email or provider role claim.
+  const user = await findOrProvisionClient(env, config.issuer.href, claims.sub, claims.name);
   const token = oauth.generateRandomState();
   const csrf = oauth.generateRandomState();
   const previous = readCookie(request, cookieName(env, 'session'));
