@@ -241,4 +241,4 @@ export default {
       return secure(response, protectedSurface);
     }
   }
-,
+};
