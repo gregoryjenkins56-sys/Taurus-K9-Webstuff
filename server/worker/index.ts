@@ -59,13 +59,45 @@ async function household(env: Env, identity: Identity, id: string) {
 
 async function api(request: Request, env: Env, path: string) {
   if (path === '/api/auth/login' && request.method === 'GET') {
-    await rateLimit(request, env, 'login', 10);
-    return startLogin(env);
-  }
+    try {
+      await rateLimit(request, env, 'login', 10);
+      return startLogin(env);
+    } catch (error) {
+      if (error instanceof HttpError) {
+        const message = error.message;
+        const code =
+          message.includes('Portal origin is not configured')
+            ? 'PORTAL_ORIGIN_INVALID'
+            : message.includes('Sign-in is not configured')
+              ? 'AUTH_CONFIG_MISSING'
+              : message.includes('Sign-in provider configuration is invalid')
+                ? 'AUTH_PROVIDER_INVALID'
+                : 'AUTH_LOGIN_FAILED';
+        return json({ error: message, code }, error.status);
+      }
+      throw error;
+    }
   if (path === '/api/auth/callback' && request.method === 'GET') {
-    await rateLimit(request, env, 'callback', 20);
-    return finishLogin(request, env);
+    try {
+      await rateLimit(request, env, 'callback', 20);
+      return finishLogin(request, env);
+    } catch (error) {
+      if (error instanceof HttpError) {
+        const message = error.message;
+        const code =
+          message.includes('Portal origin is not configured')
+            ? 'PORTAL_ORIGIN_INVALID'
+            : message.includes('Sign-in is not configured')
+              ? 'AUTH_CONFIG_MISSING'
+              : message.includes('Sign-in provider configuration is invalid')
+                ? 'AUTH_PROVIDER_INVALID'
+                : 'AUTH_CALLBACK_FAILED';
+        return json({ error: message, code }, error.status);
+      }
+      throw error;
+    }
   }
+
   await rateLimit(request, env, 'api', 120);
   const identity = await requireIdentity(request, env);
   if (path.startsWith('/api/admin/')) requireStaff(identity);
