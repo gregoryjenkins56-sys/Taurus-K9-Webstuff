@@ -32,7 +32,7 @@
       "vars": {
         "APP_ENV": "preview",
         "APP_ORIGIN": "https://taurus-k9-webstuff.taurusk9tx.workers.dev",
-        "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com",
+        "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com/",
         "AUTH_CLIENT_ID": "u1mhjXUkU3tUcBwXd4K9mnM5suq6G1MI"
       },
       "d1_databases": [
@@ -51,7 +51,7 @@
       "vars": {
         "APP_ENV": "production",
         "APP_ORIGIN": "https://taurus-k9-webstuff-production.workers.dev",
-        "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com",
+        "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com/",
         "AUTH_CLIENT_ID": "u1mhjXUkU3tUcBwXd4K9mnM5suq6G1MI"
       },
       "d1_databases": [
