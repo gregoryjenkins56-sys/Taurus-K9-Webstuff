@@ -77,6 +77,7 @@ async function api(request: Request, env: Env, path: string) {
       }
       throw error;
     }
+  }
   if (path === '/api/auth/callback' && request.method === 'GET') {
     try {
       await rateLimit(request, env, 'callback', 20);
