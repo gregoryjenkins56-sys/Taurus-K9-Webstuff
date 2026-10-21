@@ -31,6 +31,14 @@ test('Wrangler JSONC keeps default, preview and production D1 mappings distinct'
     assert.ok(database.database_name);
     return database;
   });
+  assert.deepEqual(
+    databases.map(({ database_name, database_id }) => [database_name, database_id]),
+    [
+      ['taurus-k9-webstuff', '1a11389d-19cd-4777-9ed7-f397aa6ceb86'],
+      ['taurus-k9-webstuff-preview', '78379cab-5c63-4618-a8b6-f51b866ebc2f'],
+      ['taurus-k9-webstuff-production', 'a895aff3-d273-46b6-b60f-6ef4096d91cd']
+    ]
+  );
   assert.equal(new Set(databases.map(database => database.database_id)).size, 3);
   assert.equal(new Set(databases.map(database => database.database_name)).size, 3);
 });
@@ -235,13 +243,19 @@ test('unconfigured integrations never return demo data or successful operations'
   assert.match((await response.json()).error, /not configured/);
 });
 test('rate limits are database-backed, and security headers prevent protected caching/framing', async () => {
-  let last;
-  for (let i = 0; i < 121; i++) last = await request('/api/me', 'client-a');
-  assert.equal(last.status, 429);
-  assert.equal(last.headers.get('retry-after'), '60');
-  assert.equal(last.headers.get('cache-control'), 'no-store');
-  assert.equal(last.headers.get('x-frame-options'), 'DENY');
-  assert.match(last.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+  const originalNow = Date.now;
+  Date.now = () => 1_800_000_000_000;
+  try {
+    let last;
+    for (let i = 0; i < 121; i++) last = await request('/api/me', 'client-a');
+    assert.equal(last.status, 429);
+    assert.equal(last.headers.get('retry-after'), '60');
+    assert.equal(last.headers.get('cache-control'), 'no-store');
+    assert.equal(last.headers.get('x-frame-options'), 'DENY');
+    assert.match(last.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+  } finally {
+    Date.now = originalNow;
+  }
 });
 test('production session cookies require HTTPS and no configuration can enable a login bypass', async () => {
   assert.match(cookie({ ...env, APP_ENV: 'production', APP_ORIGIN: 'https://portal.example.invalid' }, 'session', 'value', 10), /^__Host-tk9_session=.*Secure$/);

@@ -60,7 +60,7 @@
         {
           "binding": "DB",
           "database_name": "taurus-k9-webstuff-preview",
-          // Replace with the verified preview UUID before remote use. See docs/phase2-setup.md.
+          // Verify this intended UUID against the approved Cloudflare account before remote use.
           "database_id": "78379cab-5c63-4618-a8b6-f51b866ebc2f",
           "migrations_dir": "migrations"
         }
@@ -83,7 +83,7 @@
         {
           "binding": "DB",
           "database_name": "taurus-k9-webstuff-production",
-          // Replace with a distinct, verified production UUID before remote use.
+          // Verify this intended UUID against the approved Cloudflare account before remote use.
           "database_id": "a895aff3-d273-46b6-b60f-6ef4096d91cd",
           "migrations_dir": "migrations"
         }
