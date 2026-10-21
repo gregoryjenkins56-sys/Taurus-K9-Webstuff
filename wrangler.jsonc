@@ -55,7 +55,7 @@
           "binding": "DB",
           "database_name": "taurus-k9-webstuff-preview",
           // Replace with the verified preview UUID before remote use. See docs/phase2-setup.md.
-          "database_id": "REPLACE_WITH_PREVIEW_D1_DATABASE_ID",
+          "database_id": "1a11389d-19cd-4777-9ed7-f397aa6ceb86",
           "migrations_dir": "migrations"
         }
       ]
@@ -75,7 +75,7 @@
           "binding": "DB",
           "database_name": "taurus-k9-webstuff-production",
           // Replace with a distinct, verified production UUID before remote use.
-          "database_id": "REPLACE_WITH_PRODUCTION_D1_DATABASE_ID",
+          "database_id": "1a11389d-19cd-4777-9ed7-f397aa6ceb86",
           "migrations_dir": "migrations"
         }
       ]
