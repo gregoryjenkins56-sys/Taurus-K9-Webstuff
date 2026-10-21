@@ -5,6 +5,9 @@
   "compatibility_date": "2026-10-19",
   "workers_dev": false,
   "preview_urls": false,
+  "build": {
+    "command": "node scripts/validate-d1.mjs"
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -42,6 +45,9 @@
   "env": {
     "preview": {
       "name": "taurus-k9-webstuff",
+      "build": {
+        "command": "node scripts/validate-d1.mjs preview"
+      },
       "workers_dev": true,
       "preview_urls": false,
       "vars": {
@@ -62,6 +68,9 @@
     },
     "production": {
       "name": "taurus-k9-webstuff-production",
+      "build": {
+        "command": "node scripts/validate-d1.mjs production"
+      },
       "workers_dev": false,
       "preview_urls": false,
       "vars": {
