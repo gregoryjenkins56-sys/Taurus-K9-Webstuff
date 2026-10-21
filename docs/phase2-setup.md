@@ -152,17 +152,20 @@ client data belongs in this repository.
 | Wrangler selection | D1 database name | Database ID |
 | --- | --- | --- |
 | No `--env` (legacy/default) | `taurus-k9-webstuff` | Existing `1a11389d-19cd-4777-9ed7-f397aa6ceb86`, retained for compatibility |
-| `--env preview` | `taurus-k9-webstuff-preview` | `REPLACE_WITH_PREVIEW_D1_DATABASE_ID` until verified |
-| `--env production` | `taurus-k9-webstuff-production` | `REPLACE_WITH_PRODUCTION_D1_DATABASE_ID` until verified |
+| `--env preview` | `taurus-k9-webstuff-preview` | `78379cab-5c63-4618-a8b6-f51b866ebc2f` |
+| `--env production` | `taurus-k9-webstuff-production` | `a895aff3-d273-46b6-b60f-6ef4096d91cd` |
 
 The default is **not** an alias for either named environment. Use it only with
 `--local` for local work (`.dev.vars` supplies development settings); the checked-in
 default runtime vars are production settings. Never deploy or migrate remotely
 without an explicit `--env`. Local D1 state is separate from remote D1.
-The named environments deliberately contain non-UUID placeholders: remote use
-must fail until an operator supplies verified IDs, rather than silently reusing
-the legacy database. Database names alone do not isolate databases; IDs must be
-distinct across all three mappings. Do not copy the legacy ID into either block.
+The preview and production IDs above are the intended operator-supplied values,
+but this repository cannot verify that they exist in or belong to the approved
+Cloudflare account. Before any remote use, verify account access and each ID
+with `wrangler whoami` and `wrangler d1 list`. The preflight validates UUID
+format and distinct mappings, not database ownership or existence. Database
+names alone do not isolate databases; IDs must be distinct across all three
+mappings. Do not copy the legacy ID into either block.
 
 Wrangler's custom build runs `scripts/validate-d1.mjs` before deployment (including
 `deploy --dry-run` and version uploads). It rejects the default environment,
@@ -186,10 +189,11 @@ npx wrangler d1 create taurus-k9-webstuff-preview
 npx wrangler d1 create taurus-k9-webstuff-production
 ```
 
-Replace only the corresponding `env.preview.d1_databases[0].database_id` and
-`env.production.d1_databases[0].database_id` in `wrangler.jsonc` with the returned
-or verified UUIDs. If an existing database has a different name, update its
-`database_name` too. Stop if the IDs are shared or the account/ownership is unclear.
+If an intended database has a different verified ID, update only the
+corresponding `env.preview.d1_databases[0].database_id` or
+`env.production.d1_databases[0].database_id` in `wrangler.jsonc`. If an existing
+database has a different name, update its `database_name` too. Stop if the IDs
+are shared or the account/ownership is unclear.
 Provisioning a new database does not transfer existing users or other data;
 plan any required data migration separately. Review backups/restore and pending
 SQL before applying migrations, especially in production.

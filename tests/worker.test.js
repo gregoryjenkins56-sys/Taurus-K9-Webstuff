@@ -31,6 +31,14 @@ test('Wrangler JSONC keeps default, preview and production D1 mappings distinct'
     assert.ok(database.database_name);
     return database;
   });
+  assert.deepEqual(
+    databases.map(({ database_name, database_id }) => [database_name, database_id]),
+    [
+      ['taurus-k9-webstuff', '1a11389d-19cd-4777-9ed7-f397aa6ceb86'],
+      ['taurus-k9-webstuff-preview', '78379cab-5c63-4618-a8b6-f51b866ebc2f'],
+      ['taurus-k9-webstuff-production', 'a895aff3-d273-46b6-b60f-6ef4096d91cd']
+    ]
+  );
   assert.equal(new Set(databases.map(database => database.database_id)).size, 3);
   assert.equal(new Set(databases.map(database => database.database_name)).size, 3);
 });
