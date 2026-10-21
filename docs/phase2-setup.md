@@ -166,7 +166,11 @@ application (comma-separated). It must match character for character
 | Production (`--env production`) | value of `env.production.vars.APP_ORIGIN` (currently `https://taurus-k9-webstuff-production.workers.dev`) | that origin + `/` | that origin + `/api/auth/callback` |
 
 If production moves to a custom domain, change `APP_ORIGIN` and replace the
-production Allowed Logout/Callback URLs with the new origin. Prefer separate
+production Allowed Logout/Callback URLs with the new origin. Note: the checked-in
+production `APP_ORIGIN` has no account subdomain (workers.dev addresses normally
+look like `<worker>.<account-subdomain>.workers.dev`) and production has
+workers.dev disabled; set the real production origin in `APP_ORIGIN` before
+launch and register exactly that value in Auth0. Prefer separate
 Auth0 applications (or tenants) for preview and production; register each
 environment's URLs only on its own application. Only origins/URLs go here — never
 paste the client secret into these fields, Git, or chat.
