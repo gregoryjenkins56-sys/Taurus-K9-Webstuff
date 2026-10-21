@@ -6,6 +6,7 @@ import * as oauth from 'oauth4webapi';
 import ts from 'typescript';
 import worker from '../server/worker/index.ts';
 import { cookie, hash } from '../server/worker/auth.ts';
+import { validateD1 } from '../scripts/validate-d1.mjs';
 
 const origin = 'http://localhost:8787';
 const issuer = 'https://identity.example.invalid/';
@@ -32,6 +33,49 @@ test('Wrangler JSONC keeps default, preview and production D1 mappings distinct'
   });
   assert.equal(new Set(databases.map(database => database.database_id)).size, 3);
   assert.equal(new Set(databases.map(database => database.database_name)).size, 3);
+});
+
+test('remote D1 validation rejects placeholders, defaults and live database aliases', async () => {
+  const source = await readFile(new URL('../wrangler.jsonc', import.meta.url), 'utf8');
+  const { config } = ts.parseConfigFileTextToJson('wrangler.jsonc', source);
+  assert.equal(config.build.command, 'node scripts/validate-d1.mjs');
+  for (const environment of ['preview', 'production']) {
+    assert.equal(config.env[environment].build.command, `node scripts/validate-d1.mjs ${environment}`);
+    config.env[environment].d1_databases[0].database_id = `REPLACE_WITH_${environment.toUpperCase()}_D1_DATABASE_ID`;
+  }
+  for (const environment of ['preview', 'production']) {
+    assert.throws(() => validateD1(config, environment), /Provision a verified/);
+  }
+  for (const environment of [undefined, '', 'default', 'staging']) {
+    assert.throws(() => validateD1(config, environment), /require --env/);
+  }
+  // Synthetic UUIDs are test-only; they are not remote database identities.
+  const previewId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+  const productionId = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+  config.env.preview.d1_databases[0].database_id = previewId;
+  assert.doesNotThrow(() => validateD1(config, 'preview'));
+  assert.throws(() => validateD1(config, 'production'), /Provision a verified/);
+  config.env.production.d1_databases[0].database_id = productionId;
+  assert.doesNotThrow(() => validateD1(config, 'production'));
+  for (const environment of ['preview', 'production']) {
+    const mapping = config.env[environment].d1_databases[0];
+    const original = structuredClone(mapping);
+    for (const value of ['', '00000000-0000-0000-0000-000000000000', 'not-a-uuid']) {
+      mapping.database_id = value;
+      assert.throws(() => validateD1(config, environment));
+    }
+    mapping.database_id = config.d1_databases[0].database_id.toUpperCase();
+    assert.throws(() => validateD1(config, environment), /must be distinct/);
+    Object.assign(mapping, original);
+    mapping.database_name = config.d1_databases[0].database_name;
+    assert.throws(() => validateD1(config, environment), /must be distinct/);
+    Object.assign(mapping, original);
+    mapping.binding = 'OTHER';
+    assert.throws(() => validateD1(config, environment), /exactly one DB/);
+    Object.assign(mapping, original);
+  }
+  config.env.production.d1_databases[0].database_id = previewId.toUpperCase();
+  assert.throws(() => validateD1(config, 'production'), /must be distinct/);
 });
 
 before(async () => {

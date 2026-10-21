@@ -164,6 +164,18 @@ must fail until an operator supplies verified IDs, rather than silently reusing
 the legacy database. Database names alone do not isolate databases; IDs must be
 distinct across all three mappings. Do not copy the legacy ID into either block.
 
+Wrangler's custom build runs `scripts/validate-d1.mjs` before deployment (including
+`deploy --dry-run` and version uploads). It rejects the default environment,
+placeholders/non-UUIDs in the selected named environment, and shared IDs or names.
+A UUID's format is not proof of ownership: operators must still verify it against
+the approved Cloudflare account. The other named environment may remain
+unprovisioned, but must never share the selected or legacy database.
+Local `wrangler dev` skips this deployment preflight so local development still
+works; use local mode only, not remote development against the legacy mapping.
+Do not bypass the custom build with `--ignore-custom-build` or alternate configs.
+D1 migration/execute commands do not run custom builds, so the commands below
+explicitly chain the same preflight with `&&` to stop on failure.
+
 Before remote operations, obtain deployment/migration approval and confirm the
 Cloudflare account with `npx wrangler whoami`. Run `npx wrangler d1 list` to inspect
 existing databases and verify their names and UUIDs. If the intended databases
@@ -187,13 +199,19 @@ Wrangler selects the same mapping for migrations and the deployed Worker:
 
 ```sh
 # Preview: review, apply, then verify.
+node scripts/validate-d1.mjs preview &&
 npx wrangler d1 migrations list DB --env preview --remote
+node scripts/validate-d1.mjs preview &&
 npx wrangler d1 migrations apply DB --env preview --remote
+node scripts/validate-d1.mjs preview &&
 npx wrangler d1 execute DB --env preview --remote --command "SELECT name FROM sqlite_master WHERE type='table' AND name='rate_limits';"
 
 # Production: repeat only after preview verification and production approval.
+node scripts/validate-d1.mjs production &&
 npx wrangler d1 migrations list DB --env production --remote
+node scripts/validate-d1.mjs production &&
 npx wrangler d1 migrations apply DB --env production --remote
+node scripts/validate-d1.mjs production &&
 npx wrangler d1 execute DB --env production --remote --command "SELECT name FROM sqlite_master WHERE type='table' AND name='rate_limits';"
 ```
 
