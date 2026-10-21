@@ -228,10 +228,55 @@ test('admin and reviewer capabilities are separate and checked on every request'
 });
 test('logout requires CSRF and revokes the actual server-side session', async () => {
   assert.equal((await request('/api/auth/logout', 'client-a', { method: 'POST' })).status, 403);
+  assert.equal((await request('/api/auth/logout', 'client-a')).status, 404);
   const response = await mutation('/api/auth/logout', 'client-a', {});
-  assert.equal(response.status, 204);
-  assert.match(response.headers.get('set-cookie'), /Max-Age=0/);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.match(response.headers.get('set-cookie'), /^tk9_session=; Path=\/; HttpOnly; SameSite=Lax; Max-Age=0$/);
+  assert.equal((await db.prepare("SELECT count(*) AS n FROM sessions WHERE user_id = 'client-a'").first()).n, 0);
+  assert.equal((await db.prepare("SELECT count(*) AS n FROM audit_logs WHERE actor_id = 'client-a' AND action = 'session.revoked'").first()).n, 1);
   assert.equal((await request('/api/me', 'client-a')).status, 401);
+  assert.equal((await mutation('/api/auth/logout', 'client-a', {})).status, 401);
+  const portal = await request('/portal/', 'client-a');
+  assert.equal(portal.status, 302);
+  assert.equal(portal.headers.get('location'), '/api/auth/login');
+  assert.equal((await request('/api/me', 'client-b')).status, 200);
+});
+test('logout returns a server-built Auth0 logout URL that only returns to APP_ORIGIN', async () => {
+  const response = await request('/api/auth/logout?returnTo=https://attacker.example.invalid/&redirect=//attacker.example.invalid', 'client-a', {
+    method: 'POST', body: JSON.stringify({ returnTo: 'https://attacker.example.invalid/' }),
+    headers: { origin, 'x-csrf-token': sessions['client-a'].csrf, referer: 'https://attacker.example.invalid/' }
+  });
+  assert.equal(response.status, 200);
+  const { redirect } = await response.json();
+  const target = new URL(redirect);
+  assert.equal(`${target.origin}${target.pathname}`, `${issuer}v2/logout`);
+  assert.deepEqual([...target.searchParams.keys()].sort(), ['client_id', 'returnTo']);
+  assert.equal(target.searchParams.get('client_id'), 'test-client');
+  assert.equal(target.searchParams.get('returnTo'), `${origin}/`);
+  assert.doesNotMatch(redirect, /attacker|secret|token/i);
+  assert.equal((await request('/api/me', 'client-a')).status, 401);
+});
+test('logout uses the HTTPS deployed origin and falls back to the public site without provider config', async () => {
+  const deployed = 'https://portal.example.invalid';
+  const bindings = { ...env, APP_ENV: 'production', APP_ORIGIN: deployed };
+  const logout = (user, overrides = {}) => worker.fetch(new Request(`${deployed}/api/auth/logout`, {
+    method: 'POST', headers: { origin: deployed, 'x-csrf-token': sessions[user].csrf,
+      cookie: `__Host-tk9_session=${sessions[user].token}`, 'CF-Connecting-IP': '192.0.2.1' }
+  }), { ...bindings, ...overrides });
+  const response = await logout('client-a');
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('set-cookie'), /^__Host-tk9_session=; .*Max-Age=0; Secure$/);
+  const target = new URL((await response.json()).redirect);
+  assert.equal(target.searchParams.get('returnTo'), `${deployed}/`);
+  const fallbacks = [['client-b', { AUTH_CLIENT_ID: '' }], ['reviewer', { AUTH_ISSUER: '' }],
+    ['admin', { AUTH_ISSUER: 'http://identity.example.invalid/' }]];
+  for (const [user, overrides] of fallbacks) {
+    const fallback = await logout(user, overrides);
+    assert.equal(fallback.status, 200);
+    assert.deepEqual(await fallback.json(), { redirect: `${deployed}/` });
+    assert.equal((await db.prepare('SELECT count(*) AS n FROM sessions WHERE user_id = ?').bind(user).first()).n, 0);
+  }
 });
 test('unconfigured integrations never return demo data or successful operations', async () => {
   for (const path of ['/api/records', '/api/agreements', '/api/payments', '/api/documents']) {

@@ -69,7 +69,8 @@ The old demo modules/tests are removed from both source and packaged assets.
 
 1. Create a **Regular Web Application** in a separate development tenant/app.
 2. Configure client authentication as **POST** and ID token signing as **RS256**.
-3. Register exactly `http://localhost:8787/api/auth/callback` as an allowed callback.
+3. Register exactly `http://localhost:8787/api/auth/callback` as an allowed callback
+   and exactly `http://localhost:8787/` as an **Allowed Logout URL**.
 4. Populate `.dev.vars` using the actual issuer (HTTPS, trailing slash, no path),
    client ID and client secret. No real secrets belong in Git or chat.
 5. To let clients create their own accounts, enable sign-up on the Auth0
@@ -114,9 +115,9 @@ had; a user with no membership sees "No household is assigned" until an operator
 adds one (see below).
 The callback URL is always derived from `APP_ORIGIN`, not browser input.
 Provider access/ID tokens are validated then discarded; none are exposed to the
-browser or stored. Provider logout/password/MFA policies remain Auth0-managed.
-App sign-out revokes the portal session, not the Auth0 single-sign-on session;
-signing in again may reuse Auth0 SSO.
+browser or stored. Provider password/MFA policies remain Auth0-managed.
+Sign-out ends both the portal session and the Auth0 single-sign-on session (see
+[Sign-out and Auth0 logout](#sign-out-and-auth0-logout)).
 
 The local app uses HttpOnly, SameSite=Lax cookies without Secure **only** when
 APP_ENV is development and APP_ORIGIN is loopback. All other environments
@@ -125,6 +126,81 @@ for a deployed Worker. Separate preview/prod tenants, origins, databases, and se
 Workers.dev and preview URLs are disabled by default; deployment is not performed.
 The runtime must supply a trusted connecting IP (Cloudflare's platform header);
 do not put an untrusted proxy in front of it that lets clients forge this header.
+
+## Sign-out and Auth0 logout
+
+The portal and Auth0 keep **separate** sessions. Clicking **Sign out**:
+
+1. Sends a CSRF-protected `POST /api/auth/logout` (exact `Origin` and
+   `x-csrf-token` required). The Worker deletes the server-side session row,
+   records a `session.revoked` audit event in the same D1 batch, and clears the
+   session cookie (`Max-Age=0`, same `HttpOnly`/`SameSite=Lax`/`Secure`/`__Host-`
+   attributes as sign-in).
+2. Returns JSON `{ "redirect": "<url>" }`. The Worker builds this URL itself:
+   `<AUTH_ISSUER>v2/logout?client_id=<AUTH_CLIENT_ID>&returnTo=<APP_ORIGIN>/`.
+   The return target is always the public homepage of the configured
+   `APP_ORIGIN`; query strings, request bodies, `Referer` and other browser
+   input are ignored, so there is no open redirect. No ID/access token or secret
+   is included (none is stored).
+3. The portal navigates to that URL. Auth0 ends its SSO session and returns the
+   browser to the public site. The next Client Login shows the Auth0 login screen.
+
+If `AUTH_CLIENT_ID` or a valid HTTPS `AUTH_ISSUER` is missing, the portal session
+is still revoked and the browser returns to the public site, but the Auth0
+session cannot be ended (sign-in is unavailable in that state anyway).
+The `federated` parameter is intentionally not sent, so users are **not** signed
+out of Google or other upstream social providers.
+
+### Auth0 dashboard settings (per environment)
+
+In **Auth0 Dashboard → Applications → Applications → *your Regular Web
+Application* → Settings → Application URIs**, set **Allowed Logout URLs** to the
+exact `APP_ORIGIN` followed by `/` for every environment that uses that
+application (comma-separated). It must match character for character
+(scheme, host, port and trailing slash). Then click **Save Changes**.
+
+| Environment | `APP_ORIGIN` (from `.dev.vars` / `wrangler.jsonc`) | Allowed Logout URL | Allowed Callback URL |
+| --- | --- | --- | --- |
+| Local development | `http://localhost:8787` | `http://localhost:8787/` | `http://localhost:8787/api/auth/callback` |
+| Preview (`--env preview`) | `https://taurus-k9-webstuff.taurusk9tx.workers.dev` | `https://taurus-k9-webstuff.taurusk9tx.workers.dev/` | `https://taurus-k9-webstuff.taurusk9tx.workers.dev/api/auth/callback` |
+| Production (`--env production`) | value of `env.production.vars.APP_ORIGIN` (currently `https://taurus-k9-webstuff-production.workers.dev`) | that origin + `/` | that origin + `/api/auth/callback` |
+
+If production moves to a custom domain, change `APP_ORIGIN` and replace the
+production Allowed Logout/Callback URLs with the new origin. Note: the checked-in
+production `APP_ORIGIN` has no account subdomain (workers.dev addresses normally
+look like `<worker>.<account-subdomain>.workers.dev`) and production has
+workers.dev disabled; set the real production origin in `APP_ORIGIN` before
+launch and register exactly that value in Auth0. Prefer separate
+Auth0 applications (or tenants) for preview and production; register each
+environment's URLs only on its own application. Only origins/URLs go here — never
+paste the client secret into these fields, Git, or chat.
+
+### Verifying end-to-end logout
+
+1. Sign in to the client portal of the environment being tested.
+2. Click **Sign out**. The browser briefly visits `…auth0.com/v2/logout` and lands
+   on the public homepage of the same origin.
+3. Open `<APP_ORIGIN>/api/me`: it must return 401.
+4. Click **Client Login** (or open `/portal/`): the Auth0 login screen must ask
+   for credentials or an account choice instead of opening the portal directly.
+
+### Troubleshooting
+
+- **Auth0 shows an error page saying the `returnTo` parameter is not defined
+  in "Allowed Logout URLs"** after Sign out: the logout URL is not in Allowed Logout URLs for this
+  application. Add the exact origin with trailing slash shown in the table.
+- **Client Login still opens the portal without prompting:** confirm the address
+  bar passed through `/v2/logout` after Sign out. If not, the deployed Worker or
+  cached `portal/js/client.js` predates this change — redeploy with the correct
+  `--env` and hard-refresh. Also confirm the deployed `AUTH_ISSUER` and
+  `AUTH_CLIENT_ID` match the Auth0 application whose settings you edited.
+- **Google (or another social provider) signs you in with one click:** Auth0 did
+  log out, but the upstream provider session remains, so Auth0 may only show an
+  account chooser. This is expected; sign out of that provider separately if
+  needed.
+- **Sign out reports "Your session has expired":** the portal session was
+  already gone, so the logout URL could not be issued. Close the browser or sign
+  in and sign out again to end the Auth0 session.
 
 ## Operator provisioning (staff roles and exceptions only)
 
@@ -320,7 +396,8 @@ git diff --check
 ```
 
 Tests cover signed OIDC login, PKCE, browser-bound single-use state, nonce/signature
-rejection, session expiry/revocation, CSRF, household isolation, staff-role changes,
+rejection, session expiry/revocation, logout (cookie clearing, Auth0 logout URL
+bound to `APP_ORIGIN`, no open redirect, access blocked afterward), CSRF, household isolation, staff-role changes,
 invalid/oversized input, rate limits and unconfigured features, plus self-service
 provisioning: new client sign-up, idempotent repeat sign-in, inactive denial, no
 staff-role grant, atomic rollback on failure, and concurrent/racing callbacks. The provider is
@@ -362,7 +439,8 @@ and a staff account:
 5. Client cannot access `/admin/` or `/api/admin/clients`.
 6. Reviewer cannot access admin-only directory/audit endpoints.
 7. Revoking staff role or deactivating user takes effect on the next request.
-8. Sign out; prior session token no longer works.
+8. Sign out; prior session token no longer works, and opening the client portal
+   again shows the Auth0 login screen instead of signing in silently.
 9. Veterinary uploads/review, agreement, payment, and completed-agreement
    document areas remain unavailable.
 

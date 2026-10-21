@@ -185,9 +185,11 @@ async function render() {
 }
 document.getElementById('logout').addEventListener('click', async () => {
   try {
-    await api('/api/auth/logout', 'POST');
+    const data = await api('/api/auth/logout', 'POST');
     account = null;
-    location.replace('/');
+    // The server ends the app session, then supplies the identity-provider logout URL
+    // (which returns to the public site) so the provider's sign-in session ends too.
+    location.replace(data && typeof data.redirect === 'string' ? data.redirect : '/');
   } catch (error) {
     announcement.textContent = error instanceof ApiError ? error.message : 'Unable to sign out. Try again.';
   }

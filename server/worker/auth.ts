@@ -41,6 +41,10 @@ function providerConfig(env: Env) {
   if (!env.AUTH_CLIENT_ID || !env.AUTH_CLIENT_SECRET || !env.AUTH_ISSUER) {
     throw new HttpError(503, 'Sign-in is not configured. Contact Taurus K9.');
   }
+  return { ...config, issuer: trustedIssuer(env), client: { client_id: env.AUTH_CLIENT_ID }, secret: env.AUTH_CLIENT_SECRET };
+}
+
+function trustedIssuer(env: Env) {
   let issuer: URL;
   try { issuer = new URL(env.AUTH_ISSUER); }
   catch { throw new HttpError(503, 'Sign-in provider configuration is invalid.'); }
@@ -49,7 +53,22 @@ function providerConfig(env: Env) {
       issuer.href !== env.AUTH_ISSUER) {
     throw new HttpError(503, 'Sign-in provider configuration is invalid.');
   }
-  return { ...config, issuer, client: { client_id: env.AUTH_CLIENT_ID }, secret: env.AUTH_CLIENT_SECRET };
+  return issuer;
+}
+
+// Auth0 ends its single-sign-on session at /v2/logout and then redirects only to a URL
+// listed in the application's Allowed Logout URLs. The return target is always the
+// public site at the configured APP_ORIGIN; no browser-supplied value is used and no
+// token is included. If the provider is not configured, only the app session ends.
+function federatedLogoutUrl(env: Env) {
+  const returnTo = `${appConfig(env).origin}/`;
+  if (!env.AUTH_CLIENT_ID) return returnTo;
+  let issuer: URL;
+  try { issuer = trustedIssuer(env); }
+  catch { return returnTo; }
+  const target = new URL('v2/logout', issuer);
+  target.search = new URLSearchParams({ client_id: env.AUTH_CLIENT_ID, returnTo }).toString();
+  return target.href;
 }
 
 export async function hash(value: string) {
@@ -237,5 +256,8 @@ export async function logout(request: Request, env: Env, identity: Identity) {
     env.DB.prepare('INSERT INTO audit_logs(id, actor_id, action, resource_id) VALUES (?, ?, ?, ?)')
       .bind(crypto.randomUUID(), identity.id, 'session.revoked', identity.id)
   ]);
-  return new Response(null, { status: 204, headers: { 'set-cookie': cookie(env, 'session', '', 0) } });
+  return new Response(JSON.stringify({ redirect: federatedLogoutUrl(env) }), {
+    status: 200,
+    headers: { 'content-type': 'application/json; charset=utf-8', 'set-cookie': cookie(env, 'session', '', 0) }
+  });
 }
