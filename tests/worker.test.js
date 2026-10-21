@@ -243,13 +243,19 @@ test('unconfigured integrations never return demo data or successful operations'
   assert.match((await response.json()).error, /not configured/);
 });
 test('rate limits are database-backed, and security headers prevent protected caching/framing', async () => {
-  let last;
-  for (let i = 0; i < 121; i++) last = await request('/api/me', 'client-a');
-  assert.equal(last.status, 429);
-  assert.equal(last.headers.get('retry-after'), '60');
-  assert.equal(last.headers.get('cache-control'), 'no-store');
-  assert.equal(last.headers.get('x-frame-options'), 'DENY');
-  assert.match(last.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+  const originalNow = Date.now;
+  Date.now = () => 1_800_000_000_000;
+  try {
+    let last;
+    for (let i = 0; i < 121; i++) last = await request('/api/me', 'client-a');
+    assert.equal(last.status, 429);
+    assert.equal(last.headers.get('retry-after'), '60');
+    assert.equal(last.headers.get('cache-control'), 'no-store');
+    assert.equal(last.headers.get('x-frame-options'), 'DENY');
+    assert.match(last.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+  } finally {
+    Date.now = originalNow;
+  }
 });
 test('production session cookies require HTTPS and no configuration can enable a login bypass', async () => {
   assert.match(cookie({ ...env, APP_ENV: 'production', APP_ORIGIN: 'https://portal.example.invalid' }, 'session', 'value', 10), /^__Host-tk9_session=.*Secure$/);
