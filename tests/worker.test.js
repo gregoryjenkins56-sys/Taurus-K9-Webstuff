@@ -151,6 +151,25 @@ test('public site is preserved while portal, portal assets, and staff URLs requi
   }
   assert.equal((await request('/%70ortal/index.html')).status, 400);
 });
+test('portal branding uses the homepage logo with matching restrictive CSP policies', async () => {
+  const logo = 'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Logo/Taurus%20K9%20NBG.png';
+  const homepage = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  assert.ok(homepage.includes(`<img src="${logo}"`));
+  const html = await readFile(new URL('../portal/index.html', import.meta.url), 'utf8');
+  const response = await request('/portal/', 'client-a', {}, {
+    ...env,
+    ASSETS: { fetch: async () => new Response(html, { headers: { 'content-type': 'text/html' } }) }
+  });
+  assert.equal(response.status, 200);
+  const body = await response.text();
+  assert.ok(body.includes(`<link rel="icon" type="image/png" href="${logo}">`));
+  assert.ok(body.includes(`<link rel="apple-touch-icon" href="${logo}">`));
+  assert.ok(body.includes(`<img src="${logo}" alt="" width="64" height="64">`));
+  assert.match(body, /<span class="brand-mark" aria-hidden="true">\s*<img /);
+  const policy = body.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1];
+  assert.equal(policy, `default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' ${logo}; connect-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'`);
+  assert.equal(response.headers.get('content-security-policy'), `${policy}; frame-ancestors 'none'`);
+});
 test('unauthenticated and fabricated sessions cannot access protected endpoints', async () => {
   for (const path of ['/api/me', '/api/households/house-a/dogs', '/api/admin/clients', '/api/records']) {
     assert.equal((await request(path)).status, 401);
