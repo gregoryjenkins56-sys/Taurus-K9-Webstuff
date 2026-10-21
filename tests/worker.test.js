@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import * as oauth from 'oauth4webapi';
+import ts from 'typescript';
 import worker from '../server/worker/index.ts';
 import { cookie, hash } from '../server/worker/auth.ts';
 
@@ -14,6 +15,24 @@ let env;
 let sessions;
 const realFetch = globalThis.fetch;
 const now = () => Math.floor(Date.now() / 1000);
+
+test('Wrangler JSONC keeps default, preview and production D1 mappings distinct', async () => {
+  const source = await readFile(new URL('../wrangler.jsonc', import.meta.url), 'utf8');
+  const { config, error } = ts.parseConfigFileTextToJson('wrangler.jsonc', source);
+  assert.equal(error, undefined);
+  const mappings = [config, config.env.preview, config.env.production];
+  const databases = mappings.map(mapping => {
+    assert.equal(mapping.d1_databases.length, 1);
+    const database = mapping.d1_databases[0];
+    assert.equal(database.binding, 'DB');
+    assert.equal(database.migrations_dir, 'migrations');
+    assert.ok(database.database_id);
+    assert.ok(database.database_name);
+    return database;
+  });
+  assert.equal(new Set(databases.map(database => database.database_id)).size, 3);
+  assert.equal(new Set(databases.map(database => database.database_name)).size, 3);
+});
 
 before(async () => {
   mf = new Miniflare(convertV4MiniflareOptions({
