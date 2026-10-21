@@ -7,7 +7,8 @@
   },
   "scripts": {
     "dev": "npm run build && wrangler dev",
-    "build": "node scripts/build.mjs && tsc --noEmit",
+    "build": "npm run typecheck && node scripts/build.mjs",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
     "lint": "eslint server/worker scripts tests/worker.test.js portal/js/client.js",
     "test": "node --experimental-strip-types --test server/agreement-mapping.test.cjs tests/worker.test.js",
     "db:migrate:local": "wrangler d1 migrations apply portal-db --local",
