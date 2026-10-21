@@ -153,6 +153,18 @@ for each environment, not as a build variable or in source control. Build/deploy
 commands must select the intended environment explicitly (`--env preview` or
 `--env production`).
 
+Use the matching deploy command in each Cloudflare build configuration:
+
+```sh
+# Previews Base
+npm run build && npx wrangler deploy --env preview
+
+# Production
+npm run build && npx wrangler deploy --env production
+```
+
+The GitHub Actions workflow runs checks only; it does not deploy to Cloudflare.
+
 ### D1 environment mapping and remote migration runbook
 
 | Wrangler selection | D1 database name | Database ID |
