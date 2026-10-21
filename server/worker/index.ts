@@ -240,6 +240,5 @@ export default {
       if (status === 429) response.headers.set('retry-after', '60');
       return secure(response, protectedSurface);
     }
-  }
-,
-}
+   },
+};
