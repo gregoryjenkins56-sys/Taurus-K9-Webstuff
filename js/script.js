@@ -180,9 +180,8 @@ const WORKING_K9_FAQS = [
 const faqPick = idx => idx.map(i => FAQS[i]);
 
 /* ---------- lead form (CRM) ---------- */
-
 function leadForm(){
-  rreturn `<div class="hs-form-frame"
+  return `<div class="hs-form-frame"
     data-region="na2"
     data-form-id="9b37a135-9b1f-47bd-889c-3bbec3ed780f"
     data-portal-id="242184033"></div>`;
