@@ -414,7 +414,7 @@ function buildPayload(d){
   };
 }
 
-function wireHubSpotContactForm();
+function wireHubSpotContactForm(){
   const form = document.getElementById('leadForm');
   if(!form) return;
 
