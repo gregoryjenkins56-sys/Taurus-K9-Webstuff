@@ -28,7 +28,7 @@ class Element {
 
 function setup(fetch = async () => ({ok:true})){
   const names = ['company','service','owner','email','phone','city','state','dogName',
-    'dogInfo','timeline','message','heard','consentEmail','consentSms'];
+    'dogBreed','dogAge','timeline','message','heard','consentEmail','consentSms'];
   const controls = Object.fromEntries(names.map(name => [name, new Element()]));
   const nodes = {};
   Object.entries(controls).forEach(([name, control]) => {
@@ -92,9 +92,13 @@ test('all routes render meaningful content and the contact layout uses the origi
   const html = routes.find(([path]) => path === '/contact')[1];
   assert.match(html, /class="cgrid"/);
   assert.match(html, /class="form" id="leadForm"/);
-  assert.equal((html.match(/class="frow frow2"/g) || []).length, 2);
-  assert.match(html, /class="frow frow3"/);
+  assert.equal((html.match(/class="frow frow2"/g) || []).length, 4);
+  assert.equal((html.match(/class="frow frow3"/g) || []).length, 0);
+  assert.match(html, /class="frow frow2">[\s\S]*?for="city"[\s\S]*?for="state"[\s\S]*?<\/div>\s*<div class="frow frow2">[\s\S]*?for="dogBreed"[\s\S]*?for="dogAge"/);
+  assert.match(html, /<label for="dogBreed">Dog’s breed<\/label>\s*<input id="dogBreed" name="dogBreed" type="text" placeholder="e\.g\. German Shepherd or mixed breed" \/>/);
+  assert.match(html, /<label for="dogAge">Dog’s age<\/label>\s*<input id="dogAge" name="dogAge" type="text" placeholder="e\.g\. 14 months or 3 years" \/>/);
   assert.match(html, /class="radios radios-row"/);
+  assert.match(readFileSync(new URL('../css/style.css', import.meta.url), 'utf8'), /@media\(min-width:640px\)\{\.frow2\{grid-template-columns:1fr 1fr\}/);
   assert.doesNotMatch(source, /hs-form-frame|forms\/embed|wireHubSpotContactForm/);
 });
 
@@ -139,7 +143,7 @@ test('payload uses the Forms API schema, trims input and preserves consent choic
   const s = setup();
   s.valid();
   Object.entries({
-    dogName:' Rex ', dogInfo:'GSD, 14 months', timeline:'asap',
+    dogName:' Rex ', dogBreed:' German Shepherd ', dogAge:' 14 months ', timeline:'asap',
     message:'Recall and leash manners', heard:'referral', phone:'+1 (361) 555-0100'
   }).forEach(([name, value]) => { s.controls[name].value = value; });
   await s.submit();
@@ -152,7 +156,7 @@ test('payload uses the Forms API schema, trims input and preserves consent choic
   assert.deepEqual(Object.fromEntries(payload.fields.map(field => [field.name, field.value])), {
     firstname:'Test Owner', email:'owner@example.com', phone:'+1 (361) 555-0100',
     city:'Aransas Pass', state:'TX', service:'board-train', dogs_name:'Rex',
-    dogInfo:'GSD, 14 months', preferred_start_timeline:'asap',
+    dogInfo:'Breed: German Shepherd; Age: 14 months', preferred_start_timeline:'asap',
     training_goals:'Recall and leash manners', heard:'referral',
     consentEmail:'true', consentSms:'false'
   });
@@ -178,6 +182,24 @@ test('rapid submits make one request and keep the button disabled until confirma
   finish({ok:true});
   await pending;
   assert.equal(s.location.hash, '#/thank-you');
+});
+
+test('breed and age compose into the existing HubSpot field for every optional combination', async () => {
+  for(const [breed, age, expected] of [
+    ['German Shepherd', '3 years', 'Breed: German Shepherd; Age: 3 years'],
+    ['German Shepherd', '', 'Breed: German Shepherd'],
+    ['', '3 years', 'Age: 3 years'],
+    ['', '', undefined]
+  ]){
+    const s = setup();
+    s.valid();
+    s.controls.dogBreed.value = breed;
+    s.controls.dogAge.value = age;
+    await s.submit();
+    const fields = Object.fromEntries(JSON.parse(s.requests[0].options.body).fields
+      .map(field => [field.name, field.value]));
+    assert.equal(fields.dogInfo, expected);
+  }
 });
 
 test('SMS-only consent is valid, blank optional fields and unavailable context are omitted', async () => {
