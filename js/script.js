@@ -182,7 +182,11 @@ const faqPick = idx => idx.map(i => FAQS[i]);
 /* ---------- lead form (CRM) ---------- */
 
 function leadForm(){
-  return `<form class="form" id="leadForm" novalidate>
+  rreturn `<div class="hs-form-frame"
+    data-region="na2"
+    data-form-id="9b37a135-9b1f-47bd-889c-3bbec3ed780f"
+    data-portal-id="242184033"></div>`;
+}
   <div class="errm" id="errm" role="alert" data-show="false" tabindex="-1">
     <h3>Let’s take care of a few details</h3>
     <ul id="errList"></ul>
