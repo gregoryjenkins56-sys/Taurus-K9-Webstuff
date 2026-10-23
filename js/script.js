@@ -243,7 +243,7 @@ function leadForm(){
     </div>
   </div>
 
-  <div class="frow frow3">
+  <div class="frow frow2">
     <div class="field">
       <label for="city">City <span class="req" aria-hidden="true">*</span></label>
       <input id="city" name="city" type="text" autocomplete="address-level2" required aria-describedby="cityErr" />
@@ -253,9 +253,16 @@ function leadForm(){
       <label for="state">State</label>
       <select id="state" name="state" autocomplete="address-level1"><option>TX</option><option>Other</option></select>
     </div>
+  </div>
+
+  <div class="frow frow2">
     <div class="field">
-      <label for="dogInfo">Dog’s breed and age</label>
-      <input id="dogInfo" name="dogInfo" type="text" placeholder="e.g. GSD, 14 months" />
+      <label for="dogBreed">Dog’s breed</label>
+      <input id="dogBreed" name="dogBreed" type="text" placeholder="e.g. German Shepherd or mixed breed" />
+    </div>
+    <div class="field">
+      <label for="dogAge">Dog’s age</label>
+      <input id="dogAge" name="dogAge" type="text" placeholder="e.g. 14 months or 3 years" />
     </div>
   </div>
 
@@ -314,12 +321,20 @@ function buildFormPayload(form){
   const data = new FormData(form);
   const mapping = {
     owner:'firstname', email:'email', phone:'phone', city:'city', state:'state',
-    service:'service', dogName:'dogs_name', dogInfo:'dogInfo',
+    service:'service', dogName:'dogs_name',
     timeline:'preferred_start_timeline', message:'training_goals', heard:'heard'
   };
   const fields = Object.entries(mapping).map(([input, name]) => ({
     name:name, value:String(data.get(input) || '').trim()
   })).filter(field => field.value);
+  const dogInfo = [
+    ['Breed', data.get('dogBreed')],
+    ['Age', data.get('dogAge')]
+  ].map(([label, value]) => {
+    const trimmed = String(value || '').trim();
+    return trimmed ? label + ': ' + trimmed : '';
+  }).filter(Boolean).join('; ');
+  if(dogInfo) fields.push({name:'dogInfo', value:dogInfo});
   ['consentEmail','consentSms'].forEach(name => {
     fields.push({name:name, value:data.has(name) ? 'true' : 'false'});
   });
