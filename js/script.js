@@ -179,25 +179,266 @@ const WORKING_K9_FAQS = [
 
 const faqPick = idx => idx.map(i => FAQS[i]);
 
-/* ---------- lead form (HubSpot) ---------- */
+/* ---------- lead form (HubSpot Forms API) ---------- */
 function leadForm(){
-  return `<div class="hs-form-frame"
-    data-region="na2"
-    data-form-id="9b37a135-9b1f-47bd-889c-3bbec3ed780f"
-    data-portal-id="242184033"></div>`;
+  return `<form class="form" id="leadForm" novalidate>
+  <div class="errm" id="errm" role="alert" data-show="false" tabindex="-1">
+    <h3>Let’s take care of a few details</h3>
+    <ul id="errList"></ul>
+  </div>
+  <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <fieldset>
+    <legend class="fl-legend">What would you like help with? <span class="req" aria-hidden="true">*</span></legend>
+    <p class="hint">Choose the closest fit. We can talk through the details together.</p>
+    <div class="field" style="margin-top:.85rem">
+      <label for="service">Training service</label>
+      <select id="service" name="service" required aria-describedby="serviceErr">
+        <option value="">Select a service</option>
+        <optgroup label="Pet Dog Training">
+          <option value="board-train">Board &amp; Train (residential)</option>
+          <option value="private-lessons">Private lessons</option>
+          <option value="puppy-foundations">Puppy foundations</option>
+          <option value="day-training">Day training</option>
+          <option value="behavior-modification">Behavior modification (aggression, anxiety, reactivity)</option>
+        </optgroup>
+        <optgroup label="Working &amp; Agency">
+          <option value="detection">Detection dog training</option>
+          <option value="police-k9">Police K9 / patrol</option>
+          <option value="sport">Sport training</option>
+          <option value="protection">Personal protection</option>
+          <option value="agency">Agency / department program</option>
+          <option value="decoy">Decoy services</option>
+          <option value="evaluation">Dog evaluation &amp; selection</option>
+        </optgroup>
+        <option value="unsure">I’m not sure yet—please help me choose</option>
+      </select>
+      <span class="err" id="serviceErr" data-show="false">Choose the service you’re interested in.</span>
+    </div>
+  </fieldset>
+
+  <div class="frow frow2">
+    <div class="field">
+      <label for="owner">Name <span class="req" aria-hidden="true">*</span></label>
+      <input id="owner" name="owner" type="text" autocomplete="name" required aria-describedby="ownerErr" />
+      <span class="err" id="ownerErr" data-show="false">Enter your name.</span>
+    </div>
+    <div class="field">
+      <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+      <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="emailErr" />
+      <span class="err" id="emailErr" data-show="false">Enter a valid email address.</span>
+    </div>
+  </div>
+
+  <div class="frow frow2">
+    <div class="field">
+      <label for="phone">Phone <span class="req" aria-hidden="true">*</span></label>
+      <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="phoneErr phoneHint" />
+      <span class="hint" id="phoneHint">We’ll use this to get in touch. Enter a 10-digit US number.</span>
+      <span class="err" id="phoneErr" data-show="false">Enter a 10-digit phone number.</span>
+    </div>
+    <div class="field">
+      <label for="dogName">Dog name</label>
+      <input id="dogName" name="dogName" type="text" autocomplete="off" />
+    </div>
+  </div>
+
+  <div class="frow frow3">
+    <div class="field">
+      <label for="city">City <span class="req" aria-hidden="true">*</span></label>
+      <input id="city" name="city" type="text" autocomplete="address-level2" required aria-describedby="cityErr" />
+      <span class="err" id="cityErr" data-show="false">Enter your city.</span>
+    </div>
+    <div class="field">
+      <label for="state">State</label>
+      <select id="state" name="state" autocomplete="address-level1"><option>TX</option><option>Other</option></select>
+    </div>
+    <div class="field">
+      <label for="dogInfo">Dog’s breed and age</label>
+      <input id="dogInfo" name="dogInfo" type="text" placeholder="e.g. GSD, 14 months" />
+    </div>
+  </div>
+
+  <fieldset>
+    <legend class="fl-legend">When would you like to begin?</legend>
+    <div class="radios radios-row" style="margin-top:.85rem">
+      <label class="radio"><input type="radio" name="timeline" value="asap" /><span>As soon as possible<small>In the next two weeks</small></span></label>
+      <label class="radio"><input type="radio" name="timeline" value="30-days" /><span>Within a month<small>I’m planning ahead</small></span></label>
+      <label class="radio"><input type="radio" name="timeline" value="researching" /><span>I’m exploring options<small>No rush to start</small></span></label>
+    </div>
+  </fieldset>
+
+  <div class="field">
+    <label for="message">What would you like life with your dog to look like?</label>
+    <textarea id="message" name="message" placeholder="Share what’s going well, what you’d like to change, and anything that could help us understand your dog—such as health needs, training history or other pets at home."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="heard">How did you hear about us?</label>
+    <select id="heard" name="heard">
+      <option value="">Select</option>
+      <option value="google-search">Google search</option>
+      <option value="google-ads">Google ad</option>
+      <option value="facebook">Facebook</option>
+      <option value="instagram">Instagram</option>
+      <option value="tiktok">TikTok</option>
+      <option value="referral">A Taurus K9 client</option>
+      <option value="vet">My veterinarian or their team</option>
+      <option value="agency">Another agency or department</option>
+      <option value="event">Event or class</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+
+  <fieldset>
+    <legend class="fl-legend">How may we contact you? <span class="req" aria-hidden="true">*</span></legend>
+    <p class="hint">Choose at least one way for us to reply about your inquiry.</p>
+    <div style="display:grid;gap:.7rem;margin-top:.85rem">
+      <label class="consent"><input type="checkbox" id="consentEmail" name="consentEmail" aria-describedby="consentErr" /><span>Email me about this inquiry and Taurus K9 services.</span></label>
+      <label class="consent"><input type="checkbox" id="consentSms" name="consentSms" aria-describedby="consentErr" /><span>Text me about this inquiry. Message frequency varies; message and data rates may apply. Reply STOP to unsubscribe. Consent is not a condition of purchase.</span></label>
+    </div>
+    <span class="err" id="consentErr" data-show="false" style="margin-top:.6rem">Select at least one way for us to contact you.</span>
+  </fieldset>
+
+  <div>
+    <button class="btn btn-p btn-blk" type="submit" data-track="form_submit" style="min-height:54px">Send my inquiry</button>
+    <p class="fnote" id="formStatus" role="status" aria-live="polite"></p>
+    <p class="fnote" style="margin-top:.75rem">Please don’t enter sensitive information. Read our <a href="#/privacy">Privacy Policy</a>.</p>
+  </div>
+</form>`;
 }
 
-const HUBSPOT_FORM_SCRIPT = 'https://js-na2.hsforms.net/forms/embed/242184033.js';
+const HUBSPOT_FORM_ENDPOINT = 'https://api.hsforms.com/submissions/v3/integration/submit/242184033/9b37a135-9b1f-47bd-889c-3bbec3ed780f';
 
-function wireHubSpotContactForm(){
-  if(!document.querySelector('.hs-form-frame')) return;
-  if(document.querySelector(`script[src="${HUBSPOT_FORM_SCRIPT}"]`)) return;
+function buildFormPayload(form){
+  const data = new FormData(form);
+  const mapping = {
+    owner:'firstname', email:'email', phone:'phone', city:'city', state:'state',
+    service:'service', dogName:'dogs_name', dogInfo:'dogInfo',
+    timeline:'preferred_start_timeline', message:'training_goals', heard:'heard'
+  };
+  const fields = Object.entries(mapping).map(([input, name]) => ({
+    name:name, value:String(data.get(input) || '').trim()
+  })).filter(field => field.value);
+  ['consentEmail','consentSms'].forEach(name => {
+    fields.push({name:name, value:data.has(name) ? 'true' : 'false'});
+  });
+  const context = {};
+  if(location.href) context.pageUri = location.href;
+  if(document.title) context.pageName = document.title;
+  return {fields:fields, context:context};
+}
 
-  const script = document.createElement('script');
-  script.src = HUBSPOT_FORM_SCRIPT;
-  script.async = true;
-  script.addEventListener('error', () => script.remove(), {once:true});
-  document.head.appendChild(script);
+function wireForm(){
+  const form = document.getElementById('leadForm');
+  if(!form) return;
+
+  const params = new URLSearchParams((location.hash || '').split('?')[1] || '');
+  const service = params.get('service');
+  if(service) form.elements.namedItem('service').value = service;
+  const errm = form.querySelector('#errm');
+  const errList = form.querySelector('#errList');
+  const heading = errm.querySelector('h3');
+  const button = form.querySelector('button[type="submit"]');
+  const status = form.querySelector('#formStatus');
+  let posting = false;
+
+  function setErr(id, invalid){
+    form.querySelector('#' + id).setAttribute('aria-invalid', invalid ? 'true' : 'false');
+    const error = form.querySelector('#' + id + 'Err');
+    if(error) error.setAttribute('data-show', invalid ? 'true' : 'false');
+  }
+
+  errList.addEventListener('click', function(e){
+    const link = e.target.closest('a[data-field]');
+    if(!link) return;
+    e.preventDefault();
+    form.elements.namedItem(link.dataset.field).focus();
+  });
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    if(posting) return;
+    const data = new FormData(form);
+    if(String(data.get('company') || '').trim()){
+      location.hash = '#/thank-you';
+      return;
+    }
+    track('form_submit', {});
+    const errors = [];
+    ['service','owner','email','phone','city','consentEmail','consentSms'].forEach(id => setErr(id, false));
+    form.querySelector('#consentErr').setAttribute('data-show','false');
+    errm.setAttribute('data-show','false');
+    errList.replaceChildren();
+    heading.textContent = 'Let’s take care of a few details';
+    status.textContent = '';
+    const value = name => String(data.get(name) || '').trim();
+    if(!value('service')) errors.push(['service','Choose the service you’re interested in.']);
+    if(!value('owner')) errors.push(['owner','Enter your name.']);
+    if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(value('email'))){
+      errors.push(['email','Enter a valid email address.']);
+    }
+    if(!/^(1)?\d{10}$/.test(value('phone').replace(/\D/g,''))){
+      errors.push(['phone','Enter a 10-digit phone number (optionally with US country code +1).']);
+    }
+    if(!value('city')) errors.push(['city','Enter your city.']);
+    if(!data.has('consentEmail') && !data.has('consentSms')){
+      setErr('consentSms', true);
+      form.querySelector('#consentErr').setAttribute('data-show','true');
+      errors.push(['consentEmail','Choose at least one way for us to contact you.']);
+    }
+    if(errors.length){
+      errors.forEach(([id, message]) => {
+        setErr(id, true);
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '#' + id;
+        link.dataset.field = id;
+        link.textContent = message;
+        item.appendChild(link);
+        errList.appendChild(item);
+      });
+      errm.setAttribute('data-show','true');
+      errm.focus();
+      track('form_error', {error_count:errors.length});
+      return;
+    }
+
+    const payload = buildFormPayload(form);
+    posting = true;
+    button.disabled = true;
+    button.textContent = 'Sending…';
+    form.setAttribute('aria-busy','true');
+    status.textContent = 'Sending your inquiry. Please wait.';
+    try {
+      const response = await fetch(HUBSPOT_FORM_ENDPOINT, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload),
+        signal:AbortSignal.timeout(20000)
+      });
+      if(!response.ok) throw new Error('HubSpot submission failed: ' + response.status);
+    } catch(error){
+      track('form_error', {error_type:error.name === 'TimeoutError' ? 'timeout' : 'submission'});
+      heading.textContent = 'We couldn’t confirm your inquiry was sent';
+      const item = document.createElement('li');
+      item.textContent = 'Your entries are still here. Please try again, or call ' + SITE.phoneDisplay + '. If the connection was interrupted, your inquiry may already have arrived.';
+      errList.appendChild(item);
+      errm.setAttribute('data-show','true');
+      status.textContent = 'Unable to confirm delivery. You can try again.';
+      posting = false;
+      button.disabled = false;
+      button.textContent = 'Send my inquiry';
+      form.removeAttribute('aria-busy');
+      if(form.isConnected) errm.focus();
+      return;
+    }
+    track('form_success', {});
+    form.removeAttribute('aria-busy');
+    status.textContent = 'Thank you! Your inquiry has been sent.';
+    button.textContent = 'Inquiry sent';
+    if(form.isConnected) location.hash = '#/thank-you';
+  });
 }
 
 /* ---------- pages ---------- */
@@ -814,13 +1055,13 @@ PAGES['/contact'] = {
 };
 
 PAGES['/thank-you'] = {
-  title:'Contact Taurus K9 Directly',
-  desc:'The online inquiry form is not available yet. Call or email Taurus K9 to book your free meet and greet.',
+  title:'Thank You | Taurus K9',
+  desc:'Thank you for contacting Taurus K9. Our team will follow up about your dog training inquiry.',
   render(){
     return phero({
-      tag:'Let’s connect',
-      title:'Your information wasn’t sent.',
-      lede:'This online form is not connected yet. Please call or email us directly, and we’ll be glad to help.',
+      tag:'Inquiry received',
+      title:'Thank you for reaching out.',
+      lede:'Your inquiry has been sent. Our team will be in touch to talk about your dog and help you choose a next step.',
       crumbs:[{label:'Home',href:'#/'},{label:'Contact'}],
       actions:`<a class="btn btn-p" href="tel:${SITE.phone}">Call ${SITE.phoneDisplay}</a>
         <a class="btn btn-o" href="mailto:${SITE.email}">Email us</a>`
@@ -1140,7 +1381,7 @@ function renderRoute(){
 
   track('page_view', {page_path:'#' + key, page_title:document.title});
 
-  wireHubSpotContactForm();
+  wireForm();
 }
 
 window.addEventListener('hashchange', renderRoute);

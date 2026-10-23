@@ -17,6 +17,76 @@ debugger and requires Google Chrome to be installed.
 ## Publish
 GitHub Pages: Settings > Pages > Deploy from branch `main` / root.
 
+## Contact form
+
+`#/contact` renders the original Taurus K9 custom form using the existing
+`.form`, `.frow`, fieldset, radio and consent styles. It does not load HubSpot's
+embedded UI. `wireForm()` validates locally and posts JSON directly to
+`https://api.hsforms.com/submissions/v3/integration/submit/242184033/9b37a135-9b1f-47bd-889c-3bbec3ed780f`.
+No private API key is required or exposed.
+
+| Form input name | HubSpot property | Mapping basis |
+| --- | --- | --- |
+| `owner` | `firstname` | Original payload mapping; full name is preserved, not split |
+| `email` | `email` | Standard contact property |
+| `phone` | `phone` | Standard contact property; accepts 10 US digits or leading `1` |
+| `city` | `city` | Standard contact property |
+| `state` | `state` | Standard contact property |
+| `service` | `service` | Original input name retained; verify property and enum values |
+| `dogName` | `dogs_name` | Contact property documented in Verified property mappings below |
+| `dogInfo` | `dogInfo` | Original combined breed/age input name retained; verify property |
+| `timeline` | `preferred_start_timeline` | Task-supplied internal name; verify enum values |
+| `message` | `training_goals` | Task-supplied internal name |
+| `heard` | `heard` | Original input name retained; verify property and enum values |
+| `consentEmail` | `consentEmail` | Original input name retained; explicit `true`/`false`; verify property |
+| `consentSms` | `consentSms` | Original input name retained; explicit `true`/`false`; verify property |
+| `company` | Not submitted | Off-screen honeypot; populated value prevents the API request |
+
+**Before production use:** verify these properties belong to the target form,
+including enumeration internal values and any additional required fields.
+The public HubSpot form definition could not be retrieved from the development
+environment (DNS lookup failed), so the custom mappings above are assumptions
+where noted. The original combined breed/age field is deliberately not guessed
+into separate `dog_breed` and `dog_age` values. Consent fields record the visitor's
+choices; they do not configure HubSpot subscription types or replace
+`legalConsentOptions` if the target form requires them. Confirm those settings
+with the form owner before enabling automated follow-up.
+
+The request includes `context.pageUri` and `context.pageName` when available.
+Blank optional fields are omitted. Analytics use the existing consent-aware
+`track()` hook: `form_submit` on attempt, `form_error` on validation or delivery
+failure, and `form_success` only after a successful HTTP response. No field
+values are sent to analytics.
+
+While posting, the button is disabled and repeat submit events are ignored.
+A successful response routes to `#/thank-you`. A failed or 20-second timed-out
+request leaves entries intact, announces an error, and enables manual retry.
+There are no automatic retries: a lost response may mean HubSpot already
+received the inquiry, so checking HubSpot before retrying avoids that ambiguity.
+The legacy honeypot still routes to thank-you without posting or conversion
+tracking. No server-side spam prevention or idempotency guarantee is implied.
+
+Run offline regression coverage with `node --test tests/contact-form.test.js`
+(also included in `npm test`). For manual verification:
+
+1. Serve the site locally and open `#/contact` at desktop and mobile widths.
+   Confirm the original two-column/three-column rows collapse to one on mobile.
+2. Submit empty/invalid values. Check inline errors, screen-reader announcements,
+   summary focus, and summary links focusing fields without changing routes.
+3. With approved test details and permission from the HubSpot owner, submit a
+   valid inquiry. Inspect the JSON POST, confirm the thank-you route, and verify
+   the submission and field values in the target HubSpot form/contact record.
+4. Delay the request and rapidly click/press Enter: expect one request. Simulate
+   HTTP 400/429/500, offline mode and timeout: expect retained entries, a retryable
+   error and an enabled button. Restore the connection and retry.
+5. Populate the honeypot: expect no request. Navigate among all site routes,
+   return to contact, and check for JavaScript exceptions or embedded-form scripts.
+
+Rollback: revert the contact-form restoration commit and redeploy the static
+site. This restores the previous embedded form and thank-you copy; there are no
+database migrations, new dependencies or HubSpot schema changes to undo.
+Existing HubSpot submissions are not removed by rollback.
+
 ## Offline agreement mapping (development only)
 
 `server/agreement-mapping.cjs` is an isolated, server-side-intended CommonJS module.
