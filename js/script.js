@@ -414,7 +414,7 @@ function buildPayload(d){
   };
 }
 
-function wireForm(){
+function wireHubSpotContactForm();
   const form = document.getElementById('leadForm');
   if(!form) return;
 
@@ -1443,7 +1443,7 @@ function renderRoute(){
 
   track('page_view', {page_path:'#' + key, page_title:document.title});
 
-  wireForm();
+  wireHubSpotContactForm();
 }
 
 window.addEventListener('hashchange', renderRoute);
