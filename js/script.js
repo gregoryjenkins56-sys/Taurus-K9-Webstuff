@@ -219,28 +219,34 @@ function leadForm(){
 
   <div class="frow frow2">
     <div class="field">
-      <label for="owner">Name <span class="req" aria-hidden="true">*</span></label>
-      <input id="owner" name="owner" type="text" autocomplete="name" required aria-describedby="ownerErr" />
-      <span class="err" id="ownerErr" data-show="false">Enter your name.</span>
+      <label for="firstName">First Name <span class="req" aria-hidden="true">*</span></label>
+      <input id="firstName" name="firstName" type="text" autocomplete="given-name" required aria-describedby="firstNameErr" />
+      <span class="err" id="firstNameErr" data-show="false">Enter your first name.</span>
     </div>
+    <div class="field">
+      <label for="lastName">Last Name <span class="req" aria-hidden="true">*</span></label>
+      <input id="lastName" name="lastName" type="text" autocomplete="family-name" required aria-describedby="lastNameErr" />
+      <span class="err" id="lastNameErr" data-show="false">Enter your last name.</span>
+    </div>
+  </div>
+
+  <div class="frow frow2">
     <div class="field">
       <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
       <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="emailErr" />
       <span class="err" id="emailErr" data-show="false">Enter a valid email address.</span>
     </div>
-  </div>
-
-  <div class="frow frow2">
     <div class="field">
       <label for="phone">Phone <span class="req" aria-hidden="true">*</span></label>
       <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="phoneErr phoneHint" />
       <span class="hint" id="phoneHint">We’ll use this to get in touch. Enter a 10-digit US number.</span>
       <span class="err" id="phoneErr" data-show="false">Enter a 10-digit phone number.</span>
     </div>
-    <div class="field">
-      <label for="dogName">Dog name</label>
-      <input id="dogName" name="dogName" type="text" autocomplete="off" />
-    </div>
+  </div>
+
+  <div class="field">
+    <label for="dogName">Dog name</label>
+    <input id="dogName" name="dogName" type="text" autocomplete="off" />
   </div>
 
   <div class="frow frow2">
@@ -319,9 +325,8 @@ const HUBSPOT_FORM_ENDPOINT = 'https://api.hsforms.com/submissions/v3/integratio
 
 function buildFormPayload(form){
   const data = new FormData(form);
-  const ownerName = String(data.get('owner') || '').trim();
-  const [firstName, ...lastNameParts] = ownerName.split(/\s+/);
   const mapping = {
+    firstName:'firstname', lastName:'lastname',
     email:'email', phone:'phone', city:'city', state:'state',
     service:'training_service_interest', dogName:'dogs_name', dogAge:'dog_age',
     timeline:'preferred_start_timeline', message:'training_goals', heard:'lead_source_detail'
@@ -329,10 +334,6 @@ function buildFormPayload(form){
   const fields = Object.entries(mapping).map(([input, name]) => ({
     name:name, value:String(data.get(input) || '').trim()
   })).filter(field => field.value);
-  if(firstName){
-    fields.unshift({name:'lastname', value:lastNameParts.join(' ') || '(Not provided)'});
-    fields.unshift({name:'firstname', value:firstName});
-  }
   [['consentEmail','consent_email_inquiry'], ['consentSms','consent_sms_inquiry']]
     .forEach(([input, name]) => {
       fields.push({name:name, value:data.has(input) ? 'true' : 'false'});
@@ -397,7 +398,7 @@ function wireForm(){
     }
     track('form_submit', {});
     const errors = [];
-    ['service','owner','email','phone','city','consentEmail','consentSms'].forEach(id => setErr(id, false));
+    ['service','firstName','lastName','email','phone','city','consentEmail','consentSms'].forEach(id => setErr(id, false));
     form.querySelector('#consentErr').setAttribute('data-show','false');
     errm.setAttribute('data-show','false');
     errList.replaceChildren();
@@ -405,7 +406,8 @@ function wireForm(){
     status.textContent = '';
     const value = name => String(data.get(name) || '').trim();
     if(!value('service')) errors.push(['service','Choose the service you’re interested in.']);
-    if(!value('owner')) errors.push(['owner','Enter your name.']);
+    if(!value('firstName')) errors.push(['firstName','Enter your first name.']);
+    if(!value('lastName')) errors.push(['lastName','Enter your last name.']);
     if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(value('email'))){
       errors.push(['email','Enter a valid email address.']);
     }

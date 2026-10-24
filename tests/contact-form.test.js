@@ -32,7 +32,7 @@ class Element {
 }
 
 function setup(fetch = async () => ({ok:true})){
-  const names = ['company','tk9_check','service','owner','email','phone','city','state','dogName',
+  const names = ['company','tk9_check','service','firstName','lastName','email','phone','city','state','dogName',
     'dogBreed','dogAge','timeline','message','heard','consentEmail','consentSms'];
   const controls = Object.fromEntries(names.map(name => [name, new Element()]));
   const nodes = {};
@@ -78,7 +78,7 @@ function setup(fetch = async () => ({ok:true})){
   const submit = () => form.listeners.submit({preventDefault(){}});
   function valid(){
     Object.entries({
-      service:'board-train', owner:'Test Owner', email:'owner@example.com',
+      service:'board-train', firstName:'Test', lastName:'Owner', email:'owner@example.com',
       phone:'(361) 555-0100', city:'Aransas Pass', state:'TX'
     }).forEach(([name, value]) => { controls[name].value = value; });
     controls.consentEmail.checked = true;
@@ -99,6 +99,15 @@ test('all routes render meaningful content and the contact layout uses the origi
   assert.match(html, /class="form" id="leadForm"/);
   assert.equal((html.match(/class="frow frow2"/g) || []).length, 4);
   assert.equal((html.match(/class="frow frow3"/g) || []).length, 0);
+  for(const [name, label, autocomplete] of [
+    ['firstName', 'First Name', 'given-name'],
+    ['lastName', 'Last Name', 'family-name']
+  ]){
+    assert.ok(html.includes(`<label for="${name}">${label} <span class="req" aria-hidden="true">*</span></label>`));
+    assert.ok(html.includes(`<input id="${name}" name="${name}" type="text" autocomplete="${autocomplete}" required aria-describedby="${name}Err" />`));
+    assert.ok(html.includes(`id="${name}Err" data-show="false"`));
+  }
+  assert.doesNotMatch(html, /name="owner"|autocomplete="name"/);
   assert.match(html, /class="frow frow2">[\s\S]*?for="city"[\s\S]*?for="state"[\s\S]*?<\/div>\s*<div class="frow frow2">[\s\S]*?for="dogBreed"[\s\S]*?for="dogAge"/);
   assert.match(html, /<label for="dogBreed">Dog’s breed<\/label>\s*<input id="dogBreed" name="dogBreed" type="text" placeholder="e\.g\. German Shepherd or mixed breed" \/>/);
   assert.match(html, /<label for="dogAge">Dog’s age<\/label>\s*<input id="dogAge" name="dogAge" type="text" placeholder="e\.g\. 14 months or 3 years" \/>/);
@@ -113,9 +122,9 @@ test('required fields have inline errors, a focused summary and no API request',
   const s = setup();
   await s.submit();
   assert.equal(s.requests.length, 0);
-  assert.equal(s.nodes['#errList'].children.length, 6);
+  assert.equal(s.nodes['#errList'].children.length, 7);
   assert.equal(s.nodes['#errm'].focused, true);
-  for(const name of ['service','owner','email','phone','city','consentEmail','consentSms']){
+  for(const name of ['service','firstName','lastName','email','phone','city','consentEmail','consentSms']){
     assert.equal(s.controls[name].attributes['aria-invalid'], 'true');
   }
   const link = s.nodes['#errList'].children[0].children[0];
@@ -127,7 +136,7 @@ test('required fields have inline errors, a focused summary and no API request',
   assert.equal(s.controls.service.focused, true);
   assert.equal(s.location.hash, '#/contact');
   assert.equal(s.events.at(-1).name, 'form_error');
-  assert.deepEqual({...s.events.at(-1).params}, {error_type:'validation', error_count:6});
+  assert.deepEqual({...s.events.at(-1).params}, {error_type:'validation', error_count:7});
 });
 
 test('invalid email, whitespace, and non-US/incorrect-length phones cannot submit', async () => {
@@ -140,7 +149,7 @@ test('invalid email, whitespace, and non-US/incorrect-length phones cannot submi
   }
   const s = setup();
   s.valid();
-  s.controls.owner.value = '   ';
+  s.controls.firstName.value = '   ';
   s.controls.email.value = 'invalid@';
   await s.submit();
   assert.equal(s.requests.length, 0);
@@ -194,20 +203,48 @@ test('rapid submits make one request and keep the button disabled until confirma
   assert.equal(s.location.hash, '#/thank-you');
 });
 
-test('owner names split into first and last names, with a safe single-token fallback', async () => {
-  for(const [owner, firstname, lastname] of [
-    ['Test Owner', 'Test', 'Owner'],
-    ['  Mary Jane Watson  ', 'Mary', 'Jane Watson'],
-    ['Madonna', 'Madonna', '(Not provided)']
+test('separate names are trimmed without splitting multi-word or international names', async () => {
+  for(const [firstName, lastName, firstname, lastname] of [
+    [' Test ', ' Owner ', 'Test', 'Owner'],
+    ['  Mary Jane  ', '  Watson Parker  ', 'Mary Jane', 'Watson Parker'],
+    ['Jean-Luc', "O’Neill-Smith", 'Jean-Luc', "O’Neill-Smith"],
+    ['李', '王', '李', '王']
   ]){
     const s = setup();
     s.valid();
-    s.controls.owner.value = owner;
+    s.controls.firstName.value = firstName;
+    s.controls.lastName.value = lastName;
     await s.submit();
     const fields = Object.fromEntries(JSON.parse(s.requests[0].options.body).fields
       .map(field => [field.name, field.value]));
     assert.equal(fields.firstname, firstname);
     assert.equal(fields.lastname, lastname);
+    assert.equal(Object.hasOwn(fields, 'owner'), false);
+  }
+});
+
+test('each name is required and can be corrected through its error summary link', async () => {
+  for(const name of ['firstName', 'lastName']){
+    for(const value of ['', '   ']){
+      const s = setup();
+      s.valid();
+      s.controls[name].value = value;
+      await s.submit();
+      assert.equal(s.requests.length, 0);
+      assert.equal(s.nodes['#errList'].children.length, 1);
+      assert.equal(s.controls[name].attributes['aria-invalid'], 'true');
+      assert.equal(s.nodes['#' + name + 'Err'].attributes['data-show'], 'true');
+      const link = s.nodes['#errList'].children[0].children[0];
+      assert.equal(link.dataset.field, name);
+      s.nodes['#errList'].listeners.click({target:{closest:() => link}, preventDefault(){}});
+      assert.equal(s.controls[name].focused, true);
+      s.controls[name].value = 'Corrected';
+      await s.submit();
+      assert.equal(s.requests.length, 1);
+      assert.equal(s.controls[name].attributes['aria-invalid'], 'false');
+      assert.equal(s.nodes['#' + name + 'Err'].attributes['data-show'], 'false');
+      assert.equal(s.location.hash, '#/thank-you');
+    }
   }
 });
 
@@ -262,7 +299,8 @@ test('HTTP, network and timeout errors preserve entries, expose retry and never 
     s.valid();
     await s.submit();
     assert.equal(s.location.hash, '#/contact');
-    assert.equal(s.controls.owner.value, 'Test Owner');
+    assert.equal(s.controls.firstName.value, 'Test');
+    assert.equal(s.controls.lastName.value, 'Owner');
     assert.equal(s.controls.consentEmail.checked, true);
     assert.equal(s.button.disabled, false);
     assert.equal(s.nodes['#errm'].attributes['data-show'], 'true');
@@ -270,7 +308,7 @@ test('HTTP, network and timeout errors preserve entries, expose retry and never 
     assert.equal(s.events.at(-1).name, 'form_error');
     assert.deepEqual({...s.events.at(-1).params}, diagnostic);
     assert.match(s.nodes['#formStatus'].textContent, new RegExp(diagnostic.error_type));
-    assert.doesNotMatch(JSON.stringify(s.events), /owner@example.com|Test Owner/);
+    assert.doesNotMatch(JSON.stringify(s.events), /owner@example.com|"Test"|"Owner"/);
     assert.doesNotMatch(s.nodes['#formStatus'].textContent, /owner@example.com/);
     assert.equal(s.requests.length, 1);
     fail = false;
@@ -302,7 +340,8 @@ test('honeypot blocks honestly without a request or conversion and permits corre
   assert.equal(s.nodes['#errm'].attributes['data-show'], 'true');
   assert.match(s.nodes['#errList'].children[0].textContent, /Nothing was sent/);
   assert.match(s.nodes['#formStatus'].textContent, /honeypot/);
-  assert.equal(s.controls.owner.value, 'Test Owner');
+  assert.equal(s.controls.firstName.value, 'Test');
+  assert.equal(s.controls.lastName.value, 'Owner');
   assert.equal(s.button.disabled, false);
   assert.deepEqual(s.events.map(event => event.name), ['form_error']);
   assert.deepEqual({...s.events[0].params}, {error_type:'honeypot'});
