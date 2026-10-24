@@ -27,37 +27,30 @@ No private API key is required or exposed.
 
 | Form input name | HubSpot property | Mapping basis |
 | --- | --- | --- |
-| `owner` | `firstname` | Original payload mapping; full name is preserved, not split |
+| `owner` | `firstname`, `lastname` | First name token and remaining tokens; a single-token name uses `(Not provided)` for `lastname` |
 | `email` | `email` | Standard contact property |
 | `phone` | `phone` | Standard contact property; accepts 10 US digits or leading `1` |
 | `city` | `city` | Standard contact property |
 | `state` | `state` | Standard contact property |
-| `service` | `service` | Original input name retained; verify property and enum values |
+| `service` | `training_service_interest` | Internal property name; verify property and enum values |
 | `dogName` | `dogs_name` | Contact property documented in Verified property mappings below |
-| `dogBreed`, `dogAge` | `dogInfo` | Optional inputs are trimmed and combined as `Breed: …; Age: …`; either may be omitted |
+| `dogAge` | `dog_age` | Optional age input, trimmed and omitted when blank |
+| `dogBreed` | Not submitted | No verified HubSpot property mapping |
 | `timeline` | `preferred_start_timeline` | Task-supplied internal name; verify enum values |
 | `message` | `training_goals` | Task-supplied internal name |
-| `heard` | `heard` | Original input name retained; verify property and enum values |
-| `consentEmail` | `consentEmail` | Original input name retained; explicit `true`/`false`; verify property |
-| `consentSms` | `consentSms` | Original input name retained; explicit `true`/`false`; verify property |
+| `heard` | `lead_source_detail` | Internal property name; verify property and enum values |
+| `consentEmail` | `consent_email_inquiry` | Explicit `true`/`false`; verify property |
+| `consentSms` | `consent_sms_inquiry` | Explicit `true`/`false`; verify property |
 | `tk9_check` | Not submitted | Off-screen honeypot; populated value prevents the API request and displays an explicit error |
 
 **Before production use:** verify these properties belong to the target form,
 including enumeration internal values and any additional required fields.
 The public HubSpot form definition could not be retrieved from the development
 environment (DNS lookup failed), so the custom mappings above are assumptions
-where noted. The original combined breed/age field is deliberately not guessed
-into separate `dog_breed` and `dog_age` values. Consent fields record the visitor's
-choices; they do not configure HubSpot subscription types or replace
-`legalConsentOptions` if the target form requires them. Confirm those settings
-with the form owner before enabling automated follow-up.
-
-The contact form continues sending breed and age together in the existing
-`dogInfo` field because acceptance of `dog_breed` and `dog_age` by this specific
-HubSpot form has not been verified. To store them independently in HubSpot,
-configure and verify those two properties on the target form, confirm its
-internal property names and required-field settings, then update the submission
-mapping and test using an approved test submission.
+where noted. The consent fields record the visitor's choices; they do not
+configure HubSpot subscription types or replace `legalConsentOptions` if the
+target form requires them. Confirm those settings with the form owner before
+enabling automated follow-up.
 
 The request includes `context.pageUri` and `context.pageName` when available.
 Blank optional fields are omitted. Analytics use the existing consent-aware
