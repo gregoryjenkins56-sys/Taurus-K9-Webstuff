@@ -23,11 +23,16 @@ class Element {
   appendChild(child){ this.children.push(child); }
   replaceChildren(){ this.children = []; }
   focus(){ this.focused = true; }
-  addEventListener(name, listener){ this.listeners[name] = listener; }
+  addEventListener(name, listener){
+    const previous = this.listeners[name];
+    this.listeners[name] = previous
+      ? (...args) => Promise.all([previous(...args), listener(...args)])
+      : listener;
+  }
 }
 
 function setup(fetch = async () => ({ok:true})){
-  const names = ['company','service','owner','email','phone','city','state','dogName',
+  const names = ['company','tk9_check','service','owner','email','phone','city','state','dogName',
     'dogBreed','dogAge','timeline','message','heard','consentEmail','consentSms'];
   const controls = Object.fromEntries(names.map(name => [name, new Element()]));
   const nodes = {};
@@ -98,6 +103,8 @@ test('all routes render meaningful content and the contact layout uses the origi
   assert.match(html, /<label for="dogBreed">Dog’s breed<\/label>\s*<input id="dogBreed" name="dogBreed" type="text" placeholder="e\.g\. German Shepherd or mixed breed" \/>/);
   assert.match(html, /<label for="dogAge">Dog’s age<\/label>\s*<input id="dogAge" name="dogAge" type="text" placeholder="e\.g\. 14 months or 3 years" \/>/);
   assert.match(html, /class="radios radios-row"/);
+  assert.match(html, /name="tk9_check" tabindex="-1" autocomplete="off" aria-hidden="true"/);
+  assert.doesNotMatch(html, /name="company"/);
   assert.match(readFileSync(new URL('../css/style.css', import.meta.url), 'utf8'), /@media\(min-width:640px\)\{\.frow2\{grid-template-columns:1fr 1fr\}/);
   assert.doesNotMatch(source, /hs-form-frame|forms\/embed|wireHubSpotContactForm/);
 });
@@ -120,6 +127,7 @@ test('required fields have inline errors, a focused summary and no API request',
   assert.equal(s.controls.service.focused, true);
   assert.equal(s.location.hash, '#/contact');
   assert.equal(s.events.at(-1).name, 'form_error');
+  assert.deepEqual({...s.events.at(-1).params}, {error_type:'validation', error_count:6});
 });
 
 test('invalid email, whitespace, and non-US/incorrect-length phones cannot submit', async () => {
@@ -172,10 +180,12 @@ test('payload uses the Forms API schema, trims input and preserves consent choic
 test('rapid submits make one request and keep the button disabled until confirmation', async () => {
   let finish;
   const s = setup(() => new Promise(resolve => { finish = resolve; }));
+  vm.runInContext('wireForm(); wireForm()', s.context);
   s.valid();
   const pending = s.submit();
   await s.submit();
   assert.equal(s.requests.length, 1);
+  assert.equal(s.events.filter(event => event.name === 'form_submit').length, 1);
   assert.equal(s.button.disabled, true);
   assert.equal(s.form.attributes['aria-busy'], 'true');
   assert.equal(s.location.hash, '#/contact');
@@ -220,9 +230,14 @@ test('SMS-only consent is valid, blank optional fields and unavailable context a
 });
 
 test('HTTP, network and timeout errors preserve entries, expose retry and never auto-retry', async () => {
-  for(const result of [() => ({ok:false, status:400}), () => ({ok:false, status:429}),
-    () => ({ok:false, status:500}), () => { throw new TypeError('Network error'); },
-    () => { const error = new Error('Timeout'); error.name = 'TimeoutError'; throw error; }]){
+  for(const [result, diagnostic] of [
+    [() => ({ok:false, status:400}), {error_type:'http', http_status:400}],
+    [() => ({ok:false, status:429}), {error_type:'http', http_status:429}],
+    [() => ({ok:false, status:500}), {error_type:'http', http_status:500}],
+    [() => { throw new TypeError('owner@example.com'); }, {error_type:'network'}],
+    [() => { const error = new Error('owner@example.com'); error.name = 'TimeoutError'; throw error; },
+      {error_type:'timeout'}]
+  ]){
     let fail = true;
     const s = setup(() => fail ? result() : {ok:true});
     s.valid();
@@ -234,6 +249,10 @@ test('HTTP, network and timeout errors preserve entries, expose retry and never 
     assert.equal(s.nodes['#errm'].attributes['data-show'], 'true');
     assert.match(s.nodes['#errList'].children[0].textContent, /try again/);
     assert.equal(s.events.at(-1).name, 'form_error');
+    assert.deepEqual({...s.events.at(-1).params}, diagnostic);
+    assert.match(s.nodes['#formStatus'].textContent, new RegExp(diagnostic.error_type));
+    assert.doesNotMatch(JSON.stringify(s.events), /owner@example.com|Test Owner/);
+    assert.doesNotMatch(s.nodes['#formStatus'].textContent, /owner@example.com/);
     assert.equal(s.requests.length, 1);
     fail = false;
     await s.submit();
@@ -242,13 +261,71 @@ test('HTTP, network and timeout errors preserve entries, expose retry and never 
   }
 });
 
-test('honeypot is read by name and never posts or emits a conversion', async () => {
+test('legacy company autofill cannot silently discard a legitimate inquiry', async () => {
   const s = setup();
-  s.controls.company.value = 'bot';
+  s.valid();
+  s.controls.company.value = 'Autofilled company';
+  await s.submit();
+  assert.equal(s.requests.length, 1);
+  const payload = JSON.parse(s.requests[0].options.body);
+  assert.equal(payload.fields.some(field => ['company', 'tk9_check'].includes(field.name)), false);
+  assert.equal(s.location.hash, '#/thank-you');
+});
+
+test('honeypot blocks honestly without a request or conversion and permits correction', async () => {
+  const s = setup();
+  s.valid();
+  s.controls.tk9_check.value = 'Autofilled or bot value';
   await s.submit();
   assert.equal(s.requests.length, 0);
-  assert.equal(s.events.length, 0);
+  assert.equal(s.location.hash, '#/contact');
+  assert.equal(s.nodes['#errm'].focused, true);
+  assert.equal(s.nodes['#errm'].attributes['data-show'], 'true');
+  assert.match(s.nodes['#errList'].children[0].textContent, /Nothing was sent/);
+  assert.match(s.nodes['#formStatus'].textContent, /honeypot/);
+  assert.equal(s.controls.owner.value, 'Test Owner');
+  assert.equal(s.button.disabled, false);
+  assert.deepEqual(s.events.map(event => event.name), ['form_error']);
+  assert.deepEqual({...s.events[0].params}, {error_type:'honeypot'});
+  s.controls.tk9_check.value = '  ';
+  await s.submit();
+  assert.equal(s.requests.length, 1);
   assert.equal(s.location.hash, '#/thank-you');
+});
+
+test('HTTP diagnostics are bounded and never read provider bodies or status text', async () => {
+  for(const status of [400, 'owner@example.com', 999, null]){
+    const s = setup(() => ({
+      ok:false, status,
+      get statusText(){ throw new Error('Must not read provider text'); },
+      text(){ assert.fail('Must not read provider body'); },
+      json(){ assert.fail('Must not read provider body'); }
+    }));
+    s.valid();
+    await s.submit();
+    assert.deepEqual({...s.events.at(-1).params},
+      status === 400 ? {error_type:'http', http_status:400} : {error_type:'http'});
+    assert.doesNotMatch(s.nodes['#formStatus'].textContent, /owner@example.com|999/);
+    assert.equal(s.location.hash, '#/contact');
+  }
+});
+
+test('payload or timeout setup failures restore retry without claiming delivery', async () => {
+  for(const failure of [
+    "buildFormPayload = () => { throw new Error('owner@example.com'); }",
+    "AbortSignal = {timeout:() => { throw new Error('Unsupported'); }}"
+  ]){
+    const s = setup();
+    s.valid();
+    vm.runInContext(failure, s.context);
+    await s.submit();
+    assert.equal(s.requests.length, 0);
+    assert.equal(s.location.hash, '#/contact');
+    assert.equal(s.button.disabled, false);
+    assert.equal(s.form.attributes['aria-busy'], undefined);
+    assert.deepEqual({...s.events.at(-1).params}, {error_type:'client'});
+    assert.doesNotMatch(s.nodes['#formStatus'].textContent, /owner@example.com/);
+  }
 });
 
 test('a completed request cannot redirect away from a newly selected route', async () => {

@@ -40,7 +40,7 @@ No private API key is required or exposed.
 | `heard` | `heard` | Original input name retained; verify property and enum values |
 | `consentEmail` | `consentEmail` | Original input name retained; explicit `true`/`false`; verify property |
 | `consentSms` | `consentSms` | Original input name retained; explicit `true`/`false`; verify property |
-| `company` | Not submitted | Off-screen honeypot; populated value prevents the API request |
+| `tk9_check` | Not submitted | Off-screen honeypot; populated value prevents the API request and displays an explicit error |
 
 **Before production use:** verify these properties belong to the target form,
 including enumeration internal values and any additional required fields.
@@ -62,16 +62,36 @@ mapping and test using an approved test submission.
 The request includes `context.pageUri` and `context.pageName` when available.
 Blank optional fields are omitted. Analytics use the existing consent-aware
 `track()` hook: `form_submit` on attempt, `form_error` on validation or delivery
-failure, and `form_success` only after a successful HTTP response. No field
-values are sent to analytics.
+failure (including blocked spam checks), and `form_success` only after a successful
+HTTP response. Failure diagnostics use fixed `error_type` categories:
+`honeypot` (no request), `validation` (no request, with `error_count`), `client`
+(request preparation failed), `network` (delivery unknown), `timeout` (delivery
+unknown), and `http` (non-2xx response, with numeric `http_status` when available).
+Delivery categories/status also appear in the existing form status area, even
+without analytics consent. No field values, exception messages, or provider
+response bodies/status text are included in diagnostics.
 
 While posting, the button is disabled and repeat submit events are ignored.
 A successful response routes to `#/thank-you`. A failed or 20-second timed-out
 request leaves entries intact, announces an error, and enables manual retry.
 There are no automatic retries: a lost response may mean HubSpot already
 received the inquiry, so checking HubSpot before retrying avoids that ambiguity.
-The legacy honeypot still routes to thank-you without posting or conversion
-tracking. No server-side spam prevention or idempotency guarantee is implied.
+The old `company` honeypot could route to thank-you without posting anything:
+this is a confirmed false-success path, not proof of what happened to any
+particular inquiry. The trap now uses a nonstandard name to reduce company
+autofill collisions. A populated trap stays on contact, explicitly says nothing
+was sent, and suggests reloading with autofill disabled or calling instead.
+Autofill can still populate hidden fields; no client-only trap guarantees spam
+prevention. Wiring the same form repeatedly does not add duplicate handlers.
+No server-side spam prevention or idempotency guarantee is implied.
+
+Offline regression tests establish these behaviors, not live HubSpot acceptance.
+The public form-definition lookup remains DNS-blocked in this environment.
+The form owner must still verify the mapping table, required fields, enum values,
+and consent configuration, then correlate an authorized test's HTTP status with
+the submission/contact in HubSpot. No live test contacts or settings changes
+were made. The public form remains independent of preview-only worker CRM sync
+in `server/worker/hubspot.ts`.
 
 Run offline regression coverage with `node --test tests/contact-form.test.js`
 (also included in `npm test`). For manual verification:
@@ -86,7 +106,8 @@ Run offline regression coverage with `node --test tests/contact-form.test.js`
 4. Delay the request and rapidly click/press Enter: expect one request. Simulate
    HTTP 400/429/500, offline mode and timeout: expect retained entries, a retryable
    error and an enabled button. Restore the connection and retry.
-5. Populate the honeypot: expect no request. Navigate among all site routes,
+5. Populate `tk9_check`: expect no request, an explicit spam-check error, and no
+   thank-you redirect. Navigate among all site routes,
    return to contact, and check for JavaScript exceptions or embedded-form scripts.
 
 Rollback: revert the contact-form restoration commit and redeploy the static

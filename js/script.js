@@ -186,7 +186,7 @@ function leadForm(){
     <h3>Let’s take care of a few details</h3>
     <ul id="errList"></ul>
   </div>
-  <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <input class="hp" type="text" name="tk9_check" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
   <fieldset>
     <legend class="fl-legend">What would you like help with? <span class="req" aria-hidden="true">*</span></legend>
@@ -346,7 +346,8 @@ function buildFormPayload(form){
 
 function wireForm(){
   const form = document.getElementById('leadForm');
-  if(!form) return;
+  if(!form || form.dataset.wired) return;
+  form.dataset.wired = 'true';
 
   const params = new URLSearchParams((location.hash || '').split('?')[1] || '');
   const service = params.get('service');
@@ -364,6 +365,22 @@ function wireForm(){
     if(error) error.setAttribute('data-show', invalid ? 'true' : 'false');
   }
 
+  function showFailure(category, httpStatus){
+    const diagnostic = {error_type:category};
+    if(httpStatus) diagnostic.http_status = httpStatus;
+    track('form_error', diagnostic);
+    heading.textContent = 'We couldn’t confirm your inquiry was sent';
+    errList.replaceChildren();
+    const item = document.createElement('li');
+    item.textContent = category === 'honeypot'
+      ? 'Nothing was sent because the spam check was filled. Please reload and try again with autofill disabled, or call ' + SITE.phoneDisplay + '.'
+      : 'Your entries are still here. Please try again, or call ' + SITE.phoneDisplay + '. If the connection was interrupted, your inquiry may already have arrived.';
+    errList.appendChild(item);
+    errm.setAttribute('data-show','true');
+    status.textContent = 'Unable to confirm delivery (' + category + (httpStatus ? ' ' + httpStatus : '') + ').';
+    if(form.isConnected) errm.focus();
+  }
+
   errList.addEventListener('click', function(e){
     const link = e.target.closest('a[data-field]');
     if(!link) return;
@@ -375,8 +392,8 @@ function wireForm(){
     e.preventDefault();
     if(posting) return;
     const data = new FormData(form);
-    if(String(data.get('company') || '').trim()){
-      location.hash = '#/thank-you';
+    if(String(data.get('tk9_check') || '').trim()){
+      showFailure('honeypot');
       return;
     }
     track('form_submit', {});
@@ -415,37 +432,40 @@ function wireForm(){
       });
       errm.setAttribute('data-show','true');
       errm.focus();
-      track('form_error', {error_count:errors.length});
+      track('form_error', {error_type:'validation', error_count:errors.length});
       return;
     }
 
-    const payload = buildFormPayload(form);
     posting = true;
     button.disabled = true;
     button.textContent = 'Sending…';
     form.setAttribute('aria-busy','true');
     status.textContent = 'Sending your inquiry. Please wait.';
+    let category = 'client';
+    let httpStatus;
     try {
+      const payload = buildFormPayload(form);
+      const signal = AbortSignal.timeout(20000);
+      category = 'network';
       const response = await fetch(HUBSPOT_FORM_ENDPOINT, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(payload),
-        signal:AbortSignal.timeout(20000)
+        signal:signal
       });
-      if(!response.ok) throw new Error('HubSpot submission failed: ' + response.status);
+      if(!response.ok){
+        category = 'http';
+        if(Number.isInteger(response.status) && response.status >= 100 && response.status <= 599){
+          httpStatus = response.status;
+        }
+        throw new Error('Submission rejected');
+      }
     } catch(error){
-      track('form_error', {error_type:error.name === 'TimeoutError' ? 'timeout' : 'submission'});
-      heading.textContent = 'We couldn’t confirm your inquiry was sent';
-      const item = document.createElement('li');
-      item.textContent = 'Your entries are still here. Please try again, or call ' + SITE.phoneDisplay + '. If the connection was interrupted, your inquiry may already have arrived.';
-      errList.appendChild(item);
-      errm.setAttribute('data-show','true');
-      status.textContent = 'Unable to confirm delivery. You can try again.';
+      showFailure(category === 'network' && error?.name === 'TimeoutError' ? 'timeout' : category, httpStatus);
       posting = false;
       button.disabled = false;
       button.textContent = 'Send my inquiry';
       form.removeAttribute('aria-busy');
-      if(form.isConnected) errm.focus();
       return;
     }
     track('form_success', {});
