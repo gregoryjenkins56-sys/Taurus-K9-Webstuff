@@ -118,6 +118,28 @@ test('all routes render meaningful content and the contact layout uses the origi
   assert.doesNotMatch(source, /hs-form-frame|forms\/embed|wireHubSpotContactForm/);
 });
 
+test('contact intro phone and email links underline only on hover or keyboard focus', () => {
+  const {context} = setup();
+  const html = vm.runInContext('PAGES["/contact"].render()', context);
+  const intro = html.match(/<p class="fnote"[^>]*>Share a little[\s\S]*?<\/p>/)?.[0];
+  assert.ok(intro);
+  assert.match(intro, /<a href="tel:[^"]+"[^>]*>phone<\/a>/);
+  assert.match(intro, /<a href="mailto:[^"]+"[^>]*>email<\/a>/);
+  const css = readFileSync(new URL('../css/style.css', import.meta.url), 'utf8');
+  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+  for(const scheme of ['tel:', 'mailto:']){
+    const selector = `.cgrid > div > .fnote a[href^="${scheme}"]`;
+    const declarations = state => rules
+      .filter(([, selectors]) => selectors.split(',').some(value => value.trim() === selector + state))
+      .map(([, , body]) => body).join(';');
+    assert.match(declarations(''), /text-decoration:none/);
+    for(const state of [':hover', ':focus-visible']){
+      assert.match(declarations(state), /text-decoration:underline/);
+    }
+    if(scheme === 'tel:') assert.match(declarations(''), /color:#242021/);
+  }
+});
+
 test('required fields have inline errors, a focused summary and no API request', async () => {
   const s = setup();
   await s.submit();
