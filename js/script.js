@@ -319,25 +319,24 @@ const HUBSPOT_FORM_ENDPOINT = 'https://api.hsforms.com/submissions/v3/integratio
 
 function buildFormPayload(form){
   const data = new FormData(form);
+  const ownerName = String(data.get('owner') || '').trim();
+  const [firstName, ...lastNameParts] = ownerName.split(/\s+/);
   const mapping = {
-    owner:'firstname', email:'email', phone:'phone', city:'city', state:'state',
-    service:'service', dogName:'dogs_name',
-    timeline:'preferred_start_timeline', message:'training_goals', heard:'heard'
+    email:'email', phone:'phone', city:'city', state:'state',
+    service:'training_service_interest', dogName:'dogs_name', dogAge:'dog_age',
+    timeline:'preferred_start_timeline', message:'training_goals', heard:'lead_source_detail'
   };
   const fields = Object.entries(mapping).map(([input, name]) => ({
     name:name, value:String(data.get(input) || '').trim()
   })).filter(field => field.value);
-  const dogInfo = [
-    ['Breed', data.get('dogBreed')],
-    ['Age', data.get('dogAge')]
-  ].map(([label, value]) => {
-    const trimmed = String(value || '').trim();
-    return trimmed ? label + ': ' + trimmed : '';
-  }).filter(Boolean).join('; ');
-  if(dogInfo) fields.push({name:'dogInfo', value:dogInfo});
-  ['consentEmail','consentSms'].forEach(name => {
-    fields.push({name:name, value:data.has(name) ? 'true' : 'false'});
-  });
+  if(firstName){
+    fields.unshift({name:'lastname', value:lastNameParts.join(' ') || '(Not provided)'});
+    fields.unshift({name:'firstname', value:firstName});
+  }
+  [['consentEmail','consent_email_inquiry'], ['consentSms','consent_sms_inquiry']]
+    .forEach(([input, name]) => {
+      fields.push({name:name, value:data.has(input) ? 'true' : 'false'});
+    });
   const context = {};
   if(location.href) context.pageUri = location.href;
   if(document.title) context.pageName = document.title;

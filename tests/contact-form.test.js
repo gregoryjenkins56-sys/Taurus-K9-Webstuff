@@ -162,11 +162,11 @@ test('payload uses the Forms API schema, trims input and preserves consent choic
   assert.equal(options.headers['Content-Type'], 'application/json');
   const payload = JSON.parse(options.body);
   assert.deepEqual(Object.fromEntries(payload.fields.map(field => [field.name, field.value])), {
-    firstname:'Test Owner', email:'owner@example.com', phone:'+1 (361) 555-0100',
-    city:'Aransas Pass', state:'TX', service:'board-train', dogs_name:'Rex',
-    dogInfo:'Breed: German Shepherd; Age: 14 months', preferred_start_timeline:'asap',
-    training_goals:'Recall and leash manners', heard:'referral',
-    consentEmail:'true', consentSms:'false'
+    firstname:'Test', lastname:'Owner', email:'owner@example.com', phone:'+1 (361) 555-0100',
+    city:'Aransas Pass', state:'TX', training_service_interest:'board-train',
+    dogs_name:'Rex', dog_age:'14 months', preferred_start_timeline:'asap',
+    training_goals:'Recall and leash manners', lead_source_detail:'referral',
+    consent_email_inquiry:'true', consent_sms_inquiry:'false'
   });
   assert.deepEqual(payload.context, {
     pageUri:'https://www.taurusk9.com/#/contact', pageName:'Contact Taurus K9'
@@ -194,11 +194,28 @@ test('rapid submits make one request and keep the button disabled until confirma
   assert.equal(s.location.hash, '#/thank-you');
 });
 
-test('breed and age compose into the existing HubSpot field for every optional combination', async () => {
+test('owner names split into first and last names, with a safe single-token fallback', async () => {
+  for(const [owner, firstname, lastname] of [
+    ['Test Owner', 'Test', 'Owner'],
+    ['  Mary Jane Watson  ', 'Mary', 'Jane Watson'],
+    ['Madonna', 'Madonna', '(Not provided)']
+  ]){
+    const s = setup();
+    s.valid();
+    s.controls.owner.value = owner;
+    await s.submit();
+    const fields = Object.fromEntries(JSON.parse(s.requests[0].options.body).fields
+      .map(field => [field.name, field.value]));
+    assert.equal(fields.firstname, firstname);
+    assert.equal(fields.lastname, lastname);
+  }
+});
+
+test('dog age maps independently and breed is not submitted as an unverified property', async () => {
   for(const [breed, age, expected] of [
-    ['German Shepherd', '3 years', 'Breed: German Shepherd; Age: 3 years'],
-    ['German Shepherd', '', 'Breed: German Shepherd'],
-    ['', '3 years', 'Age: 3 years'],
+    ['German Shepherd', '3 years', '3 years'],
+    ['German Shepherd', '', undefined],
+    ['', '3 years', '3 years'],
     ['', '', undefined]
   ]){
     const s = setup();
@@ -208,7 +225,9 @@ test('breed and age compose into the existing HubSpot field for every optional c
     await s.submit();
     const fields = Object.fromEntries(JSON.parse(s.requests[0].options.body).fields
       .map(field => [field.name, field.value]));
-    assert.equal(fields.dogInfo, expected);
+    assert.equal(fields.dog_age, expected);
+    assert.equal(Object.hasOwn(fields, 'dogInfo'), false);
+    assert.equal(Object.hasOwn(fields, 'dog_breed'), false);
   }
 });
 
@@ -222,8 +241,8 @@ test('SMS-only consent is valid, blank optional fields and unavailable context a
   await s.submit();
   const payload = JSON.parse(s.requests[0].options.body);
   const fields = Object.fromEntries(payload.fields.map(field => [field.name, field.value]));
-  assert.equal(fields.consentEmail, 'false');
-  assert.equal(fields.consentSms, 'true');
+  assert.equal(fields.consent_email_inquiry, 'false');
+  assert.equal(fields.consent_sms_inquiry, 'true');
   assert.equal(Object.hasOwn(fields, 'dogs_name'), false);
   assert.equal(Object.hasOwn(fields, 'preferred_start_timeline'), false);
   assert.deepEqual(payload.context, {});
