@@ -1053,7 +1053,7 @@ PAGES['/contact'] = {
         body:`<div class="cgrid">
           <div>
             <h2 style="margin-bottom:.35rem">Online inquiry form</h2>
-            <p class="fnote" style="margin-bottom:1.5rem">Share a little about your dog and goals using our secure online inquiry form, or reach us by <a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="form_intro">phone</a>, email or online scheduling.</p>
+            <p class="fnote" style="margin-bottom:1.5rem">Share a little about your dog and goals using our secure online inquiry form, or reach us by <a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="form_intro">phone</a>, <a href="mailto:${SITE.email}" data-track="click_to_email" data-loc="form_intro">email</a> or online scheduling.</p>
             ${leadForm()}
           </div>
           <aside aria-labelledby="napH">
