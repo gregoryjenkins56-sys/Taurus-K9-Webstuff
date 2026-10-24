@@ -27,7 +27,8 @@ No private API key is required or exposed.
 
 | Form input name | HubSpot property | Mapping basis |
 | --- | --- | --- |
-| `owner` | `firstname`, `lastname` | First name token and remaining tokens; a single-token name uses `(Not provided)` for `lastname` |
+| `firstName` | `firstname` | Required First Name input, trimmed without splitting |
+| `lastName` | `lastname` | Required Last Name input, trimmed without splitting |
 | `email` | `email` | Standard contact property |
 | `phone` | `phone` | Standard contact property; accepts 10 US digits or leading `1` |
 | `city` | `city` | Standard contact property |
