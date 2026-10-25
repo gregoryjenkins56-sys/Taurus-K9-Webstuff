@@ -9,7 +9,14 @@ const entitlementStatuses = ['pending', 'active', 'suspended', 'revoked', 'expir
 const publicationStatuses = ['draft', 'published', 'unpublished'] as const;
 const entitlementCreateFields = ['dogId', 'enrollmentId', 'weeksPurchased', 'amountChargedMinor', 'paymentReference', 'status', 'coverageStartAt', 'coverageEndAt', 'accessStartsAt', 'accessExpiresAt', 'provisionalExpiresAt', 'idempotencyKey'];
 const entitlementPatchFields = ['status', 'coverageStartAt', 'coverageEndAt', 'accessStartsAt', 'accessExpiresAt', 'provisionalExpiresAt', 'reason', 'version'];
-const recordingFields = ['dogId', 'enrollmentId', 'title', 'sessionAt', 'trainingFocus', 'clientNotes', 'durationSeconds', 'streamVideoId', 'publicationStatus', 'retentionHold', 'idempotencyKey'];
+const recordingFields = ['dogId', 'enrollmentId', 'title', 'sessionAt', 'trainingFocus', 'clientNotes', 'durationSeconds', 'publicationStatus', 'retentionHold', 'idempotencyKey'];
+const entitlementTransitions: Record<string, readonly string[]> = {
+  pending: ['active', 'revoked', 'expired'],
+  active: ['suspended', 'revoked', 'expired'],
+  suspended: ['active', 'revoked', 'expired'],
+  revoked: [],
+  expired: []
+};
 
 async function enrollment(env: Env, enrollmentId: string, dogId: string) {
   const row = await env.DB.prepare('SELECT id, dog_id, start_date, graduation_date, access_timezone FROM enrollments WHERE id = ? AND dog_id = ?')
@@ -44,16 +51,25 @@ async function existingCreate(env: Env, table: string, user: string, key: string
 }
 
 function normalizeEntitlement(data: Record<string, unknown>, key: string) {
+  const weeks = integer(data.weeksPurchased, 'weeks purchased', 1);
+  const coverageStart = instant(data.coverageStartAt, 'coverage start');
+  const endTime = Date.parse(coverageStart) + weeks * 7 * 86400000;
+  if (!Number.isFinite(endTime) || endTime > Date.parse('9999-12-31T23:59:59.999Z')) throw new HttpError(400, 'Purchased weeks exceed the supported coverage date range.');
+  const coverageEnd = new Date(endTime).toISOString();
+  if ('coverageEndAt' in data && instant(data.coverageEndAt, 'coverage end') !== coverageEnd) {
+    throw new HttpError(400, 'Coverage end must equal coverage start plus the purchased weeks.');
+  }
   const normalized: Record<string, unknown> = {
     dogId: identifier(data.dogId, 'dog ID'), enrollmentId: identifier(data.enrollmentId, 'enrollment ID'),
-    weeksPurchased: integer(data.weeksPurchased, 'weeks purchased', 1),
+    weeksPurchased: weeks,
     amountChargedMinor: integer(data.amountChargedMinor, 'amount charged'),
     status: choice(data.status ?? 'active', 'status', ['pending', 'active'] as const),
-    coverageStartAt: instant(data.coverageStartAt, 'coverage start'), idempotencyKey: key
+    coverageStartAt: coverageStart, coverageEndAt: coverageEnd, idempotencyKey: key,
+    paymentReference: data.paymentReference == null ? null : text(data.paymentReference, 'payment reference', 200, false),
+    provisionalExpiresAt: data.provisionalExpiresAt == null ? null : instant(data.provisionalExpiresAt, 'provisionalExpiresAt')
   };
-  if ('paymentReference' in data) normalized.paymentReference = data.paymentReference === null ? null : text(data.paymentReference, 'payment reference', 200, false);
-  for (const field of ['coverageEndAt', 'accessStartsAt', 'accessExpiresAt', 'provisionalExpiresAt']) {
-    if (field in data) normalized[field] = data[field] === null && field === 'provisionalExpiresAt' ? null : instant(data[field], field);
+  for (const field of ['accessStartsAt', 'accessExpiresAt']) {
+    if (field in data) normalized[field] = instant(data[field], field);
   }
   return normalized;
 }
@@ -69,14 +85,10 @@ async function createEntitlement(request: Request, env: Env, identity: Identity)
   const enrollmentId = normalized.enrollmentId as string;
   const row = await enrollment(env, enrollmentId, dogId);
   validateEnrollmentDates(row);
-  const zone = timezone(row.access_timezone || await setting(env, 'training_video_access_timezone', 'America/New_York'));
+  const zone = timezone(row.access_timezone || await setting(env, 'training_video_access_timezone', 'America/Chicago'));
   const weeks = normalized.weeksPurchased as number;
   const coverageStart = normalized.coverageStartAt as string;
-  const endTime = Date.parse(coverageStart) + weeks * 7 * 86400000;
-  if (!Number.isFinite(endTime) || endTime > Date.parse('9999-12-31T23:59:59.999Z')) throw new HttpError(400, 'Purchased weeks exceed the supported coverage date range.');
-  const computedEnd = new Date(endTime).toISOString();
-  const coverageEnd = normalized.coverageEndAt as string | undefined ?? computedEnd;
-  if (coverageEnd !== computedEnd) throw new HttpError(400, 'Coverage end must equal coverage start plus the purchased weeks.');
+  const coverageEnd = normalized.coverageEndAt as string;
   // Old enrollments without a start date explicitly fall back to coverage start.
   const accessStart = normalized.accessStartsAt as string | undefined ?? (row.start_date ? localMidnight(row.start_date, zone) : coverageStart);
   const provisional = normalized.provisionalExpiresAt as string | null | undefined ?? null;
@@ -148,8 +160,8 @@ async function patchEntitlement(request: Request, env: Env, identity: Identity, 
   const updates: Record<string, string | number | null> = { last_updated_by_user_id: identity.id };
   if ('status' in data) {
     updates.status = choice(data.status, 'status', entitlementStatuses);
-    if (['revoked', 'expired'].includes(String(current.status)) && updates.status !== current.status) {
-      throw new HttpError(409, 'Revoked or expired entitlements cannot be reactivated. Create a new entitlement.');
+    if (updates.status !== current.status && !entitlementTransitions[String(current.status)]?.includes(updates.status)) {
+      throw new HttpError(409, 'This entitlement status transition is not allowed.');
     }
     if (data.status === 'active' && current.status !== 'active') updates.activated_by_user_id = identity.id;
   }
@@ -183,10 +195,9 @@ function normalizeRecording(data: Record<string, unknown>, key: string) {
     trainingFocus: data.trainingFocus === undefined ? '' : text(data.trainingFocus, 'training focus', 2000, false),
     clientNotes: data.clientNotes === undefined ? '' : text(data.clientNotes, 'client notes', 4000, false),
     publicationStatus: choice(data.publicationStatus ?? 'draft', 'publication status', publicationStatuses),
-    retentionHold: data.retentionHold === undefined ? false : boolean(data.retentionHold, 'retention hold')
+    retentionHold: data.retentionHold === undefined ? false : boolean(data.retentionHold, 'retention hold'),
+    durationSeconds: data.durationSeconds == null ? null : integer(data.durationSeconds, 'duration seconds')
   };
-  if ('durationSeconds' in data) normalized.durationSeconds = data.durationSeconds === null ? null : integer(data.durationSeconds, 'duration seconds');
-  if ('streamVideoId' in data) normalized.streamVideoId = data.streamVideoId === null ? null : identifier(data.streamVideoId, 'Stream video ID');
   return normalized;
 }
 
@@ -208,10 +219,10 @@ async function createRecording(request: Request, env: Env, identity: Identity) {
   try {
     await env.DB.batch([
       env.DB.prepare(`INSERT INTO training_session_recordings(
-        id,dog_id,enrollment_id,stream_video_id,title,session_at,training_focus,client_notes,duration_seconds,
+        id,dog_id,enrollment_id,title,session_at,training_focus,client_notes,duration_seconds,
         publication_status,created_by_user_id,updated_by_user_id,retention_hold,idempotency_key,request_fingerprint)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
-        .bind(id, normalized.dogId, normalized.enrollmentId, normalized.streamVideoId ?? null, normalized.title, normalized.sessionAt,
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+        .bind(id, normalized.dogId, normalized.enrollmentId, normalized.title, normalized.sessionAt,
           normalized.trainingFocus, normalized.clientNotes, normalized.durationSeconds ?? null, normalized.publicationStatus,
           identity.id, identity.id, normalized.retentionHold ? 1 : 0, key, signature),
       videoAudit(env, identity.id, 'recording.created', 'recording', id, { dogId: normalized.dogId, enrollmentId: normalized.enrollmentId })
