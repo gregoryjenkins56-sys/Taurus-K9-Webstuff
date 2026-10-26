@@ -156,7 +156,7 @@ li{margin-bottom:.35em}
 .nav__l:hover,.nav__b:hover{background:var(--gtint);color:#24AEC9}
 .nav__l[aria-current="page"]{color:#242021;background:var(--gtint)}
 .nav__cta{margin-left:.6rem}
-.nav__login{padding:.6rem .75rem;font-size:.94rem;white-space:nowrap;color:#2b3a45;border-color:var(--line2)}
+.nav__login{padding:.6rem .75rem;font-size:.94rem;white-space:nowrap;color:#242021;border-color:var(--line2)}
 .nav__login:hover{background:var(--gtint);color:#242021}
 .nav__login:focus-visible{outline:3px solid #078C7F;outline-offset:3px}
 .ntog{display:none;margin-left:auto;align-items:center;gap:.55rem;background:var(--surface);border:1px solid var(--line2);border-radius:10px;padding:.6rem .8rem;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;min-height:48px}

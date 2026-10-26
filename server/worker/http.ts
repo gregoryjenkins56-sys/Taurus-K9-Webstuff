@@ -4,11 +4,10 @@ export function json(value: unknown, status = 200) {
   return new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json; charset=utf-8' } });
 }
 
-export async function input(request: Request, allowed: string[]): Promise<Record<string, unknown>> {
+export async function input(request: Request, allowed: string[], limit = 8192): Promise<Record<string, unknown>> {
   if (request.headers.get('content-type')?.split(';')[0].trim() !== 'application/json') {
     throw new HttpError(415, 'Send a JSON request.');
   }
-  const limit = 8192;
   if (Number(request.headers.get('content-length')) > limit) throw new HttpError(413, `File or request exceeds the ${limit}-byte limit.`);
   if (!request.body) throw new HttpError(400, 'Request body is required.');
   const reader = request.body.getReader();

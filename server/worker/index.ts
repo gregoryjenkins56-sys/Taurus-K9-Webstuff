@@ -1,5 +1,6 @@
 import { appConfig, finishLogin, HttpError, logout, rateLimit, requireCsrf, requireIdentity, requireStaff, startLogin } from './auth.ts';
 import type { Env, Identity } from './auth.ts';
+import { agreementRoutes } from './agreements.ts';
 import { enqueueHubspot, hubspotDiagnostics, hubspotEnabled, processHubspot } from './hubspot.ts';
 import { input, json, text } from './http.ts';
 import { videoApi } from './videos.ts';
@@ -67,6 +68,8 @@ async function api(request: Request, env: Env, path: string) {
     requireCsrf(request, env, identity);
     await rateLimit(request, env, `mutation:${identity.id}`, 30);
   }
+  const agreementResponse = await agreementRoutes(request, env, path, identity, input);
+  if (agreementResponse) return agreementResponse;
   const videoResponse = await videoApi(request, env, path, identity);
   if (videoResponse) return videoResponse;
   if (path === '/api/auth/logout' && request.method === 'POST') return logout(request, env, identity);
