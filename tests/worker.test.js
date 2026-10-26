@@ -8,6 +8,7 @@ import worker from '../server/worker/index.ts';
 import { cookie, hash } from '../server/worker/auth.ts';
 import { validateD1 } from '../scripts/validate-d1.mjs';
 import { enqueueHubspot, hubspotEnabled, processHubspot } from '../server/worker/hubspot.ts';
+import { addCalendarDays, localMidnight } from '../server/worker/video-validation.ts';
 
 const origin = 'http://localhost:8787';
 const issuer = 'https://identity.example.invalid/';
@@ -95,10 +96,22 @@ before(async () => {
     d1Databases: ['DB']
   }));
   db = await mf.getD1Database('DB');
-  for (const file of ['0001_foundation.sql', '0002_hubspot_sync.sql']) {
+  for (const file of ['0001_foundation.sql', '0002_hubspot_sync.sql', '0003_training_videos.sql']) {
+    if (file === '0003_training_videos.sql') {
+      await db.prepare("INSERT INTO households(id,contact_name) VALUES ('legacy-house','Legacy fixture')").run();
+      await db.prepare("INSERT INTO dogs(id,household_id,name) VALUES ('legacy-dog','legacy-house','Legacy fixture')").run();
+      await db.prepare("INSERT INTO training_programs(id,name,price_minor,deposit_minor,currency) VALUES ('legacy-program','Legacy',0,0,'USD')").run();
+      await db.prepare("INSERT INTO enrollments(id,dog_id,program_id) VALUES ('legacy-enrollment','legacy-dog','legacy-program')").run();
+    }
     const schema = await readFile(new URL(`../migrations/${file}`, import.meta.url), 'utf8');
-    for (const sql of schema.split(';').map(sql => sql.trim()).filter(Boolean)) await db.prepare(sql).run();
+    const statements = schema.replace(/--[^\n]*/g, '').match(/\s*CREATE TRIGGER[\s\S]*?END;|[^;]+;/g) || [];
+    for (const sql of statements) await db.prepare(sql).run();
   }
+  const legacy = await db.prepare("SELECT * FROM enrollments WHERE id='legacy-enrollment'").first();
+  assert.equal(legacy.start_date, null);
+  assert.equal(legacy.graduation_date, null);
+  assert.equal(legacy.access_timezone, 'America/Chicago');
+  assert.match(legacy.updated_at, /^\d{4}-\d{2}-\d{2}T.*Z$/);
   env = {
     DB: db,
     ASSETS: { fetch: async request => new Response(new URL(request.url).pathname.startsWith('/portal/') ? 'protected portal' : 'public site') },
@@ -109,7 +122,7 @@ before(async () => {
 after(async () => { globalThis.fetch = realFetch; await mf?.dispose(); });
 beforeEach(async () => {
   globalThis.fetch = realFetch;
-  for (const table of ['hubspot_sync_jobs', 'audit_logs', 'sessions', 'auth_transactions', 'rate_limits', 'enrollments', 'training_programs', 'dogs', 'staff_roles', 'memberships', 'households', 'users']) {
+  for (const table of ['video_audit_events', 'video_entitlement_payments', 'training_session_recordings', 'video_entitlements', 'hubspot_sync_jobs', 'audit_logs', 'sessions', 'auth_transactions', 'rate_limits', 'enrollments', 'training_programs', 'dogs', 'staff_roles', 'memberships', 'households', 'users']) {
     await db.prepare(`DELETE FROM ${table}`).run();
   }
   sessions = {};
@@ -141,6 +154,290 @@ function mutation(path, user, body, method = 'POST', headers = {}) {
   return request(path, user, { method, body: JSON.stringify(body),
     headers: { origin, 'x-csrf-token': sessions[user].csrf, ...headers } });
 }
+
+async function videoEnrollment() {
+  const today = new Date().toISOString().slice(0, 10);
+  await db.prepare("INSERT INTO training_programs(id,name,price_minor,deposit_minor,currency) VALUES ('program','Training',10000,0,'USD')").run();
+  for (const suffix of ['a', 'b']) {
+    await db.prepare('INSERT INTO enrollments(id,dog_id,program_id,start_date,graduation_date) VALUES (?,?,?,?,?)')
+      .bind(`enrollment-${suffix}`, `dog-${suffix}`, 'program', addCalendarDays(today, -1), today).run();
+  }
+  return {
+    dogId: 'dog-a', enrollmentId: 'enrollment-a', weeksPurchased: 1,
+    amountChargedMinor: 9900, coverageStartAt: `${today}T00:00:00.000Z`, status: 'active'
+  };
+}
+
+async function videoFixture() {
+  const payload = await videoEnrollment();
+  const entitlementResponse = await mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { 'idempotency-key': 'fixture-entitlement' });
+  assert.equal(entitlementResponse.status, 201, JSON.stringify(await entitlementResponse.clone().json()));
+  const { entitlement } = await entitlementResponse.json();
+  const recordingResponse = await mutation('/api/admin/training-recordings', 'admin', {
+    dogId: 'dog-a', enrollmentId: 'enrollment-a', title: 'Formal session',
+    sessionAt: new Date().toISOString(), trainingFocus: 'Recall', clientNotes: 'Practice daily'
+  }, 'POST', { 'idempotency-key': 'fixture-recording' });
+  assert.equal(recordingResponse.status, 201, JSON.stringify(await recordingResponse.clone().json()));
+  const { recording } = await recordingResponse.json();
+  // Processing is a trusted fixture only; clients/admin requests cannot assert readiness.
+  await db.prepare("UPDATE training_session_recordings SET processing_status='ready' WHERE id=?").bind(recording.id).run();
+  assert.equal((await mutation(`/api/admin/training-recordings/${recording.id}`, 'admin', { publicationStatus: 'published' }, 'PATCH')).status, 200);
+  return { entitlement, recording, payload };
+}
+
+test('video endpoints require authentication and admin-only mutations reject clients and reviewers', async () => {
+  for (const path of ['/api/videos/dogs', '/api/videos?dogId=dog-a', '/api/videos/fake/playback-token']) {
+    assert.equal((await request(path, null, path.endsWith('token') ? { method: 'POST' } : {})).status, 401);
+  }
+  for (const user of ['client-a', 'reviewer']) {
+    for (const [path, method] of [
+      ['/api/admin/video-entitlements', 'POST'], ['/api/admin/video-entitlements/fake', 'PATCH'],
+      ['/api/admin/video-entitlements?dogId=dog-a', 'GET'],
+      ['/api/admin/training-recordings', 'POST'], ['/api/admin/training-recordings/fake', 'PATCH'],
+      ['/api/admin/training-recordings/fake/reassign', 'POST'], ['/api/admin/training-recordings/fake', 'DELETE']
+    ]) {
+      const response = method === 'GET' ? await request(path, user) : await mutation(path, user, {}, method);
+      assert.equal(response.status, 403, `${user} ${method} ${path}`);
+    }
+  }
+});
+
+test('video library and playback enforce household ownership, enrollment and coverage A', async () => {
+  const { recording, entitlement } = await videoFixture();
+  const playback = `/api/videos/${recording.id}/playback-token`;
+  assert.equal((await mutation(playback, 'client-a', {})).status, 200);
+  assert.equal((await mutation(playback, 'client-b', {})).status, 404);
+  assert.equal((await request('/api/videos?dogId=dog-a', 'client-b')).status, 404);
+  assert.equal((await mutation('/api/videos/fabricated/playback-token', 'client-a', {})).status, 404);
+  assert.equal((await mutation(playback, 'client-b', { dogId: 'dog-b', userId: 'client-a' })).status, 400);
+  const dogs = await (await request('/api/videos/dogs', 'client-a')).json();
+  assert.deepEqual(dogs.dogs.map(dog => dog.id), ['dog-a']);
+  const library = await (await request('/api/videos?dogId=dog-a&focus=Recall', 'client-a')).json();
+  assert.equal(library.recordings.length, 1);
+  for (const field of ['stream_video_id', 'created_by_user_id', 'retention_hold', 'request_fingerprint', 'idempotency_key']) {
+    assert.equal(field in library.recordings[0], false);
+  }
+  await db.prepare('INSERT INTO memberships(user_id,household_id) VALUES (?,?)').bind('client-b', 'house-a').run();
+  assert.equal((await mutation(playback, 'client-b', {})).status, 200);
+  await db.prepare('UPDATE training_session_recordings SET session_at=? WHERE id=?').bind(entitlement.coverage_end_at, recording.id).run();
+  assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  assert.equal((await (await request('/api/videos?dogId=dog-a', 'client-a')).json()).recordings.length, 0);
+  await db.prepare('UPDATE training_session_recordings SET session_at=? WHERE id=?').bind(entitlement.coverage_start_at, recording.id).run();
+  assert.equal((await mutation(playback, 'client-a', {})).status, 200);
+  await db.prepare("UPDATE video_entitlements SET enrollment_id='enrollment-b',dog_id='dog-b' WHERE id=?").bind(entitlement.id).run()
+    .then(() => assert.fail('Payment/entitlement composite foreign key must prevent inconsistent changes'), () => {});
+});
+
+test('video playback rejects drafts, processing, unavailable assets and inactive access at read time', async () => {
+  const { recording, entitlement } = await videoFixture();
+  const playback = `/api/videos/${recording.id}/playback-token`;
+  for (const status of ['draft', 'unpublished', 'deleted']) {
+    await db.prepare('UPDATE training_session_recordings SET publication_status=? WHERE id=?').bind(status, recording.id).run();
+    assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  }
+  await db.prepare("UPDATE training_session_recordings SET publication_status='published' WHERE id=?").bind(recording.id).run();
+  for (const status of ['upload_pending', 'processing', 'error', 'missing_remote', 'deleted_remote']) {
+    await db.prepare('UPDATE training_session_recordings SET processing_status=? WHERE id=?').bind(status, recording.id).run();
+    assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  }
+  await db.prepare("UPDATE training_session_recordings SET processing_status='ready' WHERE id=?").bind(recording.id).run();
+  for (const status of ['pending', 'suspended', 'revoked', 'expired']) {
+    await db.prepare('UPDATE video_entitlements SET status=? WHERE id=?').bind(status, entitlement.id).run();
+    assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  }
+  await db.prepare("UPDATE video_entitlements SET status='active',access_expires_at=? WHERE id=?").bind(new Date(Date.now() - 1).toISOString(), entitlement.id).run();
+  assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  await db.prepare('UPDATE video_entitlements SET access_expires_at=?,provisional_expires_at=? WHERE id=?')
+    .bind(entitlement.access_expires_at, new Date(Date.now() - 1).toISOString(), entitlement.id).run();
+  assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+});
+
+test('video reassignment immediately removes former owners and retention hold blocks soft deletion', async () => {
+  const { recording } = await videoFixture();
+  const adminPath = `/api/admin/training-recordings/${recording.id}`;
+  const playback = `/api/videos/${recording.id}/playback-token`;
+  assert.equal((await mutation(`${adminPath}/reassign`, 'admin', { dogId: 'dog-b', enrollmentId: 'enrollment-a' })).status, 400);
+  assert.equal((await mutation(`${adminPath}/reassign`, 'admin', { dogId: 'dog-b', enrollmentId: 'enrollment-b' })).status, 200);
+  assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  const event = await db.prepare("SELECT metadata_json FROM video_audit_events WHERE entity_id=? AND action LIKE '%reassign%'").bind(recording.id).first();
+  assert.ok(event);
+  assert.match(event.metadata_json, /dog-a/);
+  assert.match(event.metadata_json, /dog-b/);
+  assert.equal((await mutation(adminPath, 'admin', { retentionHold: true }, 'PATCH')).status, 200);
+  assert.equal((await mutation(adminPath, 'admin', { confirm: true }, 'DELETE')).status, 409);
+  assert.equal((await mutation(adminPath, 'admin', { retentionHold: false }, 'PATCH')).status, 200);
+  assert.equal((await mutation(adminPath, 'admin', {}, 'DELETE')).status, 400);
+  assert.equal((await mutation(adminPath, 'admin', { confirm: true }, 'DELETE')).status, 200);
+  const deleted = await db.prepare('SELECT * FROM training_session_recordings WHERE id=?').bind(recording.id).first();
+  assert.equal(deleted.publication_status, 'deleted');
+  assert.equal((await mutation(adminPath, 'admin', { publicationStatus: 'published' }, 'PATCH')).status, 409);
+});
+
+test('video entitlement creation is idempotent with atomic financial snapshots and safe conflicts', async () => {
+  const payload = await videoEnrollment();
+  const submit = body => mutation('/api/admin/video-entitlements', 'admin', body, 'POST', { 'idempotency-key': 'purchase-one' });
+  const created = await submit(payload);
+  assert.equal(created.status, 201);
+  const original = (await created.json()).entitlement;
+  assert.equal(original.weekly_price_minor_snapshot, 9900);
+  assert.equal(original.currency, 'USD');
+  assert.equal(original.access_expires_at, localMidnight(addCalendarDays(payload.coverageStartAt.slice(0, 10), 61), 'America/Chicago'));
+  await db.prepare("UPDATE app_settings SET value='10000' WHERE key='training_video_weekly_price_minor'").run();
+  try {
+    const retry = await submit({ ...payload });
+    assert.equal(retry.status, 200);
+    assert.equal((await retry.json()).entitlement.id, original.id);
+    assert.equal((await submit({ ...payload, weeksPurchased: 2 })).status, 409);
+    assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_entitlements').first()).count, 1);
+    const payment = await db.prepare('SELECT * FROM video_entitlement_payments').first();
+    assert.equal(payment.entitlement_id, original.id);
+    assert.equal(payment.weekly_price_minor_snapshot, 9900);
+    assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_entitlement_payments').first()).count, 1);
+    assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_audit_events').first()).count, 1);
+  } finally {
+    await db.prepare("UPDATE app_settings SET value='9900' WHERE key='training_video_weekly_price_minor'").run();
+  }
+});
+
+test('video create validates amounts, dates, idempotency keys and dog/enrollment relationships', async () => {
+  const payload = await videoEnrollment();
+  for (const body of [
+    { ...payload, weeksPurchased: 0 }, { ...payload, weeksPurchased: 1.5 },
+    { ...payload, amountChargedMinor: -1 }, { ...payload, amountChargedMinor: '9900' },
+    { ...payload, enrollmentId: 'enrollment-b' }, { ...payload, coverageStartAt: '2026-02-30T00:00:00Z' },
+    { ...payload, coverageStartAt: '2026-01-01' }, { ...payload, coverageEndAt: payload.coverageStartAt },
+    { ...payload, role: 'admin' }
+  ]) {
+    assert.equal((await mutation('/api/admin/video-entitlements', 'admin', body, 'POST', { 'idempotency-key': crypto.randomUUID() })).status, 400);
+  }
+  assert.equal((await mutation('/api/admin/video-entitlements', 'admin', payload)).status, 400);
+  assert.equal((await request('/api/admin/video-entitlements', 'admin', { method: 'POST', body: JSON.stringify(payload) })).status, 403);
+  assert.equal((await mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { origin: 'https://attacker.example.invalid' })).status, 403);
+});
+
+test('video pending activation requires provisional expiry without graduation and audits transitions', async () => {
+  const payload = await videoEnrollment();
+  await db.prepare("UPDATE enrollments SET graduation_date=NULL WHERE id='enrollment-a'").run();
+  const provisionalExpiresAt = new Date(Date.now() + 30 * 86400000).toISOString();
+  assert.equal((await mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { 'idempotency-key': 'missing-provisional' })).status, 400);
+  const pending = await mutation('/api/admin/video-entitlements', 'admin', { ...payload, status: 'pending', provisionalExpiresAt }, 'POST', { 'idempotency-key': 'pending' });
+  assert.equal(pending.status, 201);
+  const { entitlement } = await pending.json();
+  const path = `/api/admin/video-entitlements/${entitlement.id}`;
+  for (const status of ['active', 'suspended', 'active', 'revoked']) {
+    assert.equal((await mutation(path, 'admin', { status }, 'PATCH')).status, 200);
+  }
+  assert.equal((await mutation(path, 'admin', { status: 'active' }, 'PATCH')).status, 409);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_entitlement_payments').first()).count, 1);
+  assert.equal((await db.prepare("SELECT COUNT(*) AS count FROM video_audit_events WHERE entity_type='entitlement'").first()).count, 5);
+  const explicitOverride = { ...payload, accessExpiresAt: provisionalExpiresAt };
+  assert.equal((await mutation('/api/admin/video-entitlements', 'admin', explicitOverride, 'POST', { 'idempotency-key': 'override-no-provisional' })).status, 400);
+  const unactivated = await mutation('/api/admin/video-entitlements', 'admin', { ...explicitOverride, status: 'pending' }, 'POST', { 'idempotency-key': 'pending-no-provisional' });
+  assert.equal(unactivated.status, 201);
+  const pendingId = (await unactivated.json()).entitlement.id;
+  assert.equal((await mutation(`/api/admin/video-entitlements/${pendingId}`, 'admin', { status: 'active' }, 'PATCH')).status, 400);
+  assert.equal((await mutation(`/api/admin/video-entitlements/${pendingId}`, 'admin', { status: 'active', provisionalExpiresAt }, 'PATCH')).status, 200);
+});
+
+test('video publishing requires trusted readiness and recording creation retries are safe', async () => {
+  await videoEnrollment();
+  const body = { title: 'Draft', dogId: 'dog-a', enrollmentId: 'enrollment-a', sessionAt: new Date().toISOString() };
+  const headers = { 'idempotency-key': 'recording-retry' };
+  const created = await mutation('/api/admin/training-recordings', 'admin', body, 'POST', headers);
+  assert.equal(created.status, 201);
+  const { recording } = await created.json();
+  assert.equal((await mutation('/api/admin/training-recordings', 'admin', body, 'POST', headers)).status, 200);
+  assert.equal((await mutation('/api/admin/training-recordings', 'admin', { ...body, title: 'Other' }, 'POST', headers)).status, 409);
+  assert.equal((await mutation(`/api/admin/training-recordings/${recording.id}`, 'admin', { publicationStatus: 'published' }, 'PATCH')).status, 409);
+  assert.equal((await mutation(`/api/admin/training-recordings/${recording.id}`, 'admin', { processingStatus: 'ready' }, 'PATCH')).status, 400);
+});
+
+test('video expiration uses local end-of-day plus 60 calendar days across DST', () => {
+  // Expiration is EXCLUSIVE midnight after the 60th post-graduation calendar day.
+  assert.equal(localMidnight(addCalendarDays('2026-01-15', 61), 'America/New_York'), '2026-03-17T04:00:00.000Z');
+  assert.equal(localMidnight(addCalendarDays('2026-09-15', 61), 'America/New_York'), '2026-11-15T05:00:00.000Z');
+  assert.equal(localMidnight(addCalendarDays('2026-01-15', 61), 'UTC'), '2026-03-17T00:00:00.000Z');
+  assert.throws(() => localMidnight('2026-02-30', 'America/New_York'));
+  assert.throws(() => localMidnight('2026-01-01', 'Invalid/Zone'));
+});
+
+test('video access boundaries are inclusive at start and exclusive at expiration', async () => {
+  const { recording, entitlement } = await videoFixture();
+  const path = `/api/videos/${recording.id}/playback-token`;
+  const RealDate = globalThis.Date;
+  const boundary = RealDate.now() + 1000;
+  let clock = boundary;
+  await db.prepare('UPDATE video_entitlements SET access_starts_at=?,access_expires_at=? WHERE id=?')
+    .bind(new RealDate(boundary).toISOString(), new RealDate(boundary + 1000).toISOString(), entitlement.id).run();
+  globalThis.Date = class extends RealDate {
+    constructor(...args) { super(...(args.length ? args : [clock])); }
+    static now() { return clock; }
+  };
+  try {
+    clock = boundary - 1;
+    assert.equal((await mutation(path, 'client-a', {})).status, 404);
+    clock = boundary;
+    const allowed = await mutation(path, 'client-a', {});
+    assert.equal(allowed.status, 200);
+    assert.equal((await allowed.json()).authorized, true);
+    clock = boundary + 999;
+    assert.equal((await mutation(path, 'client-a', {})).status, 200);
+    clock = boundary + 1000;
+    assert.equal((await mutation(path, 'client-a', {})).status, 404);
+  } finally {
+    globalThis.Date = RealDate;
+  }
+});
+
+test('video enrollment isolation and date filters cannot broaden authorized coverage', async () => {
+  const { recording } = await videoFixture();
+  assert.equal((await (await request('/api/videos?dogId=dog-a&focus=Other', 'client-a')).json()).recordings.length, 0);
+  assert.equal((await (await request(`/api/videos?dogId=dog-a&from=${encodeURIComponent(new Date(Date.now() + 86400000).toISOString())}`, 'client-a')).json()).recordings.length, 0);
+  assert.equal((await request('/api/videos?dogId=dog-a&to=not-a-date', 'client-a')).status, 400);
+  await db.prepare("INSERT INTO enrollments(id,dog_id,program_id) VALUES ('other-enrollment','dog-a','program')").run();
+  assert.equal((await mutation(`/api/admin/training-recordings/${recording.id}/reassign`, 'admin', {
+    dogId: 'dog-a', enrollmentId: 'other-enrollment'
+  })).status, 200);
+  assert.equal((await mutation(`/api/videos/${recording.id}/playback-token`, 'client-a', {})).status, 404);
+});
+
+test('video entitlement batch rolls back entitlement and payment if audit insert fails', async () => {
+  const payload = await videoEnrollment();
+  await db.prepare("CREATE TRIGGER reject_video_audit BEFORE INSERT ON video_audit_events BEGIN SELECT RAISE(ABORT, 'test audit failure'); END").run();
+  try {
+    const response = await mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { 'idempotency-key': 'atomic-failure' });
+    assert.equal(response.status, 503);
+    for (const table of ['video_entitlements', 'video_entitlement_payments', 'video_audit_events']) {
+      assert.equal((await db.prepare(`SELECT COUNT(*) AS count FROM ${table}`).first()).count, 0);
+    }
+  } finally {
+    await db.prepare('DROP TRIGGER reject_video_audit').run();
+  }
+});
+
+test('video concurrent retries create one entitlement, payment and audit event', async () => {
+  const payload = await videoEnrollment();
+  const responses = await Promise.all([1, 2].map(() =>
+    mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { 'idempotency-key': 'concurrent-create' })));
+  assert.deepEqual(responses.map(response => response.status).sort(), [200, 201]);
+  const results = await Promise.all(responses.map(response => response.json()));
+  assert.equal(results[0].entitlement.id, results[1].entitlement.id);
+  for (const table of ['video_entitlements', 'video_entitlement_payments', 'video_audit_events']) {
+    assert.equal((await db.prepare(`SELECT COUNT(*) AS count FROM ${table}`).first()).count, 1);
+  }
+});
+
+test('video stale administrative edits conflict without duplicate audit events', async () => {
+  const { recording } = await videoFixture();
+  const path = `/api/admin/training-recordings/${recording.id}`;
+  const current = await db.prepare('SELECT version FROM training_session_recordings WHERE id=?').bind(recording.id).first();
+  assert.equal((await mutation(path, 'admin', { retentionHold: true, version: current.version }, 'PATCH')).status, 200);
+  const events = (await db.prepare('SELECT COUNT(*) AS count FROM video_audit_events').first()).count;
+  assert.equal((await mutation(path, 'admin', { retentionHold: false, version: current.version }, 'PATCH')).status, 409);
+  assert.equal((await mutation(path, 'admin', { confirm: true, version: current.version }, 'DELETE')).status, 409);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_audit_events').first()).count, events);
+  assert.equal((await db.prepare('SELECT retention_hold FROM training_session_recordings WHERE id=?').bind(recording.id).first()).retention_hold, 1);
+});
 
 test('public site is preserved while portal, portal assets, and staff URLs require a session', async () => {
   assert.equal((await request('/')).status, 200);

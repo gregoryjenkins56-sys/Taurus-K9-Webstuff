@@ -31,6 +31,107 @@ test login route or bypass in the Worker.
 
 ## Prerequisites and commands
 
+### Full Training Session Recordings: Stage 2 backend
+
+Stage 2 adds `migrations/0003_training_videos.sql`, entitlement/payment snapshots,
+recording metadata, and video audit events to the existing D1 database. It reuses
+Auth0 sessions, staff roles, dogs, enrollments, and household memberships. No new
+environment variables, secrets, Cloudflare bindings, or dependencies are required.
+**No deployments, paid resource provisioning, production migrations, or live video
+deletion were performed.**
+
+This is backend-only: no upload, Stream credentials/provider calls, webhooks,
+player, client video UI, billing/checkout, refunds, notifications, sweeper, or
+automatic deletion. Those remain Stage 3+. The playback-token endpoint performs
+all authorization checks but returns a **stub, not a playable Stream credential**.
+It must not be presented as functioning video playback or production readiness.
+
+Administrator workflow (API only):
+
+1. Populate the existing enrollment's `start_date`/`graduation_date` with strict
+   `YYYY-MM-DD` dates and `access_timezone` with an IANA timezone. Enrollment
+   lifecycle writes must maintain `updated_at` as a UTC timestamp. Existing rows
+   are preserved/backfilled; an insert trigger supplies the timestamp default.
+2. Confirm payment through the existing manual process, then POST JSON to
+   `/api/admin/video-entitlements` with `dogId`, `enrollmentId`, `weeksPurchased`,
+   `amountChargedMinor`, `coverageStartAt`, optional `paymentReference`, and
+   `status` (`active` by default, or `pending`). Unknown graduation requires
+   `provisionalExpiresAt` before activation. Optional `accessStartsAt` and
+   `accessExpiresAt` are explicit administrator overrides.
+3. Include a fresh `Idempotency-Key` header (or `idempotencyKey` body field) for
+   each create operation. Preserve it on retries: equivalent normalized input
+   returns the existing result; changed input returns 409. Keys are scoped to
+   the acting administrator and operation. Entitlement, separate payment
+   snapshot, and audit event are committed in one D1 batch; payment rows never
+   authorize playback. Amount charged is an actual manual snapshot, not assumed
+   to equal the configured list price.
+4. GET `/api/admin/video-entitlements?dogId=...`; PATCH
+   `/api/admin/video-entitlements/:id` to activate, suspend, revoke, expire, or
+   override access/provisional expiration dates. Terminal revoked/expired
+   entitlements cannot be reactivated; create a new purchase instead.
+5. POST `/api/admin/training-recordings` with `title`, `dogId`, `enrollmentId`,
+   `sessionAt`, optional `trainingFocus`/`clientNotes`, and an idempotency key.
+   This creates a draft with `upload_pending` processing state. PATCH metadata,
+   `publicationStatus`, or boolean `retentionHold`. Publishing requires trusted
+   processing state `ready`. There is deliberately no HTTP readiness override:
+   automated tests use local D1 fixtures, not a production bypass.
+6. POST `/api/admin/training-recordings/:id/reassign` with `dogId` and
+   `enrollmentId`. Both assignments are validated/audited; future playback
+   authorization immediately uses the new household and enrollment.
+7. DELETE `/api/admin/training-recordings/:id` with JSON `{"confirm":true}`.
+   A retention hold blocks this action. Deletion is a terminal local soft-delete;
+   no Stream asset is deleted or scheduled for deletion.
+
+All API mutations, including playback authorization, require the existing session
+cookie, exact Origin, and `x-csrf-token` from `/api/me`. Video administrator APIs
+require admin (reviewer is insufficient). Input field allowlists reject ownership
+and role impersonation. Conflicting concurrent edits return 409 for safe reload.
+
+Client endpoints:
+
+- GET `/api/videos/dogs`: only household-member dogs and safe access summaries.
+- GET `/api/videos?dogId=...&from=...&to=...&focus=...`: only covered, currently
+  accessible published/ready recordings. Dates are timezone-qualified instants;
+  focus filters training focus. Internal/provider/payment fields are omitted.
+- POST `/api/videos/:recordingId/playback-token` with `{}`: checks the current
+  verified user, household membership, recording assignment, publication and
+  processing state, plus active entitlement for the same dog **and enrollment**.
+  Missing and inaccessible recordings both return 404 to avoid tenant leakage.
+  The returned stub grants no provider access. Future signed-token lifetime and
+  already-issued-token revocation behavior must be defined in Stage 3.
+
+Coverage option A and expiration:
+
+- Purchased coverage is `[coverageStartAt, coverageEndAt)`, with the server
+  adding `weeksPurchased * 7 * 24` UTC hours. An explicitly supplied end must
+  equal that result. A session exactly at coverage end is not covered.
+- Playback access is `[access_starts_at, access_expires_at)` and also strictly
+  before `provisional_expires_at` when set. Expired rows fail authorization at
+  read-time even if their stored status still says `active`.
+- Default access starts at enrollment start-date local midnight, falling back
+  to coverage start if the optional enrollment start is absent.
+- Default expiration is exclusive local midnight **after** the graduation date
+  plus 60 calendar days (equivalently graduation date +61 at local midnight).
+  The calendar boundary is converted using the enrollment's IANA timezone, not
+  by adding fixed 24-hour periods to a zoned graduation instant. DST therefore
+  uses the offset at the expiration boundary. The default configured strategy
+  is `America/Chicago` (Taurus K9's Texas location); set enrollment zones
+  explicitly for other locations.
+- `app_settings` seeds `training_video_weekly_price_minor=9900`,
+  `training_video_currency=USD`, and `training_video_access_timezone`.
+  Price/currency are snapshotted at purchase. Existing entitlement dates remain
+  snapshots: automatic graduation-change recalculation and its admin UI/audit
+  workflow are deferred; use an audited entitlement PATCH after lifecycle edits.
+
+Local verification: use `npm run db:migrate:local` only on approved development
+state, then `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
+Worker tests create synthetic memberships, enrollments, and recording metadata
+in ephemeral Miniflare D1; no private videos or Stream network calls are needed.
+Preview/staging and production rollout require separate operator approval and the
+existing D1 isolation checks below; do not run remote migrations as part of Stage 2.
+For rollback, revert the backend changes while retaining additive schema and
+financial/audit history. Do not drop tables or reverse production migrations.
+
 Use Node.js 22.14+ and npm. From the repository root:
 
 ```sh
