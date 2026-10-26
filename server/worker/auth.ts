@@ -8,6 +8,9 @@ export interface Env {
   AUTH_ISSUER: string;
   AUTH_CLIENT_ID: string;
   AUTH_CLIENT_SECRET?: string;
+  CONTRACT_SIGNING_ENABLED?: string;
+  AGREEMENT_DOCUMENTS?: R2Bucket;
+  AGREEMENT_FONT_KEY?: string;
 }
 
 export class HttpError extends Error {

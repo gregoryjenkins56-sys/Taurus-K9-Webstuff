@@ -1,15 +1,15 @@
 import { appConfig, finishLogin, HttpError, logout, rateLimit, requireCsrf, requireIdentity, requireStaff, startLogin } from './auth.ts';
 import type { Env, Identity } from './auth.ts';
+import { agreementRoutes } from './agreements.ts';
 
 function json(value: unknown, status = 200) {
   return new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json; charset=utf-8' } });
 }
 
-async function input(request: Request, allowed: string[]): Promise<Record<string, unknown>> {
+async function input(request: Request, allowed: string[], limit = 8192): Promise<Record<string, unknown>> {
   if (request.headers.get('content-type')?.split(';')[0].trim() !== 'application/json') {
     throw new HttpError(415, 'Send a JSON request.');
   }
-  const limit = 8192;
   if (Number(request.headers.get('content-length')) > limit) throw new HttpError(413, `File or request exceeds the ${limit}-byte limit.`);
   if (!request.body) throw new HttpError(400, 'Request body is required.');
   const reader = request.body.getReader();
@@ -73,6 +73,8 @@ async function api(request: Request, env: Env, path: string) {
     requireCsrf(request, env, identity);
     await rateLimit(request, env, `mutation:${identity.id}`, 30);
   }
+  const agreementResponse = await agreementRoutes(request, env, path, identity, input);
+  if (agreementResponse) return agreementResponse;
   if (path === '/api/auth/logout' && request.method === 'POST') return logout(request, env, identity);
   if (path === '/api/me' && request.method === 'GET') {
     const { results } = await env.DB.prepare(

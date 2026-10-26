@@ -72,7 +72,7 @@ function mutation(path, user, body, method = 'POST', headers = {}) {
 
 test('public site is preserved while portal, portal assets, and staff URLs require a session', async () => {
   assert.equal((await request('/')).status, 200);
-  for (const path of ['/portal/', '/portal/index.html', '/portal/js/client.js', '/portal/admin', '/admin', '/admin/reviews']) {
+  for (const path of ['/portal/', '/portal/index.html', '/portal/js/client.js', '/portal/css/adobe.css', '/portal/admin', '/admin', '/admin/reviews']) {
     const response = await request(path);
     assert.equal(response.status, 302);
     assert.equal(response.headers.get('location'), '/api/auth/login');

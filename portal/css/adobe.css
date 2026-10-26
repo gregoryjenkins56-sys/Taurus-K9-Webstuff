@@ -1,0 +1,64 @@
+:root {
+  --ink: #232a2c;
+  --muted: #5c686b;
+  --blue: #235c53;
+  --line: #dce3e3;
+  --background: #f7f8f8;
+  --radius: 6px;
+  font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+}
+h1, h2, h3, .eyebrow { letter-spacing: 0; }
+h1 { font-family: Georgia, serif; font-size: 2.15rem; font-weight: 500; }
+h2 { font-size: 1.15rem; }
+button, .button { border-radius: 5px; font-size: .88rem; }
+.portal-header { padding-block: 1rem; }
+.portal-layout { grid-template-columns: 220px minmax(0, 1fr); gap: 2.5rem; }
+.sidebar { border-right: 1px solid var(--line); padding-right: 1.5rem; }
+.sidebar nav a { border-radius: 5px; font-size: .88rem; }
+.sidebar nav a[aria-current="page"] { color: #1e574b; background: #e3eeea; box-shadow: none; }
+.service-banner { background: #edf2f0; color: #425952; border-color: #d6e2dc; font-size: .8rem; }
+.brand-mark { border: 1px solid var(--line); font-size: .9rem; }
+.eyebrow { font-size: .7rem; color: #4b6860; }
+.adobe-provider-label { display: grid; gap: .35rem; border-top: 1px solid var(--line); padding-top: 1.3rem; margin-top: 1.3rem; }
+.adobe-provider-label > span { color: var(--muted); font-size: .65rem; font-weight: 700; }
+.adobe-provider-label strong { color: #b52720; font-size: .9rem; }
+.adobe-provider-label small { font-size: .72rem; color: var(--muted); }
+.adobe-setup { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1rem; padding: 1rem 0; border-block: 1px solid var(--line); margin-block: 1rem 1.5rem; }
+.adobe-setup strong { color: #b52720; font-size: .9rem; }
+.adobe-setup span { font-size: .8rem; color: var(--muted); }
+.portal-next-step { border-block: 1px solid var(--line); padding-block: 1.3rem; margin-block: 1.5rem; }
+.portal-next-step > p:not(.eyebrow) { font-size: .9rem; }
+.portal-next-step > a { display: inline-flex; align-items: center; min-height: 44px; }
+.card { border-radius: 6px; }
+.status { border-radius: 4px; font-size: .72rem; }
+.portal-agreement-list { display: grid; gap: 1rem; }
+.portal-agreement-row { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding: 1.4rem; background: #fff; border: 1px solid var(--line); border-radius: 6px; }
+.portal-agreement-row h2 { font-size: 1rem; overflow-wrap: anywhere; }
+.portal-agreement-row p { margin-bottom: .5rem; }
+.portal-agreement-row .muted, .agreement-summary-progress { font-size: .8rem; }
+.portal-agreement-actions { display: grid; justify-items: end; gap: .8rem; flex-shrink: 0; }
+.portal-agreement-summary { border-bottom: 1px solid var(--line); padding-block: 1.3rem; }
+.portal-agreement-summary .facts { max-width: 520px; font-size: .85rem; }
+.portal-agreement-summary > p:last-child { margin-top: 1rem; font-size: .8rem; }
+.portal-contract-sections { max-width: 800px; }
+.portal-contract-sections > section, .portal-contract-consent { border-bottom: 1px solid var(--line); padding-block: 1.6rem; }
+.agreement-text { white-space: pre-wrap; overflow-wrap: anywhere; font-family: Georgia, serif; font-size: 1rem; line-height: 1.85; }
+.portal-signing-action { border-top: 3px solid #b52720; padding-block: 1.5rem; margin-top: 1.5rem; }
+.portal-signing-action p, .portal-footnote { font-size: .8rem; color: var(--muted); }
+.portal-footnote { margin-top: 1.5rem; }
+.portal-empty { text-align: center; padding: 3rem 1rem; border-block: 1px solid var(--line); }
+.portal-empty p { max-width: 420px; margin-inline: auto; font-size: .9rem; }
+:focus-visible { outline: 3px solid #327bba; outline-offset: 4px; }
+@media (max-width: 850px) {
+  .portal-layout { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .sidebar { border: 0; padding: 0; }
+  .adobe-provider-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem .75rem; padding-top: .8rem; margin-top: .8rem; }
+  .adobe-provider-label > span { display: none; }
+}
+@media (max-width: 550px) {
+  h1 { font-size: 1.8rem; }
+  .portal-agreement-row { flex-direction: column; align-items: start; padding: 1rem; }
+  .portal-agreement-actions { width: 100%; justify-items: start; }
+  .portal-agreement-actions .button { width: 100%; justify-content: center; }
+  .portal-signing-action button { width: 100%; }
+}

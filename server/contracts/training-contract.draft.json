@@ -1,0 +1,19 @@
+{
+  "title": "Training Agreement",
+  "version": "DRAFT-1",
+  "isPlaceholder": true,
+  "approval": { "contract": false, "electronicDisclosure": false },
+  "sections": [
+    { "sectionId": "section-01", "heading": "Section 01 - Approved text pending", "content": "[Insert the first approved contract section here, including its exact heading and wording. This placeholder is not a legal term.]", "order": 1, "acknowledgmentType": "none", "required": false },
+    { "sectionId": "section-02", "heading": "Section 02 - Approved text pending", "content": "[Insert the next approved contract section verbatim. Initials below demonstrate an interaction only; they do not acknowledge approved legal terms.]", "order": 2, "acknowledgmentType": "initials", "required": true },
+    { "sectionId": "section-03", "heading": "Section 03 - Approved text pending", "content": "[Insert the next approved contract section verbatim. Preserve all paragraphs, clauses, punctuation, and ordering.]", "order": 3, "acknowledgmentType": "initials", "required": true },
+    { "sectionId": "section-04", "heading": "Section 04 - Approved text pending", "content": "[Insert the next approved contract section verbatim. The typed signature below is a simulation control, not an approved contract requirement.]", "order": 4, "acknowledgmentType": "signature", "required": true }
+  ],
+  "electronicDisclosure": {
+    "version": "DRAFT-1",
+    "content": "[Insert the approved electronic-signing consent and disclosures here. Legal review is required. No approved disclosure is currently configured.]"
+  },
+  "optionalConsents": [
+    { "consentId": "optional-example", "heading": "Optional consent - Approved text pending", "content": "[Insert a separately approved optional consent here, or remove this item. Leaving this unchecked does not prevent simulated completion.]" }
+  ]
+}

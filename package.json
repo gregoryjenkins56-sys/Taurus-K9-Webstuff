@@ -8,20 +8,28 @@
   "scripts": {
     "dev": "npm run build && wrangler dev",
     "build": "node scripts/build.mjs && tsc --noEmit",
-    "lint": "eslint server/worker scripts tests/worker.test.js portal/js/client.js",
-    "test": "node --experimental-strip-types --test server/agreement-mapping.test.cjs tests/worker.test.js",
+    "lint": "eslint server/worker scripts tests/worker.test.js tests/agreement.test.js tests/contract-preview.test.js tests/fixtures/*.js tests/portal.spec.js playwright.config.js portal/js/*.js",
+    "test": "node --experimental-strip-types --test server/agreement-mapping.test.cjs tests/worker.test.js tests/agreement.test.js tests/contract-preview.test.js",
+    "test:contracts": "node --test tests/agreement.test.js tests/contract-preview.test.js",
+    "test:portal": "playwright test",
+    "preview:contract": "node scripts/preview-contract.mjs",
     "db:migrate:local": "wrangler d1 migrations apply portal-db --local",
     "check": "npm run build && npm run lint && npm test"
   },
   "dependencies": {
-    "oauth4webapi": "^3.8.8"
+    "oauth4webapi": "^3.8.8",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@cloudflare/workers-types": "^5.20261019.1",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
     "eslint": "^10.13.0",
     "globals": "^17.13.0",
+    "lucide": "^1.61.0",
     "miniflare": "^5.20261019.0-beta",
+    "pdfjs-dist": "^6.4.299",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.0",
     "wrangler": "^4.151.2"

@@ -10,6 +10,14 @@ Single-page site for Taurus K9 LLC (Aransas Pass, TX): dog training, board and t
 ## Run locally
 Open `index.html` in a browser, or run `python3 -m http.server` in this folder.
 
+### Contract signing simulation
+
+Run `npm ci`, then `npm run preview:contract` and open the loopback URL printed
+in the terminal. This is a fictional, draft-only portal preview, not live signing.
+It includes per-section acknowledgments, save/resume, final review, and a marked
+sample PDF. See [the preview guide](docs/contract-signing-preview.md) for setup,
+the contract insertion point, section configuration, tests, and remaining gates.
+
 To debug the website in VS Code, select **Website: Chrome** in Run and Debug,
 then press F5. This opens the local page using VS Code's built-in JavaScript
 debugger and requires Google Chrome to be installed.

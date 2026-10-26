@@ -68,15 +68,70 @@ function table(title, headers, rows) {
       el('tbody', {}, rows.map(row => el('tr', {}, row.map(value => el('td', {}, value)))))));
 }
 
+function signingSetup() {
+  return el('aside', { class: 'adobe-setup', 'aria-label': 'Adobe Sign availability' },
+    el('strong', {}, 'Adobe Acrobat Sign'),
+    el('span', {}, 'Setup pending. Live signing and signed-PDF downloads are not connected.'));
+}
+async function agreementList(completed = false) {
+  try {
+    const { agreements } = await api(completed ? '/api/documents' : '/api/agreements');
+    return { agreements, unavailable: false };
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 503) return { agreements: [], unavailable: true };
+    throw error;
+  }
+}
+function agreementRecord(agreement) {
+  const statuses = { assigned: 'Awaiting review', in_progress: 'In progress', signed: 'Completed' };
+  return el('article', { class: 'portal-agreement-row' },
+    el('div', {}, el('p', { class: 'eyebrow' }, `AGREEMENT / ${agreement.version}`),
+      el('h2', {}, agreement.title), el('p', { class: 'muted' }, `${agreement.dog} / ${agreement.service}`),
+      el('p', { class: 'agreement-summary-progress' }, `${agreement.progress.completed} of ${agreement.progress.required} acknowledgments recorded`)),
+    el('div', { class: 'portal-agreement-actions' },
+      el('span', { class: `status ${agreement.status === 'signed' ? 'status-completed' : 'status-pending'}` }, statuses[agreement.status] || 'Awaiting review'),
+      el('a', { class: 'button', href: `#/agreement/${encodeURIComponent(agreement.id)}` }, agreement.status === 'signed' ? 'View agreement' : 'Review agreement')));
+}
+async function agreementsPage(completed = false) {
+  const { agreements, unavailable: notEnabled } = await agreementList(completed);
+  const heading = completed ? 'No completed agreements yet' : 'No agreements assigned yet';
+  return [signingSetup(), notEnabled ? notice('Agreement records are not enabled for this portal yet. Contact Taurus K9 for your agreement.') :
+    agreements.length ? el('div', { class: 'portal-agreement-list' }, agreements.map(agreementRecord)) :
+      el('section', { class: 'portal-empty' }, el('h2', {}, heading), el('p', { class: 'muted' }, completed ? 'Completed agreement records will appear here when available.' : 'Taurus K9 will assign your agreement after confirming your training enrollment.')),
+    el('p', { class: 'portal-footnote' }, 'Only agreements assigned to your signed-in account are shown. Signing and downloads require Adobe setup.')];
+}
+async function reviewAgreement(agreementId) {
+  const { snapshot, status, progress } = await api(`/api/agreements/${encodeURIComponent(agreementId)}`);
+  const button = el('button', { type: 'button', disabled: '', 'aria-describedby': 'adobe-signing-status' }, 'Continue with Adobe Sign');
+  return [link('/agreement', 'Back to My Agreement'), signingSetup(),
+    el('section', { class: 'portal-agreement-summary' }, el('p', { class: 'eyebrow' }, `AGREEMENT / ${snapshot.version}`), el('h2', {}, snapshot.title),
+      el('dl', { class: 'facts' }, el('dt', {}, 'Client'), el('dd', {}, snapshot.client.name), el('dt', {}, 'Dog'), el('dd', {}, snapshot.dog.name),
+        el('dt', {}, 'Program'), el('dd', {}, snapshot.service.name), el('dt', {}, 'Record status'), el('dd', {}, status === 'signed' ? 'Completed' : status === 'in_progress' ? 'In progress' : 'Awaiting review')),
+      el('p', { class: 'muted' }, `${progress.completed} of ${progress.required} acknowledgments recorded`)),
+    snapshot.isPlaceholder ? notice('This record contains draft placeholder terms. It cannot be sent for signing.') : null,
+    el('div', { class: 'portal-contract-sections' }, snapshot.sections.map((section, index) =>
+      el('section', { 'aria-labelledby': `contract-${section.sectionId}` }, el('p', { class: 'eyebrow' }, `SECTION ${String(index + 1).padStart(2, '0')}`),
+        el('h2', { id: `contract-${section.sectionId}` }, section.heading), el('p', { class: 'agreement-text' }, section.content)))),
+    ...snapshot.optionalConsents.map(consent => el('section', { class: 'portal-contract-consent' }, el('h2', {}, consent.heading), el('p', { class: 'agreement-text' }, consent.content), el('p', { class: 'muted' }, 'Optional consent. No selection is submitted in this read-only view.'))),
+    el('section', { class: 'portal-contract-consent' }, el('h2', {}, 'Electronic-signing disclosure'), el('p', { class: 'agreement-text' }, snapshot.electronicDisclosure.content)),
+    el('section', { class: 'portal-signing-action' }, el('h2', {}, 'Signing with Adobe Acrobat Sign'), el('p', { id: 'adobe-signing-status' }, 'Live Adobe signing is not configured. This view is read-only and does not record initials, consent, or signatures.'), button)];
+}
+
 const routes = {
   '/dashboard': { title: 'Your dashboard', async view(household) {
     const data = household ? await api(`/api/households/${household.id}/dogs`) : { dogs: [] };
+    const agreements = await agreementList();
     return [el('p', {}, `Welcome, ${account.user.name}.`),
       household ? notice(`Household: ${household.contact_name}`) : notice('No household is assigned. Contact Taurus K9 to arrange access.'),
+      el('section', { class: 'portal-next-step' }, el('p', { class: 'eyebrow' }, 'YOUR TRAINING JOURNEY'), el('h2', {}, 'Your agreement'),
+        el('p', {}, agreements.unavailable ? 'Agreement setup is pending.' : agreements.agreements.length ? `${agreements.agreements.length} agreement records assigned to your account.` : 'No agreement has been assigned yet.'),
+        link('/agreement', 'Go to My Agreement')),
       el('div', { class: 'grid' },
         card('My Dogs', el('p', {}, `${data.dogs.length} dogs in the selected household.`), link('/dogs', 'Manage dogs')),
         card('Owner information', link('/profile', 'Manage contact information')),
-        ...['Veterinary Records', 'My Agreement', 'Payments', 'Completed Documents'].map(title => card(title, el('span', { class: 'status status-unavailable' }, 'Unavailable')))),
+        card('My Agreement', link('/agreement', 'Review your assigned agreements')),
+        card('Completed Documents', link('/documents', 'View completed agreement records')),
+        ...['Veterinary Records', 'Payments'].map(title => card(title, el('span', { class: 'status status-unavailable' }, 'Unavailable')))),
       notice('Training readiness is unavailable until records, agreements, and payments have verified backend workflows.')];
   } },
   '/profile': { title: 'Owner information', async view(household) {
@@ -103,9 +158,9 @@ const routes = {
     ];
   } },
   '/records': { title: 'Veterinary Records', view: unavailable },
-  '/agreement': { title: 'My Agreement', view: unavailable },
+  '/agreement': { title: 'My Agreement', view: () => agreementsPage() },
   '/payments': { title: 'Payments', view: unavailable },
-  '/documents': { title: 'Completed Documents', view: unavailable },
+  '/documents': { title: 'Completed Documents', view: () => agreementsPage(true) },
   '/admin/clients': { title: 'Client directory', role: 'admin', async view() {
     const { clients } = await api('/api/admin/clients');
     return [notice('Showing up to 100 households. Account provisioning is restricted to the database operator.'),
@@ -141,7 +196,8 @@ async function loadAccount() {
 async function render() {
   const current = ++sequence;
   const path = location.hash.slice(1) || '/dashboard';
-  const route = Object.hasOwn(routes, path) ? routes[path] : null;
+  const agreementMatch = path.match(/^\/agreement\/([A-Za-z0-9_-]{1,80})$/);
+  const route = Object.hasOwn(routes, path) ? routes[path] : agreementMatch ? { title: 'Review agreement', view: () => reviewAgreement(agreementMatch[1]) } : null;
   const title = route ? route.title : 'Page not found';
   document.title = `${title} | Taurus K9`;
   main.setAttribute('aria-busy', 'true');
@@ -154,7 +210,7 @@ async function render() {
     if (current !== sequence) return;
     main.replaceChildren(el('h1', {}, title), ...body);
     document.querySelectorAll('.sidebar nav a').forEach(anchor => {
-      if (anchor.getAttribute('href') === `#${path}`) anchor.setAttribute('aria-current', 'page');
+      if (anchor.getAttribute('href') === `#${agreementMatch ? '/agreement' : path}`) anchor.setAttribute('aria-current', 'page');
       else anchor.removeAttribute('aria-current');
     });
     if (path.startsWith('/admin/') && route) document.querySelector('.staff-preview').open = true;
