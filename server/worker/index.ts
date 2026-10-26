@@ -1,47 +1,9 @@
 import { appConfig, finishLogin, HttpError, logout, rateLimit, requireCsrf, requireIdentity, requireStaff, startLogin } from './auth.ts';
 import type { Env, Identity } from './auth.ts';
 import { agreementRoutes } from './agreements.ts';
-
-function json(value: unknown, status = 200) {
-  return new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json; charset=utf-8' } });
-}
-
-async function input(request: Request, allowed: string[], limit = 8192): Promise<Record<string, unknown>> {
-  if (request.headers.get('content-type')?.split(';')[0].trim() !== 'application/json') {
-    throw new HttpError(415, 'Send a JSON request.');
-  }
-  if (Number(request.headers.get('content-length')) > limit) throw new HttpError(413, `File or request exceeds the ${limit}-byte limit.`);
-  if (!request.body) throw new HttpError(400, 'Request body is required.');
-  const reader = request.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    if (size > limit) { await reader.cancel(); throw new HttpError(413, `File or request exceeds the ${limit}-byte limit.`); }
-    chunks.push(value);
-  }
-  const bytes = new Uint8Array(size);
-  let offset = 0;
-  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
-  let data: unknown;
-  try { data = JSON.parse(new TextDecoder().decode(bytes)); }
-  catch { throw new HttpError(400, 'Request must contain valid JSON.'); }
-  if (!data || typeof data !== 'object' || Array.isArray(data) ||
-      Object.keys(data).some(key => !allowed.includes(key))) {
-    throw new HttpError(400, 'Request contains unsupported fields.');
-  }
-  return Object.fromEntries(Object.entries(data));
-}
-
-function text(value: unknown, name: string, max = 120, required = true) {
-  if (typeof value !== 'string' || value.length > max ||
-      Array.from(value).some(char => char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127) || (required && !value.trim())) {
-    throw new HttpError(400, `Enter a valid ${name}.`);
-  }
-  return value.trim();
-}
+import { enqueueHubspot, hubspotDiagnostics, hubspotEnabled, processHubspot } from './hubspot.ts';
+import { input, json, text } from './http.ts';
+import { videoApi } from './videos.ts';
 
 function audit(env: Env, user: string, action: string, resource: string) {
   return env.DB.prepare('INSERT INTO audit_logs(id, actor_id, action, resource_id) VALUES (?, ?, ?, ?)')
@@ -58,14 +20,47 @@ async function household(env: Env, identity: Identity, id: string) {
 }
 
 async function api(request: Request, env: Env, path: string) {
-  if (path === '/api/auth/login' && request.method === 'GET') {
-    await rateLimit(request, env, 'login', 10);
-    return startLogin(env);
+  if ((path === '/api/auth/login' || path === '/api/auth/signup') && request.method === 'GET') {
+    try {
+      await rateLimit(request, env, 'login', 10);
+      return startLogin(env, path === '/api/auth/signup');
+    } catch (error) {
+      if (error instanceof HttpError) {
+        const message = error.message;
+        const code =
+          message.includes('Portal origin is not configured')
+            ? 'PORTAL_ORIGIN_INVALID'
+            : message.includes('Sign-in is not configured')
+              ? 'AUTH_CONFIG_MISSING'
+              : message.includes('Sign-in provider configuration is invalid')
+                ? 'AUTH_PROVIDER_INVALID'
+                : 'AUTH_LOGIN_FAILED';
+        return json({ error: message, code }, error.status);
+      }
+      throw error;
+    }
   }
   if (path === '/api/auth/callback' && request.method === 'GET') {
-    await rateLimit(request, env, 'callback', 20);
-    return finishLogin(request, env);
+    try {
+      await rateLimit(request, env, 'callback', 20);
+      return finishLogin(request, env);
+    } catch (error) {
+      if (error instanceof HttpError) {
+        const message = error.message;
+        const code =
+          message.includes('Portal origin is not configured')
+            ? 'PORTAL_ORIGIN_INVALID'
+            : message.includes('Sign-in is not configured')
+              ? 'AUTH_CONFIG_MISSING'
+              : message.includes('Sign-in provider configuration is invalid')
+                ? 'AUTH_PROVIDER_INVALID'
+                : 'AUTH_CALLBACK_FAILED';
+        return json({ error: message, code }, error.status);
+      }
+      throw error;
+    }
   }
+
   await rateLimit(request, env, 'api', 120);
   const identity = await requireIdentity(request, env);
   if (path.startsWith('/api/admin/')) requireStaff(identity);
@@ -75,6 +70,8 @@ async function api(request: Request, env: Env, path: string) {
   }
   const agreementResponse = await agreementRoutes(request, env, path, identity, input);
   if (agreementResponse) return agreementResponse;
+  const videoResponse = await videoApi(request, env, path, identity);
+  if (videoResponse) return videoResponse;
   if (path === '/api/auth/logout' && request.method === 'POST') return logout(request, env, identity);
   if (path === '/api/me' && request.method === 'GET') {
     const { results } = await env.DB.prepare(
@@ -94,7 +91,8 @@ async function api(request: Request, env: Env, path: string) {
     await env.DB.batch([
       env.DB.prepare('UPDATE households SET contact_name = ?, phone = ?, city = ? WHERE id = ?')
         .bind(name, phone, city, id),
-      audit(env, identity.id, 'household.updated', id)
+      audit(env, identity.id, 'household.updated', id),
+      ...enqueueHubspot(env, id)
     ]);
     return json({ updated: true });
   }
@@ -139,6 +137,15 @@ async function api(request: Request, env: Env, path: string) {
     if (!dog) throw new HttpError(404, 'Dog not found.');
     return json({ dog });
   }
+  if (path === '/api/admin/integrations/hubspot' && request.method === 'GET') {
+    requireStaff(identity, true);
+    return json(await hubspotDiagnostics(env));
+  }
+  if (path === '/api/admin/integrations/hubspot/process' && request.method === 'POST') {
+    requireStaff(identity, true);
+    if (!hubspotEnabled(env)) throw new HttpError(503, 'HubSpot preview sync is disabled.');
+    return json(await processHubspot(env));
+  }
   if (path === '/api/admin/clients' && request.method === 'GET') {
     requireStaff(identity, true);
     const { results } = await env.DB.prepare(
@@ -166,13 +173,18 @@ function secure(response: Response, portal: boolean) {
   if (portal) {
     headers.set('cache-control', 'no-store');
     headers.set('x-frame-options', 'DENY');
-    headers.set('content-security-policy', "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'; frame-ancestors 'none'");
+    headers.set('content-security-policy', "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Logo/Taurus%20K9%20NBG.png; connect-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'; frame-ancestors 'none'");
     headers.set('permissions-policy', 'camera=(), microphone=(), geolocation=()');
   }
   return new Response(response.body, { status: response.status, headers });
 }
 
 export default {
+  async scheduled(_event: ScheduledController, bindings: Env): Promise<void> {
+    if (!hubspotEnabled(bindings)) return;
+    const env = { ...bindings, DB: 'withSession' in bindings.DB ? bindings.DB.withSession('first-primary') : bindings.DB };
+    await processHubspot(env);
+  },
   async fetch(request: Request, bindings: Env): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -209,5 +221,5 @@ export default {
       if (status === 429) response.headers.set('retry-after', '60');
       return secure(response, protectedSurface);
     }
-  }
+   },
 };

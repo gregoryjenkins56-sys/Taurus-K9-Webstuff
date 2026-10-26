@@ -179,15 +179,14 @@ const WORKING_K9_FAQS = [
 
 const faqPick = idx => idx.map(i => FAQS[i]);
 
-/* ---------- lead form (CRM) ---------- */
-
+/* ---------- lead form (HubSpot Forms API) ---------- */
 function leadForm(){
   return `<form class="form" id="leadForm" novalidate>
   <div class="errm" id="errm" role="alert" data-show="false" tabindex="-1">
     <h3>Let’s take care of a few details</h3>
     <ul id="errList"></ul>
   </div>
-  <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <input class="hp" type="text" name="tk9_check" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
   <fieldset>
     <legend class="fl-legend">What would you like help with? <span class="req" aria-hidden="true">*</span></legend>
@@ -220,31 +219,37 @@ function leadForm(){
 
   <div class="frow frow2">
     <div class="field">
-      <label for="owner">Name <span class="req" aria-hidden="true">*</span></label>
-      <input id="owner" name="owner" type="text" autocomplete="name" required aria-describedby="ownerErr" />
-      <span class="err" id="ownerErr" data-show="false">Enter your name.</span>
+      <label for="firstName">First Name <span class="req" aria-hidden="true">*</span></label>
+      <input id="firstName" name="firstName" type="text" autocomplete="given-name" required aria-describedby="firstNameErr" />
+      <span class="err" id="firstNameErr" data-show="false">Enter your first name.</span>
     </div>
+    <div class="field">
+      <label for="lastName">Last Name <span class="req" aria-hidden="true">*</span></label>
+      <input id="lastName" name="lastName" type="text" autocomplete="family-name" required aria-describedby="lastNameErr" />
+      <span class="err" id="lastNameErr" data-show="false">Enter your last name.</span>
+    </div>
+  </div>
+
+  <div class="frow frow2">
     <div class="field">
       <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
       <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="emailErr" />
       <span class="err" id="emailErr" data-show="false">Enter a valid email address.</span>
     </div>
-  </div>
-
-  <div class="frow frow2">
     <div class="field">
       <label for="phone">Phone <span class="req" aria-hidden="true">*</span></label>
       <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="phoneErr phoneHint" />
       <span class="hint" id="phoneHint">We’ll use this to get in touch. Enter a 10-digit US number.</span>
       <span class="err" id="phoneErr" data-show="false">Enter a 10-digit phone number.</span>
     </div>
-    <div class="field">
-      <label for="dogName">Dog name</label>
-      <input id="dogName" name="dogName" type="text" autocomplete="off" />
-    </div>
   </div>
 
-  <div class="frow frow3">
+  <div class="field">
+    <label for="dogName">Dog name</label>
+    <input id="dogName" name="dogName" type="text" autocomplete="off" />
+  </div>
+
+  <div class="frow frow2">
     <div class="field">
       <label for="city">City <span class="req" aria-hidden="true">*</span></label>
       <input id="city" name="city" type="text" autocomplete="address-level2" required aria-describedby="cityErr" />
@@ -254,9 +259,16 @@ function leadForm(){
       <label for="state">State</label>
       <select id="state" name="state" autocomplete="address-level1"><option>TX</option><option>Other</option></select>
     </div>
+  </div>
+
+  <div class="frow frow2">
     <div class="field">
-      <label for="dogInfo">Dog’s breed and age</label>
-      <input id="dogInfo" name="dogInfo" type="text" placeholder="e.g. GSD, 14 months" />
+      <label for="dogBreed">Dog’s breed</label>
+      <input id="dogBreed" name="dogBreed" type="text" placeholder="e.g. German Shepherd or mixed breed" />
+    </div>
+    <div class="field">
+      <label for="dogAge">Dog’s age</label>
+      <input id="dogAge" name="dogAge" type="text" placeholder="e.g. 14 months or 3 years" />
     </div>
   </div>
 
@@ -295,208 +307,173 @@ function leadForm(){
     <legend class="fl-legend">How may we contact you? <span class="req" aria-hidden="true">*</span></legend>
     <p class="hint">Choose at least one way for us to reply about your inquiry.</p>
     <div style="display:grid;gap:.7rem;margin-top:.85rem">
-      <label class="consent"><input type="checkbox" id="consentEmail" name="consentEmail" /><span>Email me about this inquiry and Taurus K9 services.</span></label>
-      <label class="consent"><input type="checkbox" id="consentSms" name="consentSms" /><span>Text me about this inquiry. Message frequency varies; message and data rates may apply. Reply STOP to unsubscribe. Consent is not a condition of purchase.</span></label>
+      <label class="consent"><input type="checkbox" id="consentEmail" name="consentEmail" aria-describedby="consentErr" /><span>Email me about this inquiry and Taurus K9 services.</span></label>
+      <label class="consent"><input type="checkbox" id="consentSms" name="consentSms" aria-describedby="consentErr" /><span>Text me about this inquiry. Message frequency varies; message and data rates may apply. Reply STOP to unsubscribe. Consent is not a condition of purchase.</span></label>
     </div>
     <span class="err" id="consentErr" data-show="false" style="margin-top:.6rem">Select at least one way for us to contact you.</span>
   </fieldset>
 
   <div>
-    <button class="btn btn-p btn-blk" type="submit" data-track="form_submit" style="min-height:54px">Check my inquiry</button>
-    <p class="fnote" style="margin-top:.75rem">This online form is not connected yet, so nothing entered here will be sent. To book or ask a question, call <a href="tel:${SITE.phone}" style="color:var(--ink)">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}" style="color:var(--ink)">${SITE.email}</a>.</p>
+    <button class="btn btn-p btn-blk" type="submit" data-track="form_submit" style="min-height:54px">Send my inquiry</button>
+    <p class="fnote" id="formStatus" role="status" aria-live="polite"></p>
     <p class="fnote" style="margin-top:.75rem">Please don’t enter sensitive information. Read our <a href="#/privacy">Privacy Policy</a>.</p>
   </div>
-
-  <details style="margin-top:.5rem">
-    <summary style="cursor:pointer;font-weight:700;color:var(--muted);font-size:.88rem">Preview information (not sent)</summary>
-    <div class="crm" style="margin-top:.75rem">
-      <h4>This preview is for display only—nothing is sent.</h4>
-      <div class="score">
-        <span class="score__v" id="scoreVal">0</span>
-        <div class="score__bar"><div class="score__fill" id="scoreFill"></div></div>
-        <span id="scoreTier" style="font-weight:700;color:#242021">&mdash;</span>
-      </div>
-      <pre id="crmPreview">{}</pre>
-    </div>
-  </details>
 </form>`;
 }
 
-function utm(){
-  const out = {};
-  const raw = location.hash || '';
-  const qi = raw.indexOf('?');
-  if(qi > -1){
-    raw.slice(qi + 1).split('&').forEach(p => {
-      const kv = p.split('=');
-      if(kv[0]) out[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1] || '');
-    });
-  }
-  const sp = new URLSearchParams(location.search);
-  ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid','msclkid'].forEach(k => {
-    if(sp.get(k)) out[k] = sp.get(k);
-  });
-  return out;
-}
+const HUBSPOT_FORM_ENDPOINT = 'https://api.hsforms.com/submissions/v3/integration/submit/242184033/9b37a135-9b1f-47bd-889c-3bbec3ed780f';
 
-function hashParam(k){
-  const raw = (location.hash || '').replace(/^#/, '');
-  const qi = raw.indexOf('?');
-  if(qi < 0) return '';
-  const sp = new URLSearchParams(raw.slice(qi + 1));
-  return sp.get(k) || '';
-}
-
-function scoreLead(d){
-  let s = 0;
-  const why = [];
-  if(d.phone){ s += 15; why.push('phone provided (+15)'); }
-  if(d.email){ s += 10; why.push('email provided (+10)'); }
-  if(d.timeline === 'asap'){ s += 20; why.push('wants to start immediately (+20)'); }
-  else if(d.timeline === '30-days'){ s += 12; why.push('start within 30 days (+12)'); }
-  if(d.service === 'board-train'){ s += 15; why.push('high-value service: Board and Train (+15)'); }
-  if(['agency','police-k9','detection','protection','sport'].indexOf(d.service) > -1){ s += 20; why.push('commercial or agency intent (+20)'); }
-  if(d.message && d.message.length > 40){ s += 10; why.push('detailed description (+10)'); }
-  const local = SITE.cities.map(c => c.toLowerCase());
-  if(d.city && local.indexOf(d.city.trim().toLowerCase()) > -1){ s += 15; why.push('in core service area (+15)'); }
-  if(d.dogInfo){ s += 5; why.push('dog details given (+5)'); }
-  if(d.heard){ s += 5; why.push('attribution captured (+5)'); }
-  const u = utm();
-  if(u.utm_medium === 'cpc' || u.gclid || u.fbclid){ s += 10; why.push('paid traffic source (+10)'); }
-  s = Math.min(100, s);
-  const tier = s >= 70 ? 'Hot: contact within 1 hour' : (s >= 40 ? 'Warm: contact within 4 business hours' : 'Nurture: 1 business day');
-  return {score:s, tier:tier, reasons:why};
-}
-
-function buildPayload(d){
-  const sc = scoreLead(d);
-  const now = new Date().toISOString();
-  const isWork = ['agency','detection','police-k9','decoy','evaluation','sport','protection'].indexOf(d.service) > -1;
-  return {
-    submittedAt: now,
-    page: location.hash || '#/',
-    attribution: utm(),
-    contact: {
-      firstname: d.owner,
-      email: d.email,
-      phone_e164: d.phone ? '+1' + d.phone.replace(/\D/g,'') : '',
-      city: d.city,
-      state: d.state,
-      lifecyclestage: 'lead'
-    },
-    dog: { name: d.dogName, breed_age: d.dogInfo },
-    inquiry: { service: d.service, tier: d.tier, timeline: d.timeline, notes: d.message, heard: d.heard },
-    consent: {
-      email: {
-        granted: !!d.consentEmail,
-        text: 'Email me about my inquiry and Taurus K9 services',
-        capturedAt: now,
-        source: 'taurusk9.com contact form'
-      },
-      sms: {
-        granted: !!d.consentSms,
-        text: 'Yes, text me about my inquiry. Message frequency varies; msg and data rates may apply. Reply STOP to unsubscribe.',
-        capturedAt: now,
-        source: 'taurusk9.com contact form'
-      }
-    },
-    scoring: { score: sc.score, tier: sc.tier, reasons: sc.reasons },
-    routing: {
-      owner: isWork ? 'Working Dog Division (Greg)' : 'Pet Division (Rebecca)',
-      pipeline: isWork ? 'Agency and Working K9' : 'Pet Training',
-      dealstage: 'New Inquiry',
-      sla: sc.score >= 70 ? '60 minutes' : '1 business day'
-    },
-    dedupeKey: 'email'
+function buildFormPayload(form){
+  const data = new FormData(form);
+  const mapping = {
+    firstName:'firstname', lastName:'lastname',
+    email:'email', phone:'phone', city:'city', state:'state',
+    service:'training_service_interest', dogName:'dogs_name', dogAge:'dog_age',
+    timeline:'preferred_start_timeline', message:'training_goals', heard:'lead_source_detail'
   };
+  const fields = Object.entries(mapping).map(([input, name]) => ({
+    name:name, value:String(data.get(input) || '').trim()
+  })).filter(field => field.value);
+  [['consentEmail','consent_email_inquiry'], ['consentSms','consent_sms_inquiry']]
+    .forEach(([input, name]) => {
+      fields.push({name:name, value:data.has(input) ? 'true' : 'false'});
+    });
+  const context = {};
+  if(location.href) context.pageUri = location.href;
+  if(document.title) context.pageName = document.title;
+  return {fields:fields, context:context};
 }
 
 function wireForm(){
   const form = document.getElementById('leadForm');
-  if(!form) return;
+  if(!form || form.dataset.wired) return;
+  form.dataset.wired = 'true';
 
-  const pre = hashParam('service');
-  if(pre){ const sel = document.getElementById('service'); if(sel) sel.value = pre; }
-  const tier = hashParam('tier');
-  if(tier){ form.dataset.tier = tier; }
+  const params = new URLSearchParams((location.hash || '').split('?')[1] || '');
+  const service = params.get('service');
+  if(service) form.elements.namedItem('service').value = service;
+  const errm = form.querySelector('#errm');
+  const errList = form.querySelector('#errList');
+  const heading = errm.querySelector('h3');
+  const button = form.querySelector('button[type="submit"]');
+  const status = form.querySelector('#formStatus');
+  let posting = false;
 
-  const errm = document.getElementById('errm');
-  const errList = document.getElementById('errList');
-
-  function setErr(id, flag){
-    const el = document.getElementById(id);
-    const e = document.getElementById(id + 'Err');
-    if(e) e.setAttribute('data-show', flag ? 'true' : 'false');
-    if(el) el.setAttribute('aria-invalid', flag ? 'true' : 'false');
+  function setErr(id, invalid){
+    form.querySelector('#' + id).setAttribute('aria-invalid', invalid ? 'true' : 'false');
+    const error = form.querySelector('#' + id + 'Err');
+    if(error) error.setAttribute('data-show', invalid ? 'true' : 'false');
   }
 
-  function collect(){
-    const g = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-    const c = id => { const el = document.getElementById(id); return el ? el.checked : false; };
-    const r = form.querySelector('input[name="timeline"]:checked');
-    return {
-      service: g('service'), owner: g('owner'), email: g('email'), phone: g('phone'),
-      city: g('city'), state: g('state'), dogName: g('dogName'), dogInfo: g('dogInfo'),
-      message: g('message'), heard: g('heard'), timeline: r ? r.value : '',
-      tier: form.dataset.tier || '', consentEmail: c('consentEmail'), consentSms: c('consentSms'),
-      company: g('company')
-    };
+  function showFailure(category, httpStatus){
+    const diagnostic = {error_type:category};
+    if(httpStatus) diagnostic.http_status = httpStatus;
+    track('form_error', diagnostic);
+    heading.textContent = 'We couldn’t confirm your inquiry was sent';
+    errList.replaceChildren();
+    const item = document.createElement('li');
+    item.textContent = category === 'honeypot'
+      ? 'Nothing was sent because the spam check was filled. Please reload and try again with autofill disabled, or call ' + SITE.phoneDisplay + '.'
+      : 'Your entries are still here. Please try again, or call ' + SITE.phoneDisplay + '. If the connection was interrupted, your inquiry may already have arrived.';
+    errList.appendChild(item);
+    errm.setAttribute('data-show','true');
+    status.textContent = 'Unable to confirm delivery (' + category + (httpStatus ? ' ' + httpStatus : '') + ').';
+    if(form.isConnected) errm.focus();
   }
 
-  function updatePreview(){
-    const d = collect();
-    const sc = scoreLead(d);
-    const sv = document.getElementById('scoreVal');
-    const sf = document.getElementById('scoreFill');
-    const st = document.getElementById('scoreTier');
-    const box = document.getElementById('crmPreview');
-    if(sv) sv.textContent = sc.score;
-    if(sf) sf.style.width = sc.score + '%';
-    if(st) st.textContent = sc.tier;
-    if(box) box.textContent = JSON.stringify(buildPayload(d), null, 2);
-  }
-
-  form.addEventListener('input', updatePreview);
-  form.addEventListener('change', updatePreview);
-  updatePreview();
-
-  form.addEventListener('submit', function(e){
+  errList.addEventListener('click', function(e){
+    const link = e.target.closest('a[data-field]');
+    if(!link) return;
     e.preventDefault();
-    const d = collect();
-    const errs = [];
-    ['service','owner','email','phone','city'].forEach(id => setErr(id, false));
-    document.getElementById('consentErr').setAttribute('data-show','false');
-    const errHeading = errm.querySelector('h3');
-    if(errHeading) errHeading.textContent = 'Let’s take care of a few details';
+    form.elements.namedItem(link.dataset.field).focus();
+  });
 
-    if(d.company){ location.hash = '#/thank-you'; return; }
-
-    if(!d.service){     setErr('service', true); errs.push(['service','Choose the service you’re interested in.']); }
-    if(!d.owner){     setErr('owner', true); errs.push(['owner','Enter your name.']); }
-    if(!d.email || !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(d.email)){
-      setErr('email', true); errs.push(['email','Enter a valid email address.']);
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    if(posting) return;
+    const data = new FormData(form);
+    if(String(data.get('tk9_check') || '').trim()){
+      showFailure('honeypot');
+      return;
     }
-    if(!d.phone || d.phone.replace(/\D/g,'').length < 10){
-      setErr('phone', true); errs.push(['phone','Enter a 10-digit phone number.']);
+    track('form_submit', {});
+    const errors = [];
+    ['service','firstName','lastName','email','phone','city','consentEmail','consentSms'].forEach(id => setErr(id, false));
+    form.querySelector('#consentErr').setAttribute('data-show','false');
+    errm.setAttribute('data-show','false');
+    errList.replaceChildren();
+    heading.textContent = 'Let’s take care of a few details';
+    status.textContent = '';
+    const value = name => String(data.get(name) || '').trim();
+    if(!value('service')) errors.push(['service','Choose the service you’re interested in.']);
+    if(!value('firstName')) errors.push(['firstName','Enter your first name.']);
+    if(!value('lastName')) errors.push(['lastName','Enter your last name.']);
+    if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(value('email'))){
+      errors.push(['email','Enter a valid email address.']);
     }
-    if(!d.city){ setErr('city', true); errs.push(['city','Enter your city.']); }
-    if(!d.consentEmail && !d.consentSms){
-      document.getElementById('consentErr').setAttribute('data-show','true');
-      errs.push(['consentEmail','Choose at least one way for us to contact you.']);
+    if(!/^(1)?\d{10}$/.test(value('phone').replace(/\D/g,''))){
+      errors.push(['phone','Enter a 10-digit phone number (optionally with US country code +1).']);
     }
-
-    if(errs.length){
-      errList.innerHTML = errs.map(x => `<li><a href="#${x[0]}">${x[1]}</a></li>`).join('');
+    if(!value('city')) errors.push(['city','Enter your city.']);
+    if(!data.has('consentEmail') && !data.has('consentSms')){
+      setErr('consentSms', true);
+      form.querySelector('#consentErr').setAttribute('data-show','true');
+      errors.push(['consentEmail','Choose at least one way for us to contact you.']);
+    }
+    if(errors.length){
+      errors.forEach(([id, message]) => {
+        setErr(id, true);
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '#' + id;
+        link.dataset.field = id;
+        link.textContent = message;
+        item.appendChild(link);
+        errList.appendChild(item);
+      });
       errm.setAttribute('data-show','true');
       errm.focus();
-      track('form_error', {error_count: errs.length});
+      track('form_error', {error_type:'validation', error_count:errors.length});
       return;
     }
 
-    if(errHeading) errHeading.textContent = 'Your inquiry is ready—but this form is not connected yet';
-    errList.innerHTML = `<li>Nothing was sent. Call <a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a> or email <a href="mailto:${SITE.email}">${SITE.email}</a>, and we’ll help you take the next step.</li>`;
-    errm.setAttribute('data-show','true');
-    errm.focus();
+    posting = true;
+    button.disabled = true;
+    button.textContent = 'Sending…';
+    form.setAttribute('aria-busy','true');
+    status.textContent = 'Sending your inquiry. Please wait.';
+    let category = 'client';
+    let httpStatus;
+    try {
+      const payload = buildFormPayload(form);
+      const signal = AbortSignal.timeout(20000);
+      category = 'network';
+      const response = await fetch(HUBSPOT_FORM_ENDPOINT, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload),
+        signal:signal
+      });
+      if(!response.ok){
+        category = 'http';
+        if(Number.isInteger(response.status) && response.status >= 100 && response.status <= 599){
+          httpStatus = response.status;
+        }
+        throw new Error('Submission rejected');
+      }
+    } catch(error){
+      showFailure(category === 'network' && error?.name === 'TimeoutError' ? 'timeout' : category, httpStatus);
+      posting = false;
+      button.disabled = false;
+      button.textContent = 'Send my inquiry';
+      form.removeAttribute('aria-busy');
+      return;
+    }
+    track('form_success', {});
+    form.removeAttribute('aria-busy');
+    status.textContent = 'Thank you! Your inquiry has been sent.';
+    button.textContent = 'Inquiry sent';
+    if(form.isConnected) location.hash = '#/thank-you';
   });
 }
 
@@ -1076,7 +1053,7 @@ PAGES['/contact'] = {
         body:`<div class="cgrid">
           <div>
             <h2 style="margin-bottom:.35rem">Online inquiry form</h2>
-            <p class="fnote" style="margin-bottom:1.5rem">This form is not connected yet, so it cannot send your information. To reach us, call <a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="form_intro">${SITE.phoneDisplay}</a>, email us or schedule online.</p>
+            <p class="fnote" style="margin-bottom:1.5rem">Share a little about your dog and goals using our secure online inquiry form, or reach us by <a href="tel:${SITE.phone}" data-track="click_to_call" data-loc="form_intro">phone</a>, <a href="mailto:${SITE.email}" data-track="click_to_email" data-loc="form_intro">email</a> or online scheduling.</p>
             ${leadForm()}
           </div>
           <aside aria-labelledby="napH">
@@ -1114,13 +1091,13 @@ PAGES['/contact'] = {
 };
 
 PAGES['/thank-you'] = {
-  title:'Contact Taurus K9 Directly',
-  desc:'The online inquiry form is not available yet. Call or email Taurus K9 to book your free meet and greet.',
+  title:'Thank You | Taurus K9',
+  desc:'Thank you for contacting Taurus K9. Our team will follow up about your dog training inquiry.',
   render(){
     return phero({
-      tag:'Let’s connect',
-      title:'Your information wasn’t sent.',
-      lede:'This online form is not connected yet. Please call or email us directly, and we’ll be glad to help.',
+      tag:'Inquiry received',
+      title:'Thank you for reaching out.',
+      lede:'Your inquiry has been sent. Our team will be in touch to talk about your dog and help you choose a next step.',
       crumbs:[{label:'Home',href:'#/'},{label:'Contact'}],
       actions:`<a class="btn btn-p" href="tel:${SITE.phone}">Call ${SITE.phoneDisplay}</a>
         <a class="btn btn-o" href="mailto:${SITE.email}">Email us</a>`

@@ -1,64 +1,92 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "taurus-k9-portal",
+  "name": "taurus-k9-webstuff",
   "main": "server/worker/index.ts",
   "compatibility_date": "2026-10-19",
   "workers_dev": false,
   "preview_urls": false,
+  "build": {
+    "command": "node scripts/validate-d1.mjs"
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
     "run_worker_first": true
   },
-  "vars": {
-    "APP_ENV": "development",
-    "APP_ORIGIN": "http://localhost:8787",
-    "AUTH_ISSUER": "",
-    "AUTH_CLIENT_ID": ""
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    },
+    "traces": {
+      "enabled": false,
+      "head_sampling_rate": 1,
+      "persist": true
+    }
   },
+  "vars": {
+    "APP_ENV": "production",
+    "APP_ORIGIN": "https://taurus-k9-webstuff.taurusk9tx.workers.dev",
+    "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com/",
+    "AUTH_CLIENT_ID": "u1mhjXUkU3tUcBwXd4K9mnM5suq6G1MI"
+  },
+  // Retained legacy/default mapping for compatibility, not a preview/production alias.
+  // Local commands must use --local; remote operations must select an explicit --env.
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "portal-db",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_name": "taurus-k9-webstuff",
+      "database_id": "1a11389d-19cd-4777-9ed7-f397aa6ceb86",
       "migrations_dir": "migrations"
     }
   ],
   "env": {
     "preview": {
-      "name": "taurus-k9-portal-preview",
+      "name": "taurus-k9-webstuff",
+      "build": {
+        "command": "node scripts/validate-d1.mjs preview"
+      },
       "workers_dev": true,
       "preview_urls": false,
+      "triggers": { "crons": ["*/5 * * * *"] },
       "vars": {
         "APP_ENV": "preview",
-        "APP_ORIGIN": "https://taurus-k9-portal-preview.REPLACE_WITH_WORKERS_SUBDOMAIN.workers.dev",
-        "AUTH_ISSUER": "https://REPLACE_WITH_PREVIEW_AUTH0_DOMAIN/",
-        "AUTH_CLIENT_ID": "REPLACE_WITH_PREVIEW_AUTH0_CLIENT_ID"
+        "HUBSPOT_SYNC_ENABLED": "false",
+        "APP_ORIGIN": "https://taurus-k9-webstuff.taurusk9tx.workers.dev",
+        "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com/",
+        "AUTH_CLIENT_ID": "u1mhjXUkU3tUcBwXd4K9mnM5suq6G1MI"
       },
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "taurus-k9-portal-preview",
-          "database_id": "REPLACE_WITH_PREVIEW_D1_DATABASE_UUID",
+          "database_name": "taurus-k9-webstuff-preview",
+          // Verify this intended UUID against the approved Cloudflare account before remote use.
+          "database_id": "78379cab-5c63-4618-a8b6-f51b866ebc2f",
           "migrations_dir": "migrations"
         }
       ]
     },
     "production": {
-      "name": "taurus-k9-portal-production",
+      "name": "taurus-k9-webstuff-production",
+      "build": {
+        "command": "node scripts/validate-d1.mjs production"
+      },
       "workers_dev": false,
       "preview_urls": false,
       "vars": {
         "APP_ENV": "production",
-        "APP_ORIGIN": "https://REPLACE_WITH_PRODUCTION_PORTAL_HOSTNAME",
-        "AUTH_ISSUER": "https://REPLACE_WITH_PRODUCTION_AUTH0_DOMAIN/",
-        "AUTH_CLIENT_ID": "REPLACE_WITH_PRODUCTION_AUTH0_CLIENT_ID"
+        "APP_ORIGIN": "https://taurus-k9-webstuff-production.workers.dev",
+        "AUTH_ISSUER": "https://dev-an352s76u7pyqmzz.us.auth0.com/",
+        "AUTH_CLIENT_ID": "u1mhjXUkU3tUcBwXd4K9mnM5suq6G1MI"
       },
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "taurus-k9-portal-production",
-          "database_id": "REPLACE_WITH_PRODUCTION_D1_DATABASE_UUID",
+          "database_name": "taurus-k9-webstuff-production",
+          // Verify this intended UUID against the approved Cloudflare account before remote use.
+          "database_id": "a895aff3-d273-46b6-b60f-6ef4096d91cd",
           "migrations_dir": "migrations"
         }
       ]

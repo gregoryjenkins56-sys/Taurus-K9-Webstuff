@@ -643,6 +643,13 @@ legend{padding:0 .4rem}
 .score__v{font-weight:900;color:#242021;font-variant-numeric:tabular-nums}
 .cgrid{display:grid;gap:1.5rem}
 @media(min-width:960px){.cgrid{grid-template-columns:1.25fr .75fr;align-items:start}}
+.cgrid > div > .fnote a[href^="tel:"],
+.cgrid > div > .fnote a[href^="mailto:"]{color:inherit;text-decoration:none}
+.cgrid > div > .fnote a[href^="tel:"]{color:#242021}
+.cgrid > div > .fnote a[href^="tel:"]:hover,
+.cgrid > div > .fnote a[href^="tel:"]:focus-visible,
+.cgrid > div > .fnote a[href^="mailto:"]:hover,
+.cgrid > div > .fnote a[href^="mailto:"]:focus-visible{text-decoration:underline}
 .nap{list-style:none;padding:0;margin:0}
 .nap li{display:flex;gap:.75rem;padding:.85rem 0;border-bottom:1px solid var(--line);font-size:.95rem;margin:0}
 .nap li:last-child{border-bottom:0}

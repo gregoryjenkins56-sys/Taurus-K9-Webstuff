@@ -1,4 +1,5 @@
 import * as oauth from 'oauth4webapi';
+import { enqueueHubspot } from './hubspot.ts';
 
 export interface Env {
   DB: D1Database | D1DatabaseSession;
@@ -11,6 +12,8 @@ export interface Env {
   CONTRACT_SIGNING_ENABLED?: string;
   AGREEMENT_DOCUMENTS?: R2Bucket;
   AGREEMENT_FONT_KEY?: string;
+  HUBSPOT_SYNC_ENABLED?: string;
+  HUBSPOT_ACCESS_TOKEN?: string;
 }
 
 export class HttpError extends Error {
@@ -44,6 +47,10 @@ function providerConfig(env: Env) {
   if (!env.AUTH_CLIENT_ID || !env.AUTH_CLIENT_SECRET || !env.AUTH_ISSUER) {
     throw new HttpError(503, 'Sign-in is not configured. Contact Taurus K9.');
   }
+  return { ...config, issuer: trustedIssuer(env), client: { client_id: env.AUTH_CLIENT_ID }, secret: env.AUTH_CLIENT_SECRET };
+}
+
+function trustedIssuer(env: Env) {
   let issuer: URL;
   try { issuer = new URL(env.AUTH_ISSUER); }
   catch { throw new HttpError(503, 'Sign-in provider configuration is invalid.'); }
@@ -52,7 +59,22 @@ function providerConfig(env: Env) {
       issuer.href !== env.AUTH_ISSUER) {
     throw new HttpError(503, 'Sign-in provider configuration is invalid.');
   }
-  return { ...config, issuer, client: { client_id: env.AUTH_CLIENT_ID }, secret: env.AUTH_CLIENT_SECRET };
+  return issuer;
+}
+
+// Auth0 ends its single-sign-on session at /v2/logout and then redirects only to a URL
+// listed in the application's Allowed Logout URLs. The return target is always the
+// public site at the configured APP_ORIGIN; no browser-supplied value is used and no
+// token is included. If the provider is not configured, only the app session ends.
+function federatedLogoutUrl(env: Env) {
+  const returnTo = `${appConfig(env).origin}/`;
+  if (!env.AUTH_CLIENT_ID) return returnTo;
+  let issuer: URL;
+  try { issuer = trustedIssuer(env); }
+  catch { return returnTo; }
+  const target = new URL('v2/logout', issuer);
+  target.search = new URLSearchParams({ client_id: env.AUTH_CLIENT_ID, returnTo }).toString();
+  return target.href;
 }
 
 export async function hash(value: string) {
@@ -114,7 +136,7 @@ export function requireCsrf(request: Request, env: Env, identity: Identity) {
   }
 }
 
-export async function startLogin(env: Env) {
+export async function startLogin(env: Env, signup = false) {
   const config = providerConfig(env);
   const server = await oauth.processDiscoveryResponse(config.issuer,
     await oauth.discoveryRequest(config.issuer, { signal: AbortSignal.timeout(10000) }));
@@ -140,9 +162,55 @@ export async function startLogin(env: Env) {
     redirect_uri: `${config.origin}/api/auth/callback`,
     state, nonce,
     code_challenge: await oauth.calculatePKCECodeChallenge(verifier),
-    code_challenge_method: 'S256'
+    code_challenge_method: 'S256',
+    // Auth0 Universal Login opens its sign-up screen; the account is still provisioned only at the callback.
+    ...(signup ? { screen_hint: 'signup' } : {})
   }).toString();
   return new Response(null, { status: 302, headers: { location: target.href, 'set-cookie': cookie(env, 'login', browser, 600) } });
+}
+
+const CLIENT_FALLBACK_NAME = 'Taurus K9 client';
+
+function safeDisplayName(value: unknown) {
+  if (typeof value !== 'string') return CLIENT_FALLBACK_NAME;
+  const chars = Array.from(value.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, ' ').replace(/\s+/g, ' ').trim());
+  while (chars.join('').length > 120) chars.pop();
+  return chars.join('').trim() || CLIENT_FALLBACK_NAME;
+}
+
+// Returns the active user for a validated issuer + subject. A genuinely new identity is
+// provisioned as a least-privileged client (user + own household + membership) in one
+// atomic batch; staff roles are never created here. Existing identities are never
+// modified, re-created or reactivated.
+async function findOrProvisionClient(env: Env, issuer: string, subject: string, name: unknown) {
+  const lookup = () => env.DB.prepare('SELECT id, active FROM users WHERE issuer = ? AND subject = ?')
+    .bind(issuer, subject).first<{ id: string; active: number }>();
+  let user = await lookup();
+  if (!user) {
+    const userId = crypto.randomUUID();
+    const householdId = crypto.randomUUID();
+    const displayName = safeDisplayName(name);
+    // Every dependent insert is conditional on this attempt's user row existing, so a
+    // concurrent callback that loses the UNIQUE(issuer, subject) race writes nothing.
+    const created = 'EXISTS (SELECT 1 FROM users WHERE id = ? AND issuer = ? AND subject = ?)';
+    await env.DB.batch([
+      env.DB.prepare(`INSERT INTO users(id, issuer, subject, display_name, active) VALUES (?, ?, ?, ?, 1)
+        ON CONFLICT(issuer, subject) DO NOTHING`).bind(userId, issuer, subject, displayName),
+      env.DB.prepare(`INSERT INTO households(id, contact_name) SELECT ?, ? WHERE ${created}`)
+        .bind(householdId, displayName, userId, issuer, subject),
+      env.DB.prepare(`INSERT INTO memberships(user_id, household_id) SELECT ?, ? WHERE ${created}`)
+        .bind(userId, householdId, userId, issuer, subject),
+      env.DB.prepare(`INSERT INTO audit_logs(id, actor_id, action, resource_id) SELECT ?, ?, ?, ? WHERE ${created}`)
+        .bind(crypto.randomUUID(), userId, 'account.self_registered', userId, userId, issuer, subject),
+      env.DB.prepare(`INSERT INTO audit_logs(id, actor_id, action, resource_id) SELECT ?, ?, ?, ? WHERE ${created}`)
+        .bind(crypto.randomUUID(), userId, 'household.created', householdId, userId, issuer, subject),
+      ...enqueueHubspot(env, householdId)
+    ]);
+    user = await lookup();
+    if (!user) throw new HttpError(503, 'Your portal account could not be created. Please try again.');
+  }
+  if (user.active !== 1) throw new HttpError(403, 'Your portal account is disabled. Contact Taurus K9.');
+  return { id: user.id };
 }
 
 export async function finishLogin(request: Request, env: Env) {
@@ -170,10 +238,8 @@ export async function finishLogin(request: Request, env: Env) {
   await oauth.validateApplicationLevelSignature(server, response, { signal: AbortSignal.timeout(10000) });
   const claims = oauth.getValidatedIdTokenClaims(tokens);
   if (!claims?.sub) throw new HttpError(400, 'Sign-in verification failed.');
-  // Identity is matched to an operator-provisioned record, never an email or provider role claim.
-  const user = await env.DB.prepare('SELECT id FROM users WHERE issuer = ? AND subject = ? AND active = 1')
-    .bind(config.issuer.href, claims.sub).first<{ id: string }>();
-  if (!user) throw new HttpError(403, 'Your portal account has not been provisioned. Contact Taurus K9.');
+  // Identity is matched only by validated issuer + subject, never an email or provider role claim.
+  const user = await findOrProvisionClient(env, config.issuer.href, claims.sub, claims.name);
   const token = oauth.generateRandomState();
   const csrf = oauth.generateRandomState();
   const previous = readCookie(request, cookieName(env, 'session'));
@@ -197,5 +263,8 @@ export async function logout(request: Request, env: Env, identity: Identity) {
     env.DB.prepare('INSERT INTO audit_logs(id, actor_id, action, resource_id) VALUES (?, ?, ?, ?)')
       .bind(crypto.randomUUID(), identity.id, 'session.revoked', identity.id)
   ]);
-  return new Response(null, { status: 204, headers: { 'set-cookie': cookie(env, 'session', '', 0) } });
+  return new Response(JSON.stringify({ redirect: federatedLogoutUrl(env) }), {
+    status: 200,
+    headers: { 'content-type': 'application/json; charset=utf-8', 'set-cookie': cookie(env, 'session', '', 0) }
+  });
 }

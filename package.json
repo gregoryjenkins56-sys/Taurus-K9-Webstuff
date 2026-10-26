@@ -7,13 +7,14 @@
   },
   "scripts": {
     "dev": "npm run build && wrangler dev",
-    "build": "node scripts/build.mjs && tsc --noEmit",
-    "lint": "eslint server/worker scripts tests/worker.test.js tests/agreement.test.js tests/contract-preview.test.js tests/fixtures/*.js tests/portal.spec.js playwright.config.js portal/js/*.js",
-    "test": "node --experimental-strip-types --test server/agreement-mapping.test.cjs tests/worker.test.js tests/agreement.test.js tests/contract-preview.test.js",
+    "build": "npm run typecheck && node scripts/build.mjs",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "lint": "eslint server/worker scripts tests/worker.test.js tests/agreement.test.js tests/contract-preview.test.js tests/contact-form.test.js tests/fixtures/*.js tests/portal.spec.js playwright.config.js portal/js/*.js",
+    "test": "node --experimental-strip-types --test server/agreement-mapping.test.cjs tests/worker.test.js tests/agreement.test.js tests/contract-preview.test.js tests/contact-form.test.js",
     "test:contracts": "node --test tests/agreement.test.js tests/contract-preview.test.js",
     "test:portal": "playwright test",
     "preview:contract": "node scripts/preview-contract.mjs",
-    "db:migrate:local": "wrangler d1 migrations apply portal-db --local",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "check": "npm run build && npm run lint && npm test"
   },
   "dependencies": {

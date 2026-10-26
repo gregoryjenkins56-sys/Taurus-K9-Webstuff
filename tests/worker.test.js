@@ -3,8 +3,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import * as oauth from 'oauth4webapi';
+import ts from 'typescript';
 import worker from '../server/worker/index.ts';
 import { cookie, hash } from '../server/worker/auth.ts';
+import { validateD1 } from '../scripts/validate-d1.mjs';
+import { enqueueHubspot, hubspotEnabled, processHubspot } from '../server/worker/hubspot.ts';
+import { addCalendarDays, localMidnight } from '../server/worker/video-validation.ts';
 
 const origin = 'http://localhost:8787';
 const issuer = 'https://identity.example.invalid/';
@@ -15,6 +19,75 @@ let sessions;
 const realFetch = globalThis.fetch;
 const now = () => Math.floor(Date.now() / 1000);
 
+test('Wrangler JSONC keeps default, preview and production D1 mappings distinct', async () => {
+  const source = await readFile(new URL('../wrangler.jsonc', import.meta.url), 'utf8');
+  const { config, error } = ts.parseConfigFileTextToJson('wrangler.jsonc', source);
+  assert.equal(error, undefined);
+  const mappings = [config, config.env.preview, config.env.production];
+  const databases = mappings.map(mapping => {
+    assert.equal(mapping.d1_databases.length, 1);
+    const database = mapping.d1_databases[0];
+    assert.equal(database.binding, 'DB');
+    assert.equal(database.migrations_dir, 'migrations');
+    assert.ok(database.database_id);
+    assert.ok(database.database_name);
+    return database;
+  });
+  assert.deepEqual(
+    databases.map(({ database_name, database_id }) => [database_name, database_id]),
+    [
+      ['taurus-k9-webstuff', '1a11389d-19cd-4777-9ed7-f397aa6ceb86'],
+      ['taurus-k9-webstuff-preview', '78379cab-5c63-4618-a8b6-f51b866ebc2f'],
+      ['taurus-k9-webstuff-production', 'a895aff3-d273-46b6-b60f-6ef4096d91cd']
+    ]
+  );
+  assert.equal(new Set(databases.map(database => database.database_id)).size, 3);
+  assert.equal(new Set(databases.map(database => database.database_name)).size, 3);
+});
+
+test('remote D1 validation rejects placeholders, defaults and live database aliases', async () => {
+  const source = await readFile(new URL('../wrangler.jsonc', import.meta.url), 'utf8');
+  const { config } = ts.parseConfigFileTextToJson('wrangler.jsonc', source);
+  assert.equal(config.build.command, 'node scripts/validate-d1.mjs');
+  for (const environment of ['preview', 'production']) {
+    assert.equal(config.env[environment].build.command, `node scripts/validate-d1.mjs ${environment}`);
+    config.env[environment].d1_databases[0].database_id = `REPLACE_WITH_${environment.toUpperCase()}_D1_DATABASE_ID`;
+  }
+  for (const environment of ['preview', 'production']) {
+    assert.throws(() => validateD1(config, environment), /Provision a verified/);
+  }
+  for (const environment of [undefined, '', 'default', 'staging']) {
+    assert.throws(() => validateD1(config, environment), /require --env/);
+  }
+  // Synthetic UUIDs are test-only; they are not remote database identities.
+  const previewId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+  const productionId = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+  config.env.preview.d1_databases[0].database_id = previewId;
+  assert.doesNotThrow(() => validateD1(config, 'preview'));
+  assert.throws(() => validateD1(config, 'production'), /Provision a verified/);
+  config.env.production.d1_databases[0].database_id = productionId;
+  assert.doesNotThrow(() => validateD1(config, 'production'));
+  for (const environment of ['preview', 'production']) {
+    const mapping = config.env[environment].d1_databases[0];
+    const original = structuredClone(mapping);
+    for (const value of ['', '00000000-0000-0000-0000-000000000000', 'not-a-uuid']) {
+      mapping.database_id = value;
+      assert.throws(() => validateD1(config, environment));
+    }
+    mapping.database_id = config.d1_databases[0].database_id.toUpperCase();
+    assert.throws(() => validateD1(config, environment), /must be distinct/);
+    Object.assign(mapping, original);
+    mapping.database_name = config.d1_databases[0].database_name;
+    assert.throws(() => validateD1(config, environment), /must be distinct/);
+    Object.assign(mapping, original);
+    mapping.binding = 'OTHER';
+    assert.throws(() => validateD1(config, environment), /exactly one DB/);
+    Object.assign(mapping, original);
+  }
+  config.env.production.d1_databases[0].database_id = previewId.toUpperCase();
+  assert.throws(() => validateD1(config, 'production'), /must be distinct/);
+});
+
 before(async () => {
   mf = new Miniflare(convertV4MiniflareOptions({
     modules: true,
@@ -23,10 +96,22 @@ before(async () => {
     d1Databases: ['DB']
   }));
   db = await mf.getD1Database('DB');
-  for (const file of ['0001_foundation.sql']) {
+  for (const file of ['0001_foundation.sql', '0002_hubspot_sync.sql', '0003_training_videos.sql']) {
+    if (file === '0003_training_videos.sql') {
+      await db.prepare("INSERT INTO households(id,contact_name) VALUES ('legacy-house','Legacy fixture')").run();
+      await db.prepare("INSERT INTO dogs(id,household_id,name) VALUES ('legacy-dog','legacy-house','Legacy fixture')").run();
+      await db.prepare("INSERT INTO training_programs(id,name,price_minor,deposit_minor,currency) VALUES ('legacy-program','Legacy',0,0,'USD')").run();
+      await db.prepare("INSERT INTO enrollments(id,dog_id,program_id) VALUES ('legacy-enrollment','legacy-dog','legacy-program')").run();
+    }
     const schema = await readFile(new URL(`../migrations/${file}`, import.meta.url), 'utf8');
-    for (const sql of schema.split(';').map(sql => sql.trim()).filter(Boolean)) await db.prepare(sql).run();
+    const statements = schema.replace(/--[^\n]*/g, '').match(/\s*CREATE TRIGGER[\s\S]*?END;|[^;]+;/g) || [];
+    for (const sql of statements) await db.prepare(sql).run();
   }
+  const legacy = await db.prepare("SELECT * FROM enrollments WHERE id='legacy-enrollment'").first();
+  assert.equal(legacy.start_date, null);
+  assert.equal(legacy.graduation_date, null);
+  assert.equal(legacy.access_timezone, 'America/Chicago');
+  assert.match(legacy.updated_at, /^\d{4}-\d{2}-\d{2}T.*Z$/);
   env = {
     DB: db,
     ASSETS: { fetch: async request => new Response(new URL(request.url).pathname.startsWith('/portal/') ? 'protected portal' : 'public site') },
@@ -37,7 +122,7 @@ before(async () => {
 after(async () => { globalThis.fetch = realFetch; await mf?.dispose(); });
 beforeEach(async () => {
   globalThis.fetch = realFetch;
-  for (const table of ['audit_logs', 'sessions', 'auth_transactions', 'rate_limits', 'enrollments', 'training_programs', 'dogs', 'staff_roles', 'memberships', 'households', 'users']) {
+  for (const table of ['video_audit_events', 'video_entitlement_payments', 'training_session_recordings', 'video_entitlements', 'hubspot_sync_jobs', 'audit_logs', 'sessions', 'auth_transactions', 'rate_limits', 'enrollments', 'training_programs', 'dogs', 'staff_roles', 'memberships', 'households', 'users']) {
     await db.prepare(`DELETE FROM ${table}`).run();
   }
   sessions = {};
@@ -70,6 +155,290 @@ function mutation(path, user, body, method = 'POST', headers = {}) {
     headers: { origin, 'x-csrf-token': sessions[user].csrf, ...headers } });
 }
 
+async function videoEnrollment() {
+  const today = new Date().toISOString().slice(0, 10);
+  await db.prepare("INSERT INTO training_programs(id,name,price_minor,deposit_minor,currency) VALUES ('program','Training',10000,0,'USD')").run();
+  for (const suffix of ['a', 'b']) {
+    await db.prepare('INSERT INTO enrollments(id,dog_id,program_id,start_date,graduation_date) VALUES (?,?,?,?,?)')
+      .bind(`enrollment-${suffix}`, `dog-${suffix}`, 'program', addCalendarDays(today, -1), today).run();
+  }
+  return {
+    dogId: 'dog-a', enrollmentId: 'enrollment-a', weeksPurchased: 1,
+    amountChargedMinor: 9900, coverageStartAt: `${today}T00:00:00.000Z`, status: 'active'
+  };
+}
+
+async function videoFixture() {
+  const payload = await videoEnrollment();
+  const entitlementResponse = await mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { 'idempotency-key': 'fixture-entitlement' });
+  assert.equal(entitlementResponse.status, 201, JSON.stringify(await entitlementResponse.clone().json()));
+  const { entitlement } = await entitlementResponse.json();
+  const recordingResponse = await mutation('/api/admin/training-recordings', 'admin', {
+    dogId: 'dog-a', enrollmentId: 'enrollment-a', title: 'Formal session',
+    sessionAt: new Date().toISOString(), trainingFocus: 'Recall', clientNotes: 'Practice daily'
+  }, 'POST', { 'idempotency-key': 'fixture-recording' });
+  assert.equal(recordingResponse.status, 201, JSON.stringify(await recordingResponse.clone().json()));
+  const { recording } = await recordingResponse.json();
+  // Processing is a trusted fixture only; clients/admin requests cannot assert readiness.
+  await db.prepare("UPDATE training_session_recordings SET processing_status='ready' WHERE id=?").bind(recording.id).run();
+  assert.equal((await mutation(`/api/admin/training-recordings/${recording.id}`, 'admin', { publicationStatus: 'published' }, 'PATCH')).status, 200);
+  return { entitlement, recording, payload };
+}
+
+test('video endpoints require authentication and admin-only mutations reject clients and reviewers', async () => {
+  for (const path of ['/api/videos/dogs', '/api/videos?dogId=dog-a', '/api/videos/fake/playback-token']) {
+    assert.equal((await request(path, null, path.endsWith('token') ? { method: 'POST' } : {})).status, 401);
+  }
+  for (const user of ['client-a', 'reviewer']) {
+    for (const [path, method] of [
+      ['/api/admin/video-entitlements', 'POST'], ['/api/admin/video-entitlements/fake', 'PATCH'],
+      ['/api/admin/video-entitlements?dogId=dog-a', 'GET'],
+      ['/api/admin/training-recordings', 'POST'], ['/api/admin/training-recordings/fake', 'PATCH'],
+      ['/api/admin/training-recordings/fake/reassign', 'POST'], ['/api/admin/training-recordings/fake', 'DELETE']
+    ]) {
+      const response = method === 'GET' ? await request(path, user) : await mutation(path, user, {}, method);
+      assert.equal(response.status, 403, `${user} ${method} ${path}`);
+    }
+  }
+});
+
+test('video library and playback enforce household ownership, enrollment and coverage A', async () => {
+  const { recording, entitlement } = await videoFixture();
+  const playback = `/api/videos/${recording.id}/playback-token`;
+  assert.equal((await mutation(playback, 'client-a', {})).status, 200);
+  assert.equal((await mutation(playback, 'client-b', {})).status, 404);
+  assert.equal((await request('/api/videos?dogId=dog-a', 'client-b')).status, 404);
+  assert.equal((await mutation('/api/videos/fabricated/playback-token', 'client-a', {})).status, 404);
+  assert.equal((await mutation(playback, 'client-b', { dogId: 'dog-b', userId: 'client-a' })).status, 400);
+  const dogs = await (await request('/api/videos/dogs', 'client-a')).json();
+  assert.deepEqual(dogs.dogs.map(dog => dog.id), ['dog-a']);
+  const library = await (await request('/api/videos?dogId=dog-a&focus=Recall', 'client-a')).json();
+  assert.equal(library.recordings.length, 1);
+  for (const field of ['stream_video_id', 'created_by_user_id', 'retention_hold', 'request_fingerprint', 'idempotency_key']) {
+    assert.equal(field in library.recordings[0], false);
+  }
+  await db.prepare('INSERT INTO memberships(user_id,household_id) VALUES (?,?)').bind('client-b', 'house-a').run();
+  assert.equal((await mutation(playback, 'client-b', {})).status, 200);
+  await db.prepare('UPDATE training_session_recordings SET session_at=? WHERE id=?').bind(entitlement.coverage_end_at, recording.id).run();
+  assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  assert.equal((await (await request('/api/videos?dogId=dog-a', 'client-a')).json()).recordings.length, 0);
+  await db.prepare('UPDATE training_session_recordings SET session_at=? WHERE id=?').bind(entitlement.coverage_start_at, recording.id).run();
+  assert.equal((await mutation(playback, 'client-a', {})).status, 200);
+  await db.prepare("UPDATE video_entitlements SET enrollment_id='enrollment-b',dog_id='dog-b' WHERE id=?").bind(entitlement.id).run()
+    .then(() => assert.fail('Payment/entitlement composite foreign key must prevent inconsistent changes'), () => {});
+});
+
+test('video playback rejects drafts, processing, unavailable assets and inactive access at read time', async () => {
+  const { recording, entitlement } = await videoFixture();
+  const playback = `/api/videos/${recording.id}/playback-token`;
+  for (const status of ['draft', 'unpublished', 'deleted']) {
+    await db.prepare('UPDATE training_session_recordings SET publication_status=? WHERE id=?').bind(status, recording.id).run();
+    assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  }
+  await db.prepare("UPDATE training_session_recordings SET publication_status='published' WHERE id=?").bind(recording.id).run();
+  for (const status of ['upload_pending', 'processing', 'error', 'missing_remote', 'deleted_remote']) {
+    await db.prepare('UPDATE training_session_recordings SET processing_status=? WHERE id=?').bind(status, recording.id).run();
+    assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  }
+  await db.prepare("UPDATE training_session_recordings SET processing_status='ready' WHERE id=?").bind(recording.id).run();
+  for (const status of ['pending', 'suspended', 'revoked', 'expired']) {
+    await db.prepare('UPDATE video_entitlements SET status=? WHERE id=?').bind(status, entitlement.id).run();
+    assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  }
+  await db.prepare("UPDATE video_entitlements SET status='active',access_expires_at=? WHERE id=?").bind(new Date(Date.now() - 1).toISOString(), entitlement.id).run();
+  assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  await db.prepare('UPDATE video_entitlements SET access_expires_at=?,provisional_expires_at=? WHERE id=?')
+    .bind(entitlement.access_expires_at, new Date(Date.now() - 1).toISOString(), entitlement.id).run();
+  assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+});
+
+test('video reassignment immediately removes former owners and retention hold blocks soft deletion', async () => {
+  const { recording } = await videoFixture();
+  const adminPath = `/api/admin/training-recordings/${recording.id}`;
+  const playback = `/api/videos/${recording.id}/playback-token`;
+  assert.equal((await mutation(`${adminPath}/reassign`, 'admin', { dogId: 'dog-b', enrollmentId: 'enrollment-a' })).status, 400);
+  assert.equal((await mutation(`${adminPath}/reassign`, 'admin', { dogId: 'dog-b', enrollmentId: 'enrollment-b' })).status, 200);
+  assert.equal((await mutation(playback, 'client-a', {})).status, 404);
+  const event = await db.prepare("SELECT metadata_json FROM video_audit_events WHERE entity_id=? AND action LIKE '%reassign%'").bind(recording.id).first();
+  assert.ok(event);
+  assert.match(event.metadata_json, /dog-a/);
+  assert.match(event.metadata_json, /dog-b/);
+  assert.equal((await mutation(adminPath, 'admin', { retentionHold: true }, 'PATCH')).status, 200);
+  assert.equal((await mutation(adminPath, 'admin', { confirm: true }, 'DELETE')).status, 409);
+  assert.equal((await mutation(adminPath, 'admin', { retentionHold: false }, 'PATCH')).status, 200);
+  assert.equal((await mutation(adminPath, 'admin', {}, 'DELETE')).status, 400);
+  assert.equal((await mutation(adminPath, 'admin', { confirm: true }, 'DELETE')).status, 200);
+  const deleted = await db.prepare('SELECT * FROM training_session_recordings WHERE id=?').bind(recording.id).first();
+  assert.equal(deleted.publication_status, 'deleted');
+  assert.equal((await mutation(adminPath, 'admin', { publicationStatus: 'published' }, 'PATCH')).status, 409);
+});
+
+test('video entitlement creation is idempotent with atomic financial snapshots and safe conflicts', async () => {
+  const payload = await videoEnrollment();
+  const submit = body => mutation('/api/admin/video-entitlements', 'admin', body, 'POST', { 'idempotency-key': 'purchase-one' });
+  const created = await submit(payload);
+  assert.equal(created.status, 201);
+  const original = (await created.json()).entitlement;
+  assert.equal(original.weekly_price_minor_snapshot, 9900);
+  assert.equal(original.currency, 'USD');
+  assert.equal(original.access_expires_at, localMidnight(addCalendarDays(payload.coverageStartAt.slice(0, 10), 61), 'America/Chicago'));
+  await db.prepare("UPDATE app_settings SET value='10000' WHERE key='training_video_weekly_price_minor'").run();
+  try {
+    const retry = await submit({ ...payload });
+    assert.equal(retry.status, 200);
+    assert.equal((await retry.json()).entitlement.id, original.id);
+    assert.equal((await submit({ ...payload, weeksPurchased: 2 })).status, 409);
+    assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_entitlements').first()).count, 1);
+    const payment = await db.prepare('SELECT * FROM video_entitlement_payments').first();
+    assert.equal(payment.entitlement_id, original.id);
+    assert.equal(payment.weekly_price_minor_snapshot, 9900);
+    assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_entitlement_payments').first()).count, 1);
+    assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_audit_events').first()).count, 1);
+  } finally {
+    await db.prepare("UPDATE app_settings SET value='9900' WHERE key='training_video_weekly_price_minor'").run();
+  }
+});
+
+test('video create validates amounts, dates, idempotency keys and dog/enrollment relationships', async () => {
+  const payload = await videoEnrollment();
+  for (const body of [
+    { ...payload, weeksPurchased: 0 }, { ...payload, weeksPurchased: 1.5 },
+    { ...payload, amountChargedMinor: -1 }, { ...payload, amountChargedMinor: '9900' },
+    { ...payload, enrollmentId: 'enrollment-b' }, { ...payload, coverageStartAt: '2026-02-30T00:00:00Z' },
+    { ...payload, coverageStartAt: '2026-01-01' }, { ...payload, coverageEndAt: payload.coverageStartAt },
+    { ...payload, role: 'admin' }
+  ]) {
+    assert.equal((await mutation('/api/admin/video-entitlements', 'admin', body, 'POST', { 'idempotency-key': crypto.randomUUID() })).status, 400);
+  }
+  assert.equal((await mutation('/api/admin/video-entitlements', 'admin', payload)).status, 400);
+  assert.equal((await request('/api/admin/video-entitlements', 'admin', { method: 'POST', body: JSON.stringify(payload) })).status, 403);
+  assert.equal((await mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { origin: 'https://attacker.example.invalid' })).status, 403);
+});
+
+test('video pending activation requires provisional expiry without graduation and audits transitions', async () => {
+  const payload = await videoEnrollment();
+  await db.prepare("UPDATE enrollments SET graduation_date=NULL WHERE id='enrollment-a'").run();
+  const provisionalExpiresAt = new Date(Date.now() + 30 * 86400000).toISOString();
+  assert.equal((await mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { 'idempotency-key': 'missing-provisional' })).status, 400);
+  const pending = await mutation('/api/admin/video-entitlements', 'admin', { ...payload, status: 'pending', provisionalExpiresAt }, 'POST', { 'idempotency-key': 'pending' });
+  assert.equal(pending.status, 201);
+  const { entitlement } = await pending.json();
+  const path = `/api/admin/video-entitlements/${entitlement.id}`;
+  for (const status of ['active', 'suspended', 'active', 'revoked']) {
+    assert.equal((await mutation(path, 'admin', { status }, 'PATCH')).status, 200);
+  }
+  assert.equal((await mutation(path, 'admin', { status: 'active' }, 'PATCH')).status, 409);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_entitlement_payments').first()).count, 1);
+  assert.equal((await db.prepare("SELECT COUNT(*) AS count FROM video_audit_events WHERE entity_type='entitlement'").first()).count, 5);
+  const explicitOverride = { ...payload, accessExpiresAt: provisionalExpiresAt };
+  assert.equal((await mutation('/api/admin/video-entitlements', 'admin', explicitOverride, 'POST', { 'idempotency-key': 'override-no-provisional' })).status, 400);
+  const unactivated = await mutation('/api/admin/video-entitlements', 'admin', { ...explicitOverride, status: 'pending' }, 'POST', { 'idempotency-key': 'pending-no-provisional' });
+  assert.equal(unactivated.status, 201);
+  const pendingId = (await unactivated.json()).entitlement.id;
+  assert.equal((await mutation(`/api/admin/video-entitlements/${pendingId}`, 'admin', { status: 'active' }, 'PATCH')).status, 400);
+  assert.equal((await mutation(`/api/admin/video-entitlements/${pendingId}`, 'admin', { status: 'active', provisionalExpiresAt }, 'PATCH')).status, 200);
+});
+
+test('video publishing requires trusted readiness and recording creation retries are safe', async () => {
+  await videoEnrollment();
+  const body = { title: 'Draft', dogId: 'dog-a', enrollmentId: 'enrollment-a', sessionAt: new Date().toISOString() };
+  const headers = { 'idempotency-key': 'recording-retry' };
+  const created = await mutation('/api/admin/training-recordings', 'admin', body, 'POST', headers);
+  assert.equal(created.status, 201);
+  const { recording } = await created.json();
+  assert.equal((await mutation('/api/admin/training-recordings', 'admin', body, 'POST', headers)).status, 200);
+  assert.equal((await mutation('/api/admin/training-recordings', 'admin', { ...body, title: 'Other' }, 'POST', headers)).status, 409);
+  assert.equal((await mutation(`/api/admin/training-recordings/${recording.id}`, 'admin', { publicationStatus: 'published' }, 'PATCH')).status, 409);
+  assert.equal((await mutation(`/api/admin/training-recordings/${recording.id}`, 'admin', { processingStatus: 'ready' }, 'PATCH')).status, 400);
+});
+
+test('video expiration uses local end-of-day plus 60 calendar days across DST', () => {
+  // Expiration is EXCLUSIVE midnight after the 60th post-graduation calendar day.
+  assert.equal(localMidnight(addCalendarDays('2026-01-15', 61), 'America/New_York'), '2026-03-17T04:00:00.000Z');
+  assert.equal(localMidnight(addCalendarDays('2026-09-15', 61), 'America/New_York'), '2026-11-15T05:00:00.000Z');
+  assert.equal(localMidnight(addCalendarDays('2026-01-15', 61), 'UTC'), '2026-03-17T00:00:00.000Z');
+  assert.throws(() => localMidnight('2026-02-30', 'America/New_York'));
+  assert.throws(() => localMidnight('2026-01-01', 'Invalid/Zone'));
+});
+
+test('video access boundaries are inclusive at start and exclusive at expiration', async () => {
+  const { recording, entitlement } = await videoFixture();
+  const path = `/api/videos/${recording.id}/playback-token`;
+  const RealDate = globalThis.Date;
+  const boundary = RealDate.now() + 1000;
+  let clock = boundary;
+  await db.prepare('UPDATE video_entitlements SET access_starts_at=?,access_expires_at=? WHERE id=?')
+    .bind(new RealDate(boundary).toISOString(), new RealDate(boundary + 1000).toISOString(), entitlement.id).run();
+  globalThis.Date = class extends RealDate {
+    constructor(...args) { super(...(args.length ? args : [clock])); }
+    static now() { return clock; }
+  };
+  try {
+    clock = boundary - 1;
+    assert.equal((await mutation(path, 'client-a', {})).status, 404);
+    clock = boundary;
+    const allowed = await mutation(path, 'client-a', {});
+    assert.equal(allowed.status, 200);
+    assert.equal((await allowed.json()).authorized, true);
+    clock = boundary + 999;
+    assert.equal((await mutation(path, 'client-a', {})).status, 200);
+    clock = boundary + 1000;
+    assert.equal((await mutation(path, 'client-a', {})).status, 404);
+  } finally {
+    globalThis.Date = RealDate;
+  }
+});
+
+test('video enrollment isolation and date filters cannot broaden authorized coverage', async () => {
+  const { recording } = await videoFixture();
+  assert.equal((await (await request('/api/videos?dogId=dog-a&focus=Other', 'client-a')).json()).recordings.length, 0);
+  assert.equal((await (await request(`/api/videos?dogId=dog-a&from=${encodeURIComponent(new Date(Date.now() + 86400000).toISOString())}`, 'client-a')).json()).recordings.length, 0);
+  assert.equal((await request('/api/videos?dogId=dog-a&to=not-a-date', 'client-a')).status, 400);
+  await db.prepare("INSERT INTO enrollments(id,dog_id,program_id) VALUES ('other-enrollment','dog-a','program')").run();
+  assert.equal((await mutation(`/api/admin/training-recordings/${recording.id}/reassign`, 'admin', {
+    dogId: 'dog-a', enrollmentId: 'other-enrollment'
+  })).status, 200);
+  assert.equal((await mutation(`/api/videos/${recording.id}/playback-token`, 'client-a', {})).status, 404);
+});
+
+test('video entitlement batch rolls back entitlement and payment if audit insert fails', async () => {
+  const payload = await videoEnrollment();
+  await db.prepare("CREATE TRIGGER reject_video_audit BEFORE INSERT ON video_audit_events BEGIN SELECT RAISE(ABORT, 'test audit failure'); END").run();
+  try {
+    const response = await mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { 'idempotency-key': 'atomic-failure' });
+    assert.equal(response.status, 503);
+    for (const table of ['video_entitlements', 'video_entitlement_payments', 'video_audit_events']) {
+      assert.equal((await db.prepare(`SELECT COUNT(*) AS count FROM ${table}`).first()).count, 0);
+    }
+  } finally {
+    await db.prepare('DROP TRIGGER reject_video_audit').run();
+  }
+});
+
+test('video concurrent retries create one entitlement, payment and audit event', async () => {
+  const payload = await videoEnrollment();
+  const responses = await Promise.all([1, 2].map(() =>
+    mutation('/api/admin/video-entitlements', 'admin', payload, 'POST', { 'idempotency-key': 'concurrent-create' })));
+  assert.deepEqual(responses.map(response => response.status).sort(), [200, 201]);
+  const results = await Promise.all(responses.map(response => response.json()));
+  assert.equal(results[0].entitlement.id, results[1].entitlement.id);
+  for (const table of ['video_entitlements', 'video_entitlement_payments', 'video_audit_events']) {
+    assert.equal((await db.prepare(`SELECT COUNT(*) AS count FROM ${table}`).first()).count, 1);
+  }
+});
+
+test('video stale administrative edits conflict without duplicate audit events', async () => {
+  const { recording } = await videoFixture();
+  const path = `/api/admin/training-recordings/${recording.id}`;
+  const current = await db.prepare('SELECT version FROM training_session_recordings WHERE id=?').bind(recording.id).first();
+  assert.equal((await mutation(path, 'admin', { retentionHold: true, version: current.version }, 'PATCH')).status, 200);
+  const events = (await db.prepare('SELECT COUNT(*) AS count FROM video_audit_events').first()).count;
+  assert.equal((await mutation(path, 'admin', { retentionHold: false, version: current.version }, 'PATCH')).status, 409);
+  assert.equal((await mutation(path, 'admin', { confirm: true, version: current.version }, 'DELETE')).status, 409);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS count FROM video_audit_events').first()).count, events);
+  assert.equal((await db.prepare('SELECT retention_hold FROM training_session_recordings WHERE id=?').bind(recording.id).first()).retention_hold, 1);
+});
+
 test('public site is preserved while portal, portal assets, and staff URLs require a session', async () => {
   assert.equal((await request('/')).status, 200);
   for (const path of ['/portal/', '/portal/index.html', '/portal/js/client.js', '/portal/css/adobe.css', '/portal/admin', '/admin', '/admin/reviews']) {
@@ -79,6 +448,25 @@ test('public site is preserved while portal, portal assets, and staff URLs requi
     assert.equal(response.headers.get('cache-control'), 'no-store');
   }
   assert.equal((await request('/%70ortal/index.html')).status, 400);
+});
+test('portal branding uses the homepage logo with matching restrictive CSP policies', async () => {
+  const logo = 'https://242184033.fs1.hubspotusercontent-na2.net/hubfs/242184033/Logo/Taurus%20K9%20NBG.png';
+  const homepage = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  assert.ok(homepage.includes(`<img src="${logo}"`));
+  const html = await readFile(new URL('../portal/index.html', import.meta.url), 'utf8');
+  const response = await request('/portal/', 'client-a', {}, {
+    ...env,
+    ASSETS: { fetch: async () => new Response(html, { headers: { 'content-type': 'text/html' } }) }
+  });
+  assert.equal(response.status, 200);
+  const body = await response.text();
+  assert.ok(body.includes(`<link rel="icon" type="image/png" href="${logo}">`));
+  assert.ok(body.includes(`<link rel="apple-touch-icon" href="${logo}">`));
+  assert.ok(body.includes(`<img src="${logo}" alt="" width="64" height="64">`));
+  assert.match(body, /<span class="brand-mark" aria-hidden="true">\s*<img /);
+  const policy = body.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1];
+  assert.equal(policy, `default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' ${logo}; connect-src 'self'; base-uri 'none'; form-action 'self'; object-src 'none'`);
+  assert.equal(response.headers.get('content-security-policy'), `${policy}; frame-ancestors 'none'`);
 });
 test('unauthenticated and fabricated sessions cannot access protected endpoints', async () => {
   for (const path of ['/api/me', '/api/households/house-a/dogs', '/api/admin/clients', '/api/records']) {
@@ -157,10 +545,55 @@ test('admin and reviewer capabilities are separate and checked on every request'
 });
 test('logout requires CSRF and revokes the actual server-side session', async () => {
   assert.equal((await request('/api/auth/logout', 'client-a', { method: 'POST' })).status, 403);
+  assert.equal((await request('/api/auth/logout', 'client-a')).status, 404);
   const response = await mutation('/api/auth/logout', 'client-a', {});
-  assert.equal(response.status, 204);
-  assert.match(response.headers.get('set-cookie'), /Max-Age=0/);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.match(response.headers.get('set-cookie'), /^tk9_session=; Path=\/; HttpOnly; SameSite=Lax; Max-Age=0$/);
+  assert.equal((await db.prepare("SELECT count(*) AS n FROM sessions WHERE user_id = 'client-a'").first()).n, 0);
+  assert.equal((await db.prepare("SELECT count(*) AS n FROM audit_logs WHERE actor_id = 'client-a' AND action = 'session.revoked'").first()).n, 1);
   assert.equal((await request('/api/me', 'client-a')).status, 401);
+  assert.equal((await mutation('/api/auth/logout', 'client-a', {})).status, 401);
+  const portal = await request('/portal/', 'client-a');
+  assert.equal(portal.status, 302);
+  assert.equal(portal.headers.get('location'), '/api/auth/login');
+  assert.equal((await request('/api/me', 'client-b')).status, 200);
+});
+test('logout returns a server-built Auth0 logout URL that only returns to APP_ORIGIN', async () => {
+  const response = await request('/api/auth/logout?returnTo=https://attacker.example.invalid/&redirect=//attacker.example.invalid', 'client-a', {
+    method: 'POST', body: JSON.stringify({ returnTo: 'https://attacker.example.invalid/' }),
+    headers: { origin, 'x-csrf-token': sessions['client-a'].csrf, referer: 'https://attacker.example.invalid/' }
+  });
+  assert.equal(response.status, 200);
+  const { redirect } = await response.json();
+  const target = new URL(redirect);
+  assert.equal(`${target.origin}${target.pathname}`, `${issuer}v2/logout`);
+  assert.deepEqual([...target.searchParams.keys()].sort(), ['client_id', 'returnTo']);
+  assert.equal(target.searchParams.get('client_id'), 'test-client');
+  assert.equal(target.searchParams.get('returnTo'), `${origin}/`);
+  assert.doesNotMatch(redirect, /attacker|secret|token/i);
+  assert.equal((await request('/api/me', 'client-a')).status, 401);
+});
+test('logout uses the HTTPS deployed origin and falls back to the public site without provider config', async () => {
+  const deployed = 'https://portal.example.invalid';
+  const bindings = { ...env, APP_ENV: 'production', APP_ORIGIN: deployed };
+  const logout = (user, overrides = {}) => worker.fetch(new Request(`${deployed}/api/auth/logout`, {
+    method: 'POST', headers: { origin: deployed, 'x-csrf-token': sessions[user].csrf,
+      cookie: `__Host-tk9_session=${sessions[user].token}`, 'CF-Connecting-IP': '192.0.2.1' }
+  }), { ...bindings, ...overrides });
+  const response = await logout('client-a');
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('set-cookie'), /^__Host-tk9_session=; .*Max-Age=0; Secure$/);
+  const target = new URL((await response.json()).redirect);
+  assert.equal(target.searchParams.get('returnTo'), `${deployed}/`);
+  const fallbacks = [['client-b', { AUTH_CLIENT_ID: '' }], ['reviewer', { AUTH_ISSUER: '' }],
+    ['admin', { AUTH_ISSUER: 'http://identity.example.invalid/' }]];
+  for (const [user, overrides] of fallbacks) {
+    const fallback = await logout(user, overrides);
+    assert.equal(fallback.status, 200);
+    assert.deepEqual(await fallback.json(), { redirect: `${deployed}/` });
+    assert.equal((await db.prepare('SELECT count(*) AS n FROM sessions WHERE user_id = ?').bind(user).first()).n, 0);
+  }
 });
 test('unconfigured integrations never return demo data or successful operations', async () => {
   for (const path of ['/api/records', '/api/agreements', '/api/payments', '/api/documents']) {
@@ -172,13 +605,19 @@ test('unconfigured integrations never return demo data or successful operations'
   assert.match((await response.json()).error, /not configured/);
 });
 test('rate limits are database-backed, and security headers prevent protected caching/framing', async () => {
-  let last;
-  for (let i = 0; i < 121; i++) last = await request('/api/me', 'client-a');
-  assert.equal(last.status, 429);
-  assert.equal(last.headers.get('retry-after'), '60');
-  assert.equal(last.headers.get('cache-control'), 'no-store');
-  assert.equal(last.headers.get('x-frame-options'), 'DENY');
-  assert.match(last.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+  const originalNow = Date.now;
+  Date.now = () => 1_800_000_000_000;
+  try {
+    let last;
+    for (let i = 0; i < 121; i++) last = await request('/api/me', 'client-a');
+    assert.equal(last.status, 429);
+    assert.equal(last.headers.get('retry-after'), '60');
+    assert.equal(last.headers.get('cache-control'), 'no-store');
+    assert.equal(last.headers.get('x-frame-options'), 'DENY');
+    assert.match(last.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+  } finally {
+    Date.now = originalNow;
+  }
 });
 test('production session cookies require HTTPS and no configuration can enable a login bypass', async () => {
   assert.match(cookie({ ...env, APP_ENV: 'production', APP_ORIGIN: 'https://portal.example.invalid' }, 'session', 'value', 10), /^__Host-tk9_session=.*Secure$/);
@@ -186,10 +625,10 @@ test('production session cookies require HTTPS and no configuration can enable a
   assert.equal((await request('/api/me', null, {}, { ...env, APP_ENV: 'preview' })).status, 503);
 });
 
-async function provider({ badSignature = false, subject = 'subject-client-a', nonceOverride, claimsOverride = {} } = {}) {
+async function provider({ badSignature = false, subject = 'subject-client-a', nonceOverride, claimsOverride = {}, count = 1, bindings = env } = {}) {
   const pair = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify']);
   const jwk = { ...await crypto.subtle.exportKey('jwk', pair.publicKey), kid: crypto.randomUUID(), alg: 'RS256', use: 'sig' };
-  let login;
+  const logins = [];
   globalThis.fetch = async (url, options) => {
     const target = new URL(url instanceof Request ? url.url : url);
     if (target.hostname !== 'identity.example.invalid') throw new Error('Unexpected external test request');
@@ -201,7 +640,9 @@ async function provider({ badSignature = false, subject = 'subject-client-a', no
     if (target.pathname === '/jwks') return Response.json({ keys: [jwk] });
     if (target.pathname === '/token') {
       const params = new URLSearchParams(options.body);
-      assert.equal(await oauth.calculatePKCECodeChallenge(params.get('code_verifier')), login.searchParams.get('code_challenge'));
+      const challenge = await oauth.calculatePKCECodeChallenge(params.get('code_verifier'));
+      const login = logins.find(candidate => candidate.searchParams.get('code_challenge') === challenge);
+      assert.ok(login);
       assert.equal(params.get('client_secret'), 'test-only-secret');
       const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url');
       const payload = `${encode({ alg: 'RS256', kid: jwk.kid })}.${encode({
@@ -215,12 +656,261 @@ async function provider({ badSignature = false, subject = 'subject-client-a', no
     }
     throw new Error('Unexpected provider endpoint');
   };
-  const response = await request('/api/auth/login');
-  assert.equal(response.status, 302);
-  login = new URL(response.headers.get('location'));
-  const browserCookie = response.headers.get('set-cookie').split(';')[0];
-  return { login, browserCookie, callback: `/api/auth/callback?code=test-code&state=${login.searchParams.get('state')}` };
+  const flows = [];
+  for (let i = 0; i < count; i++) {
+    const response = await worker.fetch(new Request(`${bindings.APP_ORIGIN}/api/auth/login`, {
+      headers: { 'CF-Connecting-IP': '192.0.2.1' }
+    }), bindings);
+    assert.equal(response.status, 302);
+    const login = new URL(response.headers.get('location'));
+    logins.push(login);
+    const browserCookie = response.headers.get('set-cookie').split(';')[0];
+    flows.push({ login, browserCookie, callback: `/api/auth/callback?code=test-code&state=${login.searchParams.get('state')}` });
+  }
+  return { ...flows[0], flows };
 }
+async function complete(flow, bindings = env) {
+  return request(flow.callback, null, { headers: { cookie: flow.browserCookie } }, bindings);
+}
+function sessionFrom(response) {
+  return response.headers.getSetCookie().find(value => value.startsWith('tk9_session=')).split(';')[0];
+}
+async function counts() {
+  const row = await db.prepare(`SELECT (SELECT count(*) FROM users) AS users, (SELECT count(*) FROM households) AS households,
+    (SELECT count(*) FROM memberships) AS memberships, (SELECT count(*) FROM staff_roles) AS roles,
+    (SELECT count(*) FROM sessions) AS sessions`).first();
+  return { ...row };
+}
+
+const hubspotPath = '/api/admin/integrations/hubspot';
+function previewBindings(overrides = {}) {
+  return { ...env, APP_ENV: 'preview', APP_ORIGIN: 'https://preview.example.invalid',
+    HUBSPOT_SYNC_ENABLED: 'true', HUBSPOT_ACCESS_TOKEN: 'synthetic-test-value', ...overrides };
+}
+function previewRequest(path, user, options = {}, bindings = previewBindings()) {
+  const headers = new Headers(options.headers);
+  headers.set('CF-Connecting-IP', '192.0.2.1');
+  if (user) headers.set('cookie', `__Host-tk9_session=${sessions[user].token}`);
+  if (options.method === 'POST' || options.method === 'PATCH') {
+    headers.set('origin', bindings.APP_ORIGIN);
+    headers.set('content-type', 'application/json');
+    if (user && !headers.has('x-csrf-token')) headers.set('x-csrf-token', sessions[user].csrf);
+  }
+  return worker.fetch(new Request(`${bindings.APP_ORIGIN}${path}`, { ...options, headers }), bindings);
+}
+function previewUpdate(body = { contactName: 'Preview Client', phone: '555-0100', city: 'Rockport' }, bindings) {
+  return previewRequest('/api/households/house-a', 'client-a', { method: 'PATCH', body: JSON.stringify(body) }, bindings);
+}
+async function syncJob() {
+  return db.prepare("SELECT * FROM hubspot_sync_jobs WHERE household_id = 'house-a'").first();
+}
+function successfulHubspot() {
+  return Response.json({ status: 'COMPLETE', results: [{ id: '12345' }] });
+}
+
+test('HubSpot preview signup enqueues atomically and repeat issuer+subject login does not duplicate jobs', async () => {
+  const bindings = previewBindings();
+  const { flows } = await provider({ subject: 'synthetic-hubspot-signup', count: 2, bindings,
+    claimsOverride: { name: 'Preview Signup', email: 'mutable@example.invalid' } });
+  for (const flow of flows) {
+    const response = await previewRequest(flow.callback, null, { headers: { cookie: flow.browserCookie } }, bindings);
+    assert.equal(response.status, 302);
+  }
+  const { results } = await db.prepare('SELECT * FROM hubspot_sync_jobs').all();
+  assert.equal(results.length, 1);
+  assert.equal(results[0].status, 'pending');
+  assert.deepEqual(JSON.parse(results[0].payload), { firstname: 'Preview Signup', phone: '', city: '' });
+  assert.doesNotMatch(results[0].payload, /email|subject|issuer/);
+});
+
+test('HubSpot profile enqueue coalesces identical changes, updates latest payload and rolls back with source', async () => {
+  assert.equal((await previewUpdate()).status, 200);
+  const first = await syncJob();
+  for (let i = 0; i < 3; i++) assert.equal((await previewUpdate()).status, 200);
+  assert.equal((await syncJob()).idempotency_key, first.idempotency_key);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM hubspot_sync_jobs').first()).n, 1);
+  assert.equal((await previewUpdate({ contactName: 'Changed', phone: '', city: '' })).status, 200);
+  assert.notEqual((await syncJob()).idempotency_key, first.idempotency_key);
+  assert.equal(JSON.parse((await syncJob()).payload).firstname, 'Changed');
+  await assert.rejects(db.batch([
+    db.prepare("UPDATE households SET city = 'rollback' WHERE id = 'house-a'"),
+    ...enqueueHubspot(previewBindings(), 'house-a'),
+    db.prepare("INSERT INTO households(id, contact_name) VALUES ('house-a', 'duplicate')")
+  ]));
+  assert.equal(JSON.parse((await syncJob()).payload).city, '');
+  assert.equal((await db.prepare("SELECT city FROM households WHERE id = 'house-a'").first()).city, '');
+});
+
+test('HubSpot sync stays off in production/development even with a flag and secret; missing config fails closed', async () => {
+  for (const overrides of [
+    { APP_ENV: 'production' }, { APP_ENV: 'development' }, { APP_ENV: 'preview ' },
+    { HUBSPOT_SYNC_ENABLED: 'false' }, { HUBSPOT_SYNC_ENABLED: undefined }, { HUBSPOT_ACCESS_TOKEN: '' }
+  ]) {
+    const bindings = previewBindings(overrides);
+    assert.equal(hubspotEnabled(bindings), false);
+    assert.deepEqual(enqueueHubspot(bindings, 'house-a'), []);
+    assert.deepEqual(await processHubspot(bindings), { enabled: false, processed: 0 });
+    await worker.scheduled({}, bindings);
+  }
+  const bindings = previewBindings({ APP_ENV: 'production' });
+  assert.equal((await previewUpdate(undefined, bindings)).status, 200);
+  assert.equal(await syncJob(), null);
+  assert.deepEqual(await (await previewRequest(hubspotPath, 'admin', {}, bindings)).json(), { enabled: false });
+  assert.equal((await previewRequest(`${hubspotPath}/process`, 'admin', { method: 'POST' }, bindings)).status, 503);
+  const flow = await provider({ subject: 'synthetic-disabled-signup' });
+  assert.equal((await complete(flow)).status, 302);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM hubspot_sync_jobs').first()).n, 0);
+});
+
+test('HubSpot processing uses unique household upsert, persists success, and replays without duplicate contacts', async () => {
+  await previewUpdate();
+  const bodies = [];
+  globalThis.fetch = async (url, options) => {
+    assert.equal(url, 'https://api.hubapi.com/crm/v3/objects/contacts/batch/upsert');
+    assert.equal(options.method, 'POST');
+    assert.equal(options.redirect, 'error');
+    assert.equal(options.headers.authorization, ['Bearer', previewBindings().HUBSPOT_ACCESS_TOKEN].join(' '));
+    bodies.push(JSON.parse(options.body));
+    return successfulHubspot();
+  };
+  const response = await previewRequest(`${hubspotPath}/process`, 'admin', { method: 'POST' });
+  assert.deepEqual(await response.json(), { enabled: true, processed: 1 });
+  const job = await syncJob();
+  assert.equal(job.status, 'succeeded');
+  assert.equal(job.hubspot_contact_id, '12345');
+  assert.ok(job.last_success_at);
+  assert.equal(job.last_error, null);
+  await previewUpdate();
+  await processHubspot(previewBindings());
+  assert.equal(bodies.length, 1);
+  await previewUpdate({ contactName: 'Updated Name', phone: '', city: '' });
+  await worker.scheduled({}, previewBindings());
+  assert.equal(bodies.length, 2);
+  assert.equal(bodies[0].inputs[0].id, bodies[1].inputs[0].id);
+  assert.deepEqual(bodies[0].inputs[0], {
+    id: 'preview:house-a', idProperty: 'tk9_preview_household_id',
+    properties: { firstname: 'Preview Client', phone: '555-0100', city: 'Rockport', tk9_preview_household_id: 'preview:house-a' }
+  });
+  const health = await (await previewRequest(hubspotPath, 'admin')).json();
+  assert.equal(health.summary.succeeded, 1);
+  assert.equal(health.successes[0].last_success_at, (await syncJob()).last_success_at);
+});
+
+test('HubSpot retries use exponential backoff, sanitize failures, and stop after six attempts', async () => {
+  await previewUpdate();
+  globalThis.fetch = async () => new Response('sensitive provider body: synthetic-test-value private@example.invalid', { status: 429 });
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    const started = now();
+    assert.equal((await processHubspot(previewBindings())).processed, 1);
+    const job = await syncJob();
+    assert.equal(job.attempt_count, attempt);
+    assert.equal(job.status, attempt === 6 ? 'failed' : 'pending');
+    assert.equal(job.last_error, 'hubspot_http_429');
+    assert.ok(job.next_attempt_at >= started + 60 * 2 ** (attempt - 1));
+    assert.equal((await processHubspot(previewBindings())).processed, 0);
+    if (attempt < 6) await db.prepare('UPDATE hubspot_sync_jobs SET next_attempt_at = 0').run();
+  }
+  const diagnostics = await previewRequest(hubspotPath, 'admin');
+  assert.equal(diagnostics.headers.get('cache-control'), 'no-store');
+  const health = await diagnostics.json();
+  assert.equal(health.summary.failed, 1);
+  assert.equal(health.failures[0].attempt_count, 6);
+  assert.equal(health.failures[0].last_error, 'hubspot_http_429');
+  assert.doesNotMatch(JSON.stringify(health), /private@|synthetic-test-value|Preview Client|Rockport|555-0100|payload|house-a/);
+  // A genuinely changed profile starts a new revision; identical failed triggers do not reset attempts.
+  await previewUpdate();
+  assert.equal((await syncJob()).status, 'failed');
+  await previewUpdate({ contactName: 'Corrected', phone: '', city: '' });
+  assert.equal((await syncJob()).attempt_count, 0);
+  globalThis.fetch = async () => successfulHubspot();
+  await processHubspot(previewBindings());
+  assert.equal((await syncJob()).status, 'succeeded');
+});
+
+test('HubSpot network and malformed/partial responses remain retryable without leaking error text', async () => {
+  await previewUpdate();
+  for (const response of [
+    () => { throw new Error('synthetic-test-value private@example.invalid'); },
+    () => Response.json({ status: 'PENDING', results: [{ id: '12345' }] }),
+    () => Response.json({ status: 'COMPLETE', numErrors: 1, results: [] }),
+    () => new Response('not JSON')
+  ]) {
+    globalThis.fetch = async () => response();
+    await processHubspot(previewBindings());
+    const job = await syncJob();
+    assert.equal(job.status, 'pending');
+    assert.match(job.last_error, /^hubspot_(network_or_response_error|invalid_response)$/);
+    await db.prepare('UPDATE hubspot_sync_jobs SET next_attempt_at = 0').run();
+  }
+});
+
+test('HubSpot leases prevent overlapping sends and preserve updates arriving during an in-flight sync', async () => {
+  await previewUpdate();
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls++;
+    assert.equal((await processHubspot(previewBindings())).processed, 0);
+    assert.equal((await previewUpdate({ contactName: 'Newest', phone: '', city: '' })).status, 200);
+    assert.equal((await processHubspot(previewBindings())).processed, 0);
+    return successfulHubspot();
+  };
+  await processHubspot(previewBindings());
+  assert.equal(calls, 1);
+  const job = await syncJob();
+  assert.equal(job.status, 'pending');
+  assert.equal(job.attempt_count, 0);
+  assert.equal(job.lease_token, null);
+  assert.equal(job.last_success_at, null);
+  globalThis.fetch = async (_url, options) => {
+    assert.equal(JSON.parse(options.body).inputs[0].properties.firstname, 'Newest');
+    return successfulHubspot();
+  };
+  await processHubspot(previewBindings());
+  assert.equal((await syncJob()).status, 'succeeded');
+});
+
+test('HubSpot recovers expired leases and terminates crashed final attempts', async () => {
+  await previewUpdate();
+  await db.prepare("UPDATE hubspot_sync_jobs SET status = 'processing', lease_token = 'abandoned', lease_until = 0, attempt_count = 1").run();
+  globalThis.fetch = async () => successfulHubspot();
+  await processHubspot(previewBindings());
+  assert.equal((await syncJob()).attempt_count, 2);
+  assert.equal((await syncJob()).status, 'succeeded');
+  await db.prepare("UPDATE hubspot_sync_jobs SET status = 'processing', lease_until = 0, attempt_count = 6").run();
+  assert.equal((await processHubspot(previewBindings())).processed, 0);
+  assert.equal((await syncJob()).status, 'failed');
+  assert.equal((await syncJob()).last_error, 'hubspot_attempts_exhausted');
+});
+
+test('HubSpot processing batches are bounded to five households', async () => {
+  const bindings = previewBindings();
+  for (let i = 0; i < 7; i++) {
+    const id = `batch-${i}`;
+    await db.batch([
+      db.prepare('INSERT INTO households(id, contact_name) VALUES (?, ?)').bind(id, 'Synthetic'),
+      ...enqueueHubspot(bindings, id)
+    ]);
+  }
+  globalThis.fetch = async () => successfulHubspot();
+  assert.equal((await processHubspot(bindings)).processed, 5);
+  assert.equal((await processHubspot(bindings)).processed, 2);
+});
+
+test('HubSpot diagnostics and processing require admin and processing retains CSRF protections', async () => {
+  for (const user of [null, 'client-a', 'reviewer']) {
+    const expected = user ? 403 : 401;
+    assert.equal((await previewRequest(hubspotPath, user)).status, expected);
+    assert.equal((await previewRequest(`${hubspotPath}/process`, user, { method: 'POST' })).status, expected);
+  }
+  assert.equal((await previewRequest(`${hubspotPath}/process`, 'admin', {
+    method: 'POST', headers: { 'x-csrf-token': 'incorrect' }
+  })).status, 403);
+  const health = await (await previewRequest(hubspotPath, 'admin')).json();
+  assert.equal(health.summary.total, 0);
+  assert.equal(health.summary.pending, 0);
+  assert.equal(health.summary.last_success_at, null);
+  assert.deepEqual(health.failures, []);
+});
 test('real OIDC flow uses PKCE/state/nonce/signature, then creates a hashed, revocable session', async () => {
   const flow = await provider();
   assert.equal(flow.login.searchParams.get('scope'), 'openid profile');
@@ -250,11 +940,149 @@ test('OIDC bad signatures and wrong nonce fail closed without creating a session
     assert.doesNotMatch(await response.text(), /access.token|secret|nonce|signature/i);
   }
 });
-test('provider identity must be provisioned; matching email or self-assigned roles never grants access', async () => {
-  const flow = await provider({ subject: 'not-provisioned', claimsOverride: { email: 'client-a@example.invalid', role: 'admin' } });
-  const response = await request(flow.callback, null, { headers: { cookie: flow.browserCookie } });
+test('signup route requests the Auth0 sign-up screen with the same PKCE/state/nonce protections', async () => {
+  await provider();
+  const response = await request('/api/auth/signup');
+  assert.equal(response.status, 302);
+  const target = new URL(response.headers.get('location'));
+  assert.equal(target.searchParams.get('screen_hint'), 'signup');
+  for (const name of ['state', 'nonce', 'code_challenge']) assert.ok(target.searchParams.get(name));
+  assert.equal(target.searchParams.get('code_challenge_method'), 'S256');
+  assert.match(response.headers.get('set-cookie'), /^tk9_login=/);
+  assert.equal((await request('/api/auth/login')).headers.get('location').includes('screen_hint'), false);
+});
+test('new identity self-provisions a least-privileged client with its own household; email and role claims are ignored', async () => {
+  const before = await counts();
+  const flow = await provider({ subject: 'google-oauth2|synthetic-new-client', claimsOverride: {
+    name: ' New\u202e Client\n ', email: 'client-a@example.invalid', role: 'admin', household_id: 'house-a' } });
+  const response = await complete(flow);
+  assert.equal(response.status, 302);
+  assert.equal(response.headers.get('location'), `${origin}/portal/`);
+  const cookieHeader = { headers: { cookie: sessionFrom(response) } };
+  const me = await (await request('/api/me', null, cookieHeader)).json();
+  assert.ok(!['client-a', 'client-b', 'reviewer', 'admin'].includes(me.user.id));
+  assert.equal(me.user.role, null);
+  assert.equal(me.user.name, 'New Client');
+  assert.equal(me.households.length, 1);
+  const house = me.households[0];
+  assert.ok(!['house-a', 'house-b'].includes(house.id));
+  assert.deepEqual({ ...house, id: undefined }, { id: undefined, contact_name: 'New Client', phone: '', city: '' });
+  const user = await db.prepare('SELECT issuer, subject, active FROM users WHERE id=?').bind(me.user.id).first();
+  assert.deepEqual({ ...user }, { issuer, subject: 'google-oauth2|synthetic-new-client', active: 1 });
+  assert.equal(await db.prepare('SELECT role FROM staff_roles WHERE user_id=?').bind(me.user.id).first(), null);
+  assert.deepEqual(await counts(), { ...before, users: before.users + 1, households: before.households + 1,
+    memberships: before.memberships + 1, sessions: before.sessions + 1 });
+  const { results } = await db.prepare('SELECT action, resource_id FROM audit_logs WHERE actor_id=? ORDER BY action').bind(me.user.id).all();
+  assert.deepEqual(results.map(row => [row.action, row.resource_id]), [
+    ['account.self_registered', me.user.id], ['household.created', house.id], ['session.created', me.user.id]]);
+  // The new client is isolated from other households and staff areas.
+  assert.equal((await request('/api/households/house-a/dogs', null, cookieHeader)).status, 404);
+  assert.equal((await request('/api/dogs/dog-a', null, cookieHeader)).status, 404);
+  assert.equal((await request('/api/admin/clients', null, cookieHeader)).status, 403);
+  assert.equal((await request('/api/admin/audit', null, cookieHeader)).status, 403);
+  assert.equal((await request('/admin/reviews', null, cookieHeader)).status, 403);
+  // Onboarding: the client completes their own household details and adds a dog without staff help.
+  const write = (path, body, method = 'POST') => request(path, null, { method, body: JSON.stringify(body),
+    headers: { ...cookieHeader.headers, origin, 'x-csrf-token': me.csrfToken } });
+  assert.equal((await write(`/api/households/${house.id}`, { contactName: 'New Client', phone: '555-0100', city: 'Rockport' }, 'PATCH')).status, 200);
+  assert.equal((await write(`/api/households/${house.id}/dogs`, { name: 'Scout', breed: '', birthDate: '', approximateAge: '1 year' })).status, 201);
+  assert.equal((await write(`/api/households/${house.id}`, { contactName: 'x', phone: '', city: '', householdId: 'house-a' }, 'PATCH')).status, 400);
+  assert.equal((await request('/api/households/house-a/dogs', 'client-a').then(r => r.json())).dogs.length, 1);
+  assert.equal((await db.prepare("SELECT contact_name FROM households WHERE id='house-a'").first()).contact_name, 'Test household a');
+});
+test('display name falls back safely when the validated profile has no usable name', async () => {
+  for (const [index, name] of [undefined, 42, '   ', '\u0000\u0007'].entries()) {
+    const flow = await provider({ subject: `synthetic-fallback-${index}`, claimsOverride: name === undefined ? {} : { name } });
+    const me = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(flow)) } })).json();
+    assert.equal(me.user.name, 'Taurus K9 client');
+    assert.equal(me.households[0].contact_name, 'Taurus K9 client');
+  }
+  const flow = await provider({ subject: 'synthetic-long-name', claimsOverride: { name: '\u{1F415}'.repeat(200) } });
+  const me = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(flow)) } })).json();
+  assert.ok(me.user.name.length <= 120 && me.user.name.length > 0);
+});
+test('repeated sign-in for a self-provisioned or existing client is idempotent and keeps memberships', async () => {
+  const subject = 'synthetic-repeat-client';
+  const first = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(await provider({ subject }))) } })).json();
+  const before = await counts();
+  const second = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(await provider({ subject, claimsOverride: { name: 'Renamed' } }))) } })).json();
+  assert.equal(second.user.id, first.user.id);
+  assert.equal(second.user.name, first.user.name);
+  assert.deepEqual(second.households, first.households);
+  assert.deepEqual(await counts(), { ...before, sessions: before.sessions + 1 });
+  for (const user of ['client-a', 'admin']) {
+    const existing = await counts();
+    const me = await (await request('/api/me', null, { headers: { cookie: sessionFrom(await complete(await provider({ subject: `subject-${user}` }))) } })).json();
+    assert.equal(me.user.id, user);
+    assert.deepEqual(me.households.map(house => house.id), user === 'client-a' ? ['house-a'] : []);
+    assert.equal(me.user.role, user === 'admin' ? 'admin' : null);
+    assert.deepEqual(await counts(), { ...existing, sessions: existing.sessions + 1 });
+  }
+});
+test('inactive identities stay blocked and are never re-created or reactivated', async () => {
+  await db.prepare("UPDATE users SET active = 0 WHERE id = 'client-b'").run();
+  const before = await counts();
+  const response = await complete(await provider({ subject: 'subject-client-b' }));
   assert.equal(response.status, 403);
-  assert.equal((await db.prepare('SELECT count(*) AS count FROM sessions').first()).count, 4);
+  assert.match((await response.json()).error, /disabled/);
+  assert.equal(response.headers.getSetCookie().some(value => value.startsWith('tk9_session=') && !/Max-Age=0/.test(value)), false);
+  assert.deepEqual(await counts(), before);
+  assert.equal((await db.prepare("SELECT active FROM users WHERE id='client-b'").first()).active, 0);
+});
+test('provisioning failure is atomic: no partial user, household or membership is left behind', async () => {
+  const before = await counts();
+  await db.prepare("CREATE TRIGGER test_membership_failure BEFORE INSERT ON memberships BEGIN SELECT RAISE(ABORT,'test-only membership failure'); END").run();
+  try {
+    const response = await complete(await provider({ subject: 'synthetic-atomic-client' }));
+    assert.equal(response.status, 503);
+    assert.doesNotMatch(await response.text(), /test-only|SQL|D1/);
+    assert.deepEqual(await counts(), before);
+  } finally {
+    await db.prepare('DROP TRIGGER test_membership_failure').run();
+  }
+  assert.equal((await complete(await provider({ subject: 'synthetic-atomic-client' }))).status, 302);
+  assert.deepEqual(await counts(), { ...before, users: before.users + 1, households: before.households + 1,
+    memberships: before.memberships + 1, sessions: before.sessions + 1 });
+});
+test('concurrent first sign-ins for one identity create exactly one user and household', async () => {
+  const subject = 'synthetic-concurrent-client';
+  const before = await counts();
+  const { flows } = await provider({ subject, count: 3 });
+  const responses = await Promise.all(flows.map(flow => complete(flow)));
+  assert.deepEqual(responses.map(response => response.status), [302, 302, 302]);
+  const ids = await Promise.all(responses.map(async response =>
+    (await (await request('/api/me', null, { headers: { cookie: sessionFrom(response) } })).json()).user.id));
+  assert.equal(new Set(ids).size, 1);
+  assert.deepEqual(await counts(), { ...before, users: before.users + 1, households: before.households + 1,
+    memberships: before.memberships + 1, sessions: before.sessions + 3 });
+});
+test('a callback that loses the provisioning race writes no orphan household and joins the winner', async () => {
+  const subject = 'synthetic-race-client';
+  const flow = await provider({ subject });
+  let raced = false;
+  const racingDb = {
+    prepare: sql => db.prepare(sql),
+    async batch(statements) {
+      if (!raced && statements.length === 5) {
+        raced = true;
+        // Simulates another callback committing between this callback's lookup and its batch.
+        await db.prepare('INSERT INTO users(id, issuer, subject, display_name) VALUES (?, ?, ?, ?)').bind('race-winner', issuer, subject, 'Winner').run();
+        await db.prepare("INSERT INTO households(id, contact_name) VALUES ('race-house', 'Winner')").run();
+        await db.prepare("INSERT INTO memberships(user_id, household_id) VALUES ('race-winner', 'race-house')").run();
+      }
+      return db.batch(statements);
+    }
+  };
+  const before = await counts();
+  const response = await complete(flow, { ...env, DB: racingDb });
+  assert.equal(raced, true);
+  assert.equal(response.status, 302);
+  const me = await (await request('/api/me', null, { headers: { cookie: sessionFrom(response) } })).json();
+  assert.equal(me.user.id, 'race-winner');
+  assert.deepEqual(me.households.map(house => house.id), ['race-house']);
+  assert.deepEqual(await counts(), { ...before, users: before.users + 1, households: before.households + 1,
+    memberships: before.memberships + 1, sessions: before.sessions + 1 });
+  assert.equal((await db.prepare("SELECT count(*) AS count FROM audit_logs WHERE action IN ('account.self_registered', 'household.created')").first()).count, 0);
 });
 test('signed tokens with wrong audience, issuer, or expired lifetime fail closed', async () => {
   for (const claimsOverride of [{ aud: 'another-client' }, { iss: 'https://other.example.invalid/' }, { exp: now() - 300 }]) {

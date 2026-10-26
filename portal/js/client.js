@@ -126,6 +126,9 @@ const routes = {
       el('section', { class: 'portal-next-step' }, el('p', { class: 'eyebrow' }, 'YOUR TRAINING JOURNEY'), el('h2', {}, 'Your agreement'),
         el('p', {}, agreements.unavailable ? 'Agreement setup is pending.' : agreements.agreements.length ? `${agreements.agreements.length} agreement records assigned to your account.` : 'No agreement has been assigned yet.'),
         link('/agreement', 'Go to My Agreement')),
+      household && !household.phone && !household.city
+        ? notice('Welcome to Taurus K9! Finish setting up your account: add your contact details under Owner information, then add your dogs.')
+        : null,
       el('div', { class: 'grid' },
         card('My Dogs', el('p', {}, `${data.dogs.length} dogs in the selected household.`), link('/dogs', 'Manage dogs')),
         card('Owner information', link('/profile', 'Manage contact information')),
@@ -163,8 +166,8 @@ const routes = {
   '/documents': { title: 'Completed Documents', view: () => agreementsPage(true) },
   '/admin/clients': { title: 'Client directory', role: 'admin', async view() {
     const { clients } = await api('/api/admin/clients');
-    return [notice('Showing up to 100 households. Account provisioning is restricted to the database operator.'),
-      clients.length ? table('Client households', ['Contact name', 'Phone', 'City'], clients.map(row => [row.contact_name, row.phone, row.city])) : notice('No households provisioned.')];
+    return [notice('Showing up to 100 households. Clients create their own account and household when they first sign in; staff roles are assigned only by the database operator.'),
+      clients.length ? table('Client households', ['Contact name', 'Phone', 'City'], clients.map(row => [row.contact_name, row.phone, row.city])) : notice('No client households yet.')];
   } },
   '/admin/reviews': { title: 'Record reviews', role: 'reviewer', view: unavailable },
   '/admin/audit': { title: 'Audit history', role: 'admin', async view() {
@@ -225,7 +228,8 @@ async function render() {
       document.getElementById('staff-nav').replaceChildren();
       document.querySelector('.staff-preview').hidden = true;
       document.getElementById('logout').hidden = true;
-      main.append(el('a', { href: '/api/auth/login', class: 'button' }, 'Sign in'));
+      main.append(el('a', { href: '/api/auth/login', class: 'button' }, 'Sign in'), ' ',
+        el('a', { href: '/api/auth/signup', class: 'button' }, 'Create a client account'));
     }
   } finally {
     if (current === sequence) {
@@ -237,9 +241,11 @@ async function render() {
 }
 document.getElementById('logout').addEventListener('click', async () => {
   try {
-    await api('/api/auth/logout', 'POST');
+    const data = await api('/api/auth/logout', 'POST');
     account = null;
-    location.replace('/');
+    // The server ends the app session, then supplies the identity-provider logout URL
+    // (which returns to the public site) so the provider's sign-in session ends too.
+    location.replace(data && typeof data.redirect === 'string' ? data.redirect : '/');
   } catch (error) {
     announcement.textContent = error instanceof ApiError ? error.message : 'Unable to sign out. Try again.';
   }
