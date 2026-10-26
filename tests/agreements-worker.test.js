@@ -60,8 +60,8 @@ function syntheticTemplate() {
     optionalConsents: [{ consentId:'optional-test',heading:'Synthetic optional choice',content:'Synthetic optional text.' }]
   };
 }
-async function assigned() {
-  const draft = await request('/api/admin/contracts','admin',{ template: syntheticTemplate() });
+async function assigned(template = syntheticTemplate()) {
+  const draft = await request('/api/admin/contracts','admin',{ template });
   assert.equal(draft.status,201);
   const templateId = (await draft.json()).id;
   const published = await request(`/api/admin/contracts/${templateId}/publish`,'admin',{ expectedRevision:0,legalApproval:true });
@@ -123,6 +123,21 @@ test('save/resume and acknowledgment corrections preserve evidence versions and 
   assert.equal(current.state.events.at(-1).action,'acknowledgment.corrected');
   await assert.rejects(db.prepare("UPDATE agreement_evidence SET value='tampered'").run(),/evidence_append_only/);
   await assert.rejects(db.prepare("DELETE FROM agreement_events").run(),/audit_append_only/);
+});
+test('draft saves accept the maximum supported set of full-length section values', async () => {
+  const template = syntheticTemplate();
+  template.sections = Array.from({ length:100 },(_,index) => ({
+    sectionId:`section-${index}`,heading:`Synthetic section ${index}`,content:'Synthetic content for automated tests only.',
+    order:index+1,acknowledgmentType:'signature',required:true
+  }));
+  const {agreementId} = await assigned(template);
+  const current = await view(agreementId);
+  const drafts = Object.fromEntries(template.sections.map(section => [section.sectionId,'S'.repeat(160)]));
+  const body = { expectedRevision:current.state.revision,agreementHash:current.snapshot.contentHash,drafts,printedName:'N'.repeat(160),signature:'S'.repeat(160) };
+  assert.ok(Buffer.byteLength(JSON.stringify(body)) > 8192);
+  const saved = await request(`/api/agreements/${agreementId}/draft`,'client-a',body);
+  assert.equal(saved.status,200,JSON.stringify(await saved.clone().json()));
+  assert.equal((await saved.json()).state.drafts['section-99'],'S'.repeat(160));
 });
 test('stale concurrent writes and untrusted identity/hash/section fields are rejected', async () => {
   const {agreementId} = await assigned();

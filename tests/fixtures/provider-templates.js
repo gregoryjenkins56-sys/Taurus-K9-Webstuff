@@ -31,8 +31,14 @@ export async function createProviderTemplate(template, provider, library) {
       let remainder = paragraph;
       if (!remainder) { reserve(15); cursor -= 15; }
       while (remainder) {
-        let length = remainder.length;
-        while (selectedFont.widthOfTextAtSize(remainder.slice(0, length), size) > 516) length -= 1;
+        let lower = 1;
+        let upper = remainder.length;
+        while (lower < upper) {
+          const middle = Math.ceil((lower + upper) / 2);
+          if (selectedFont.widthOfTextAtSize(remainder.slice(0, middle), size) <= 516) lower = middle;
+          else upper = middle - 1;
+        }
+        let length = lower;
         if (length < remainder.length) {
           const space = remainder.lastIndexOf(' ', length);
           if (space > 0) length = space;

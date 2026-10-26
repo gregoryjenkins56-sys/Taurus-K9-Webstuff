@@ -212,7 +212,8 @@ export async function agreementRoutes(request: Request, env: Env, path: string, 
   const row = await ownedAgreement(env, identity, agreementId, writing);
   if ((!action || action === 'completion') && request.method === 'GET') return json(await agreementView(env,row));
   if (!writing) throw new HttpError(405, 'Method not allowed.');
-  const data = await input(request, ['expectedRevision','agreementHash','value','drafts','printedName','signature','accepted']);
+  const draftSave = action === 'draft' && request.method === 'POST';
+  const data = await input(request, ['expectedRevision','agreementHash','value','drafts','printedName','signature','accepted'], draftSave ? 131072 : 8192);
   requireRevision(row,data);
   const snapshot = JSON.parse(row.snapshot_json) as AgreementSnapshot;
   const state = JSON.parse(row.state_json) as SigningState;
